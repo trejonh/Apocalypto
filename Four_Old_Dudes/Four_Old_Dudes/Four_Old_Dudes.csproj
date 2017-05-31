@@ -85,9 +85,12 @@
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="GameRunner.cs" />
+    <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Players\IPlayer.cs" />
     <Compile Include="Players\Playable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Drawable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -121,6 +124,7 @@
       <Name>Tiled.SFML</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
