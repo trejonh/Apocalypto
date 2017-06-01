@@ -1,9 +1,9 @@
-﻿using SFML.Window;
+﻿using SFML.Graphics;
 namespace Four_Old_Dudes.System
 {
     public abstract class Drawable
     {
-        protected Window _winInstance { get; set; }
+        protected RenderWindow _winInstance { get; set; }
         public abstract void Draw();
     }
 }

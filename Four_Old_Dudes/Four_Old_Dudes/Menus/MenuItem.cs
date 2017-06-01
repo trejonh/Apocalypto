@@ -1,9 +1,7 @@
-﻿using Four_Old_Dudes.System;
-using SFML.Graphics;
-using SFML.Window;
+﻿using SFML.Graphics;
 namespace Four_Old_Dudes.Menus
 {
-    public abstract class MenuItem : Drawable
+    public abstract class MenuItem : System.Drawable
     {
         protected Text _itemText { get; set; }
         protected Shape _itemShape { get; set; }

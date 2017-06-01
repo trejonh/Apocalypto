@@ -63,7 +63,7 @@
     </Reference>
     <Reference Include="sfmlnet-graphics-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TL_Lib\sfmlnet-graphics-2.dll</HintPath>
+      <HintPath>..\lib\sfmlnet-graphics-2.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-system-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -71,7 +71,7 @@
     </Reference>
     <Reference Include="sfmlnet-window-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TL_Lib\sfmlnet-window-2.dll</HintPath>
+      <HintPath>..\lib\sfmlnet-window-2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -90,12 +90,16 @@
     <Compile Include="Players\IPlayer.cs" />
     <Compile Include="Players\Playable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\Drawable.cs" />
+    <Compile Include="Core\Drawable.cs" />
+    <Compile Include="Utils\AssetManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\assets.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-graphics-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
