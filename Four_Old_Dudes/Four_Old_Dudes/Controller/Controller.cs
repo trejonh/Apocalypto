@@ -1,5 +1,4 @@
 ﻿using System;
-using Four_Old_Dudes.Players;
 using SFML.Graphics;
 using SFML.Window;
 
@@ -32,12 +31,10 @@ namespace Four_Old_Dudes.Controller
         }
         public bool JoyStickAvailable { get; } = Joystick.IsConnected(0);
         public RenderWindow CurrentGameWindow { get; }
-        public Playable User { get; private set; }
 
-        public Controller(ref RenderWindow gameWindow, Playable player)
+        public Controller(ref RenderWindow gameWindow)
         {
             CurrentGameWindow = gameWindow;
-            User = player;
             if (CurrentGameWindow != null)
                 SetupEventListeners();
         }

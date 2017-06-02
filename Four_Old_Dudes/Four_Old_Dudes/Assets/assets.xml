@@ -1,2 +1,12 @@
 <assets>
+  <asset>
+    <type>font</type>
+    <name>orange juice</name>
+    <location>\fonts\orange_jusice.ttf</location>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>menu pointer</name>
+    <location>\images\pointer.png</location>
+  </asset>
 </assets>

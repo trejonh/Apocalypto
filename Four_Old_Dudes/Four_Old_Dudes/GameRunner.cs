@@ -1,8 +1,6 @@
-﻿using SFML.Graphics;
-using SFML.Window;
+﻿using Four_Old_Dudes.Utils;
 using System;
-using System.Collections.Generic;
-using Tiled.SFML;
+using System.IO;
 
 namespace Four_Old_Dudes
 {
@@ -11,7 +9,10 @@ namespace Four_Old_Dudes
         private const int Screenx = 1280, Screeny = 720;
         static void Main()
         {
-            RenderWindow window = new RenderWindow(new VideoMode(Screenx, Screeny), "Four Old Dudes!");
+            //_filePath = Directory.GetParent(_filePath).FullName;
+            AssetManager.LoadAssets();
+            Console.ReadLine();
+            /*RenderWindow window = new RenderWindow(new VideoMode(Screenx, Screeny), "Four Old Dudes!");
             MainMenu.InitOptions();
             window.SetActive();
             window.Closed += OnClosed;
@@ -34,10 +35,10 @@ namespace Four_Old_Dudes
                 window.Draw(xml);
                 window.Display();
                 window.DispatchEvents();
-            }
+            }*/
         }
 
-        private static void OnClosed(object sender, EventArgs e)
+        /*private static void OnClosed(object sender, EventArgs e)
         {
             Window window = (Window)sender;
             window.Close();
@@ -126,6 +127,6 @@ namespace Four_Old_Dudes
             {
                 
             }
-        }
+        }*/
     }
 }

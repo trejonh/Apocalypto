@@ -87,19 +87,17 @@
     <Compile Include="GameRunner.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />
-    <Compile Include="Players\IPlayer.cs" />
-    <Compile Include="Players\Playable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Drawable.cs" />
     <Compile Include="Utils\AssetManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Assets\fonts\orange_juice.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\assets.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\assets.xml" />
+    <Content Include="Assets\images\pointer.png" />
     <Content Include="csfml-graphics-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -121,12 +119,6 @@
     <Content Include="OpenTK.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Tiled.SFML\Tiled.SFML.csproj">
-      <Project>{b11dd8e6-1809-4abe-bba1-a6fc0ca7ed0a}</Project>
-      <Name>Tiled.SFML</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
