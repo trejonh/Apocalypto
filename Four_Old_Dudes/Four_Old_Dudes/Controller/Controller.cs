@@ -1,11 +1,12 @@
 ﻿using System;
 using Four_Old_Dudes.Players;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 
 namespace Four_Old_Dudes.Controller
 {
-    class Controller
+    public class Controller
     {
         public  enum XboxOneButtonMappings
         {
@@ -27,12 +28,14 @@ namespace Four_Old_Dudes.Controller
             DPadYDir = Joystick.Axis.PovX,
             Triggers = Joystick.Axis.Z,
             LThumbXDir = Joystick.Axis.Y,
-            RThumbYDir = Joystick.Axis.X
+            LThumbYDir = Joystick.Axis.X
 
         }
         public bool JoyStickAvailable { get; } = Joystick.IsConnected(0);
         public RenderWindow CurrentGameWindow { get; }
-        public Playable User { get; private set; }
+        public Playable User { get;}
+        public Time FrameTime { get; set; }
+        public Clock FrameClock { get; set; }
 
         public Controller(ref RenderWindow gameWindow, Playable player)
         {
@@ -40,6 +43,7 @@ namespace Four_Old_Dudes.Controller
             User = player;
             if (CurrentGameWindow != null)
                 SetupEventListeners();
+            FrameClock = new Clock();
         }
 
         private void SetupEventListeners()
@@ -54,39 +58,37 @@ namespace Four_Old_Dudes.Controller
 
         }
 
-        private void OnJoyStickMoved(object sender, JoystickMoveEventArgs e)
+        void OnJoyStickMoved(object sender, JoystickMoveEventArgs e)
         {
             Console.WriteLine("moved axis");
             Console.WriteLine(e);
         }
 
-        static void OnJoyStickConnected(object sender, JoystickConnectEventArgs e)
+        void OnJoyStickConnected(object sender, JoystickConnectEventArgs e)
         {
             Console.WriteLine("connected");
             Console.WriteLine(e);
         }
-        static void OnJoyStickDisconnected(object sender, EventArgs e)
+        void OnJoyStickDisconnected(object sender, EventArgs e)
         {
             Console.WriteLine("connected");
             Console.WriteLine(e);
         }
 
-        static void OnKeyPressed(object sender, KeyEventArgs e)
+        void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("key pressed");
-            Console.WriteLine(e);
+           
         }
-        static void OnKeyReleased(object sender, KeyEventArgs e)
+        void OnKeyReleased(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("key released");
-            Console.WriteLine(e);
+           User.Stop();
         }
-        static void OnButtonPressed(object sender, JoystickButtonEventArgs e)
+        void OnButtonPressed(object sender, JoystickButtonEventArgs e)
         { 
             Console.WriteLine("button pressed");
             Console.WriteLine(e);
         }
-        static void OnButtonReleased(object sender, JoystickButtonEventArgs e)
+        void OnButtonReleased(object sender, JoystickButtonEventArgs e)
         {
             Console.WriteLine("button released");
             Console.WriteLine(e);

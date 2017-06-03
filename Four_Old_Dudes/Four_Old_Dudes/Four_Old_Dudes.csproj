@@ -85,14 +85,31 @@
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="GameRunner.cs" />
-    <Compile Include="Players\IPlayer.cs" />
+    <Compile Include="Menus\IMenu.cs" />
+    <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Players\Playable.cs" />
+    <Compile Include="Players\SpriteAnimated.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="assets\fonts\orange_juice.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\maps\map.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\maps\Tiles_32x32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\misc\pointer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\sprites\player.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-graphics-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
