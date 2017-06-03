@@ -2,7 +2,7 @@
   <asset>
     <type>font</type>
     <name>OrangeJuice</name>
-    <location>\fonts\orange_jusice.ttf</location>
+    <location>\fonts\orange_juice.ttf</location>
   </asset>
   <asset>
     <type>texture</type>
@@ -12,27 +12,32 @@
   <asset>
     <type>text</type>
     <name>DefaultMenuTitle</name>
-    <location>Four Old Dudes</location>
+    <text>Four Old Dudes</text>
   </asset>
   <asset>
     <type>text</type>
     <name>Exit</name>
-    <location>Exit</location>
+    <text>Exit</text>
   </asset>
   <asset>
     <type>text</type>
     <name>NewGame</name>
-    <location>New Game</location>
+    <text>New Game</text>
   </asset>
   <asset>
     <type>text</type>
     <name>LoadGame</name>
-    <location>Stats</location>
+    <text>Load Game</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Stats</name>
+    <text>Stats</text>
   </asset>
   <asset>
     <type>text</type>
     <name>GameTitle</name>
-    <location>Four Old Dudes!</location>
+    <text>Four Old Dudes!</text>
   </asset>
   <asset>
     <type>audio</type>

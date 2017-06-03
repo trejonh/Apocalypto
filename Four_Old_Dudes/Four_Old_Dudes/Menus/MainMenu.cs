@@ -35,7 +35,8 @@ namespace Four_Old_Dudes.Menus
             var statsText = new Text() { Position = new Vector2f(stats.Position.X + 80, stats.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Stats"), Color = Color.Black, Font = font, CharacterSize = 60 };
             var exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = new Color(128, 128, 128), Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 1) - 40) };
             var exitText = new Text() { Position = new Vector2f(exit.Position.X + 100, exit.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Exit"), Color = Color.Black, Font = font, CharacterSize = 60 };
-            var pointerTexture = new Texture(AssetManager.LoadTexture("OldTimeyPointer")) { Smooth = true };
+            var pointerTexture = AssetManager.LoadTexture("OldTimeyPointer");
+            pointerTexture.Smooth = true;
             var renderWindow = WinInstance;
             Pointer = new MenuPointer(ref renderWindow,pointerTexture);
             MenuItems.Add(new MenuItem(ref renderWindow, newGameText, newGame));
@@ -45,6 +46,12 @@ namespace Four_Old_Dudes.Menus
             Pointer.SetPosition(new Vector2f((newGame.Position.X - pointerTexture.Size.X / 2f), newGame.Position.Y));
             Pointer.SetScale(new Vector2f(0.5f, 0.5f));
             _pointerPositions = new LinkedList<Vector2f>(new[] { Pointer.GetPosition().Value, new Vector2f((loadGame.Position.X - pointerTexture.Size.X / 2f), loadGame.Position.Y), new Vector2f((stats.Position.X - pointerTexture.Size.X / 2f), stats.Position.Y), new Vector2f((exit.Position.X - pointerTexture.Size.X / 2f), exit.Position.Y) });
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+            Pointer.Draw();
         }
 
         public override void OnJoyStickAxisMoved(object sender, JoystickMoveEventArgs e)
@@ -96,7 +103,7 @@ namespace Four_Old_Dudes.Menus
 
         public override void OnJoyStickButtonPressed(object sender, JoystickButtonEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void OnKeyPressed(object sender, KeyEventArgs e)

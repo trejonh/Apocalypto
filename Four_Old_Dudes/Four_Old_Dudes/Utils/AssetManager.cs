@@ -21,8 +21,8 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly Dictionary<string, string> FontAssets = new Dictionary<string, string>();
 
-        private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets\";
-        private static readonly string AssetXmlFile = BaseFileLocation + @"assets.xml";
+        private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets";
+        private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
         public static void LoadAssets()
         {
             var fs = new FileStream(AssetXmlFile, FileMode.Open, FileAccess.Read);
