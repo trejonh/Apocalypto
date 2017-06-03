@@ -5,21 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace Four_Old_Dudes.Utils
 {
     public static class AssetManager
     {
-        private static Dictionary<string, string> _stringAssets = new Dictionary<string, string>(), _textureAssests = new Dictionary<string, string>(),
-            _audioAssets = new Dictionary<string, string>(), _mapAssets = new Dictionary<string, string>(), _fontAssets = new Dictionary<string, string>();
-        private static string baseFileLocation = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName + @"\Assets\";
-        private static string _assetXMLFile = baseFileLocation + @"assets.xml";
+        private static readonly Dictionary<string, string> StringAssets = new Dictionary<string, string>();
+
+        private static readonly Dictionary<string, string> TextureAssests = new Dictionary<string, string>();
+
+        private static readonly Dictionary<string, string> AudioAssets = new Dictionary<string, string>();
+
+        private static readonly Dictionary<string, string> MapAssets = new Dictionary<string, string>();
+
+        private static readonly Dictionary<string, string> FontAssets = new Dictionary<string, string>();
+
+        private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets\";
+        private static readonly string AssetXmlFile = BaseFileLocation + @"assets.xml";
         public static void LoadAssets()
         {
-            FileStream fs = new FileStream(_assetXMLFile, FileMode.Open, FileAccess.Read);
+            var fs = new FileStream(AssetXmlFile, FileMode.Open, FileAccess.Read);
 
             var xdoc = XDocument.Load(fs);
             var assets = from u in xdoc.Descendants("asset")
@@ -27,7 +33,7 @@ namespace Four_Old_Dudes.Utils
                         {
                             Type = (string)u.Element("type"),
                             Name = (string)u.Element("name"),
-                            Location = baseFileLocation + (string)u.Element("location"),
+                            Location = BaseFileLocation + (string)u.Element("location"),
                             Text = (string)u.Element("text")
                         };
 
@@ -36,19 +42,19 @@ namespace Four_Old_Dudes.Utils
                 switch (asset.Type)
                 {
                     case "font":
-                        _fontAssets.Add(asset.Name, asset.Location);
+                        FontAssets.Add(asset.Name, asset.Location);
                         break;
                     case "texture":
-                        _textureAssests.Add(asset.Name, asset.Location);
+                        TextureAssests.Add(asset.Name, asset.Location);
                         break;
                     case "map":
-                        _mapAssets.Add(asset.Name, asset.Location);
+                        MapAssets.Add(asset.Name, asset.Location);
                         break;
                     case "audio":
-                        _audioAssets.Add(asset.Name, asset.Location);
+                        AudioAssets.Add(asset.Name, asset.Location);
                         break;
                     case "text":
-                        _stringAssets.Add(asset.Name, asset.Text);
+                        StringAssets.Add(asset.Name, asset.Text);
                         break;
                 }
             }
@@ -60,7 +66,7 @@ namespace Four_Old_Dudes.Utils
             Texture text = null;
             try
             {
-                text = new Texture(_textureAssests[name]);
+                text = new Texture(TextureAssests[name]);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -74,7 +80,7 @@ namespace Four_Old_Dudes.Utils
             Texture text = null;
             try
             {
-                text = new Texture(_textureAssests[name],rect);
+                text = new Texture(TextureAssests[name],rect);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -89,7 +95,7 @@ namespace Four_Old_Dudes.Utils
             Sound sound = null;
             try
             {
-                buffer = new SoundBuffer(_audioAssets[name]);
+                buffer = new SoundBuffer(AudioAssets[name]);
                 sound = new Sound(buffer);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
@@ -104,7 +110,7 @@ namespace Four_Old_Dudes.Utils
             Music music = null;
             try
             {
-                music = new Music(_audioAssets[name]);
+                music = new Music(AudioAssets[name]);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -117,7 +123,7 @@ namespace Four_Old_Dudes.Utils
             string mess = "";
             try
             {
-                mess = _stringAssets[name];
+                mess = StringAssets[name];
             }
             catch (KeyNotFoundException kex)
             {
@@ -130,7 +136,7 @@ namespace Four_Old_Dudes.Utils
             Font font = null;
             try
             {
-                font = new Font(_fontAssets[name]);
+                font = new Font(FontAssets[name]);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {

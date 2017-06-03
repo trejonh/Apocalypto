@@ -1,17 +1,29 @@
 ﻿using Four_Old_Dudes.Utils;
 using System;
 using System.IO;
+using Four_Old_Dudes.Menus;
+using SFML.Graphics;
+using SFML.Window;
 
 namespace Four_Old_Dudes
 {
     class GameRunner
     {
-        private const int Screenx = 1280, Screeny = 720;
+        private const int Screenx = 1080, Screeny = 720;
         static void Main()
         {
             //_filePath = Directory.GetParent(_filePath).FullName;
             AssetManager.LoadAssets();
-            Console.ReadLine();
+            var window = new RenderWindow(new VideoMode(Screenx,Screeny),AssetManager.GetMessage("GameTitle"));
+            window.SetActive(true);
+            var menu = new MainMenu(ref window,AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
+            while (window.IsOpen)
+            {
+                window.Clear();
+                menu.Draw();
+                window.Display();
+                window.DispatchEvents();
+            }
             /*RenderWindow window = new RenderWindow(new VideoMode(Screenx, Screeny), "Four Old Dudes!");
             MainMenu.InitOptions();
             window.SetActive();

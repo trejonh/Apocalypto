@@ -1,12 +1,42 @@
 <assets>
   <asset>
     <type>font</type>
-    <name>orange juice</name>
+    <name>OrangeJuice</name>
     <location>\fonts\orange_jusice.ttf</location>
   </asset>
   <asset>
     <type>texture</type>
-    <name>menu pointer</name>
+    <name>OldTimeyPointer</name>
     <location>\images\pointer.png</location>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>DefaultMenuTitle</name>
+    <location>Four Old Dudes</location>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Exit</name>
+    <location>Exit</location>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>NewGame</name>
+    <location>New Game</location>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>LoadGame</name>
+    <location>Stats</location>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>GameTitle</name>
+    <location>Four Old Dudes!</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>ShiftThroughMenu</name>
+    <location>\audio\menuClick.wav</location>
   </asset>
 </assets>

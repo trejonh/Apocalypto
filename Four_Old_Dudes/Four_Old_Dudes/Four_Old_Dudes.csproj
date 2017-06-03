@@ -85,8 +85,10 @@
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="GameRunner.cs" />
+    <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />
+    <Compile Include="Menus\MenuPointer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Drawable.cs" />
     <Compile Include="Utils\AssetManager.cs" />
@@ -98,6 +100,9 @@
   <ItemGroup>
     <Content Include="Assets\assets.xml" />
     <Content Include="Assets\images\pointer.png" />
+    <Content Include="csfml-audio-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-graphics-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
