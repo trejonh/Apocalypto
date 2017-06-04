@@ -13,6 +13,7 @@ namespace Four_Old_Dudes
         static void Main()
         {
             //_filePath = Directory.GetParent(_filePath).FullName;
+            LogManager.InitLogFile();
             AssetManager.LoadAssets();
             var window = new RenderWindow(new VideoMode(Screenx,Screeny),AssetManager.GetMessage("GameTitle"));
             window.SetActive(true);

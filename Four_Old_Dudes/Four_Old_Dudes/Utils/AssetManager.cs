@@ -9,6 +9,9 @@ using System.Xml.Linq;
 
 namespace Four_Old_Dudes.Utils
 {
+    /// <summary>
+    /// An asset manager class that handles the loading and rendering of all assets
+    /// </summary>
     public static class AssetManager
     {
         private static readonly Dictionary<string, string> StringAssets = new Dictionary<string, string>();
@@ -23,6 +26,10 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
+
+        /// <summary>
+        /// Load in file locations of all assest found in assets.xml to be used for the game
+        /// </summary>
         public static void LoadAssets()
         {
             var fs = new FileStream(AssetXmlFile, FileMode.Open, FileAccess.Read);
@@ -56,25 +63,30 @@ namespace Four_Old_Dudes.Utils
                     case "text":
                         StringAssets.Add(asset.Name, asset.Text);
                         break;
+                    default:
+                        LogManager.LogWarning("Following asset could not be mapped"+asset);
+                        break;
                 }
             }
             fs.Close();
         }
 
+        /// <summary>
+        /// Load texture resource
+        /// </summary>
+        /// <param name="name">Name of the texture resource to load</param>
+        /// <returns>The rendered texture</returns>
         public static Texture LoadTexture(string name)
         {
-            Texture text = null;
-            try
-            {
-                text = new Texture(TextureAssests[name]);
-            }
-            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
-            {
-                // TODO: Add a log manager
-            }
-            return text;
+            return LoadTexture(name, new IntRect(0,0,32,32));
         }
 
+        /// <summary>
+        /// Load texture resource
+        /// </summary>
+        /// <param name="name">Name of the texture to load</param>
+        /// <param name="rect">The rectangle containing the texture</param>
+        /// <returns>The loaded texture</returns>
         public static Texture LoadTexture(string name, IntRect rect)
         {
             Texture text = null;
@@ -84,27 +96,36 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                // TODO: Add a log manager
+               LogManager.LogError(ex.Message);
             }
             return text;
         }
 
+        /// <summary>
+        /// Load an audio asset
+        /// </summary>
+        /// <param name="name">The nme of the asset</param>
+        /// <returns>The loaded audio file</returns>
         public static Sound LoadSound(string name)
         {
-            SoundBuffer buffer = null;
             Sound sound = null;
             try
             {
-                buffer = new SoundBuffer(AudioAssets[name]);
+                var buffer = new SoundBuffer(AudioAssets[name]);
                 sound = new Sound(buffer);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                // TODO: Add a log manager
+                LogManager.LogError(ex.Message);
             }
             return sound;
         }
 
+        /// <summary>
+        /// Load a music asset
+        /// </summary>
+        /// <param name="name">The nme of the asset</param>
+        /// <returns>The loaded music file</returns>
         public static Music LoadMusic(string name)
         {
             Music music = null;
@@ -114,23 +135,35 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                // TODO: Add a log manager
+                LogManager.LogError(ex.Message);
             }
             return music;
         }
+
+        /// <summary>
+        /// Load a string asset
+        /// </summary>
+        /// <param name="name">The nme of the asset</param>
+        /// <returns>The loaded string</returns>
         public static string GetMessage(string name)
         {
-            string mess = "";
+            var mess = "";
             try
             {
                 mess = StringAssets[name];
             }
             catch (KeyNotFoundException kex)
             {
-                // TODO: Add a log manager
+                LogManager.LogError(kex.Message);
             }
             return mess;
         }
+
+        /// <summary>
+        /// Load a font asset
+        /// </summary>
+        /// <param name="name">The nme of the asset</param>
+        /// <returns>The loaded font</returns>
         public static Font LoadFont(string name)
         {
             Font font = null;
@@ -140,7 +173,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                // TODO: Add a log manager
+                LogManager.LogError(ex.Message);
             }
             return font;
         }
