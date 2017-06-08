@@ -1,160 +1,196 @@
 ﻿using System;
 using System.Collections.Generic;
+using Four_Old_Dudes.Utils;
+using SFML.Audio;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 
 namespace Four_Old_Dudes.Menus
 {
-    class MainMenu:IMenu
+    /// <summary>
+    /// The main menu of Four Old Dudes
+    /// </summary>
+    public class MainMenu : Menu
     {
-
-        private RectangleShape _newGame, _loadGame, _stats, _exit;
-        private Text _newGameText, _loadGameText, _statsText, _exitText;
-        private static Sprite _pointerSprite;
-        private static Texture _pointerTexture;
-        private static LinkedList<Vector2f> _pointerPositions;
-        private static LinkedListNode<Vector2f> _currentNode;
+        private LinkedList<Vector2f> _pointerPositions;
+        private LinkedListNode<Vector2f> _currentNode;
         private const int ButtonX = 300, ButtonY = 100;
-        public string Name { get; set; }
+        /// <summary>
+        /// The menu title
+        /// </summary>
+        public string MenuTitle { get; set; }
 
-        public int ScreenSizeX { get; set;}
-
-        public int ScreenSizeY { get; set; }
-
-        public MainMenu(string menuName)
+        /// <summary>
+        /// Construct a new main menu
+        /// </summary>
+        /// <param name="window">Reference to the window to draw to</param>
+        /// <param name="shiftSound">Sound to play when shifting through menu options</param>
+        /// <param name="selectSound">Sound to play when selecting a menu option</param>
+        public MainMenu
+            (ref RenderWindow window, Sound shiftSound, Sound selectSound) : base(ref window,
+            new List<MenuItem>(), shiftSound, selectSound)
         {
-            Name = string.IsNullOrEmpty(menuName) ? "Main Menu" : menuName;
-            ScreenSizeX = 0;
-            ScreenSizeY = 0;
-        }
-        public MainMenu(string menuName, int screeny, int screenx)
-        {
-            Name = string.IsNullOrEmpty(menuName) ? "Main Menu" : menuName;
-            ScreenSizeX = screenx;
-            ScreenSizeY = screeny;
-        }
-        public void DrawMenu(ref RenderWindow window)
-        {
-            window.Draw(_newGame);
-            window.Draw(_newGameText);
-            window.Draw(_loadGame);
-            window.Draw(_loadGameText);
-            window.Draw(_pointerSprite);
-            window.Draw(_stats);
-            window.Draw(_statsText);
-            window.Draw(_exit);
-            window.Draw(_exitText);
+            MenuTitle = AssetManager.GetMessage("DefaultMenuTitle");
+            SetupMenu();
         }
 
-        public void CreateMenu(ref RenderWindow window)
+        /// <summary>
+        /// Set up main menu
+        /// </summary>
+        private void SetupMenu()
         {
-            _newGame = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = new Color(128, 128, 128), Position = new Vector2f((ScreenSizeX / 2) - ButtonX / 2, ScreenSizeY - (ButtonY * 6)) };
-            _newGameText = new Text() { Position = new Vector2f(_newGame.Position.X + 21, _newGame.Position.Y + 10), DisplayedString = "New Game", Color = Color.Black, Font = new Font("orange_juice.ttf"), CharacterSize = 60 };
-            _loadGame = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = new Color(128, 128, 128), Position = new Vector2f((ScreenSizeX / 2) - ButtonX / 2, ScreenSizeY - (ButtonY * 4) - 40) };
-            _loadGameText = new Text() { Position = new Vector2f(_loadGame.Position.X + 14, _loadGame.Position.Y + 10), DisplayedString = "Load Game", Color = Color.Black, Font = new Font(@"assets/fonts/orange_juice.ttf"), CharacterSize = 60 };
-            _stats = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = new Color(128, 128, 128), Position = new Vector2f((ScreenSizeX / 2) - ButtonX / 2, ScreenSizeY - (ButtonY * 2) - 80) };
-            _statsText = new Text() { Position = new Vector2f(_stats.Position.X + 80, _stats.Position.Y + 10), DisplayedString = "Stats", Color = Color.Black, Font = new Font(@"assets/fonts/orange_juice.ttf"), CharacterSize = 60 };
-            _exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = new Color(128, 128, 128), Position = new Vector2f((ScreenSizeX / 2) - ButtonX / 2, ScreenSizeY - (ButtonY * 1) - 40) };
-            _exitText = new Text() { Position = new Vector2f(_exit.Position.X + 100, _exit.Position.Y + 10), DisplayedString = "Exit", Color = Color.Black, Font = new Font(@"assets/fonts/orange_juice.ttf"), CharacterSize = 60 };
-            _pointerTexture = new Texture(@"assets/misc/pointer.png") { Smooth = true };
-            _pointerSprite = new Sprite(_pointerTexture)
+            uint screenSizeX = WinInstance.Size.X, screenSizeY = WinInstance.Size.Y;
+            var fillColor = new Color(128, 128, 128);
+            var font = AssetManager.LoadFont("OrangeJuice");
+            var newGame = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 6)) };
+            var newGameText = new Text() { Position = new Vector2f(newGame.Position.X + 21, newGame.Position.Y + 10), DisplayedString = AssetManager.GetMessage("NewGame"), Color = Color.Black, Font = font, CharacterSize = 60 };
+            var loadGame = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 4) - 40) };
+            var loadGameText = new Text() { Position = new Vector2f(loadGame.Position.X + 14, loadGame.Position.Y + 10), DisplayedString = AssetManager.GetMessage("LoadGame"), Color = Color.Black, Font = font, CharacterSize = 60 };
+            var stats = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 2) - 80) };
+            var statsText = new Text() { Position = new Vector2f(stats.Position.X + 80, stats.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Stats"), Color = Color.Black, Font = font, CharacterSize = 60 };
+            var exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 1) - 40) };
+            var exitText = new Text() { Position = new Vector2f(exit.Position.X + 100, exit.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Exit"), Color = Color.Black, Font = font, CharacterSize = 60 };
+            var pointerTexture = AssetManager.LoadTexture("OldTimeyPointer");
+            pointerTexture.Smooth = true;
+            var renderWindow = WinInstance;
+            Pointer = new MenuPointer(ref renderWindow, pointerTexture);
+            MenuItems.Add(new MenuItem(ref renderWindow, newGameText, newGame));
+            MenuItems.Add(new MenuItem(ref renderWindow, loadGameText, loadGame));
+            MenuItems.Add(new MenuItem(ref renderWindow, statsText, stats));
+            MenuItems.Add(new MenuItem(ref renderWindow, exitText, exit));
+            Pointer.SetPosition(new Vector2f((newGame.Position.X - pointerTexture.Size.X / 2f), newGame.Position.Y));
+            Pointer.SetScale(new Vector2f(0.5f, 0.5f));
+            _pointerPositions = new LinkedList<Vector2f>(new[] { Pointer.GetPosition().Value, new Vector2f((loadGame.Position.X - pointerTexture.Size.X / 2f), loadGame.Position.Y), new Vector2f((stats.Position.X - pointerTexture.Size.X / 2f), stats.Position.Y), new Vector2f((exit.Position.X - pointerTexture.Size.X / 2f), exit.Position.Y) });
+        }
+
+        /// <summary>
+        /// Draw menu items and  pointer to the window
+        /// </summary>
+        public override void Draw()
+        {
+            base.Draw();
+            Pointer.Draw();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void OnJoyStickAxisMoved(object sender, JoystickMoveEventArgs e)
+        {
+            Vector2f? pointerPoition;
+            if ((pointerPoition = Pointer.GetPosition()) == null)
             {
-                Position = new Vector2f((_newGame.Position.X - _pointerTexture.Size.X / 2f), _newGame.Position.Y),
-                Scale = new Vector2f(0.5f, 0.5f)
-            };
-            _pointerPositions = new LinkedList<Vector2f>(new[] { _pointerSprite.Position, new Vector2f((_loadGame.Position.X - _pointerTexture.Size.X / 2f), _loadGame.Position.Y), new Vector2f((_stats.Position.X - _pointerTexture.Size.X / 2f), _stats.Position.Y), new Vector2f((_exit.Position.X - _pointerTexture.Size.X / 2f), _exit.Position.Y) });
-            _currentNode = _pointerPositions.First;
-            window.KeyPressed += OnKeyPressed;
-            window.JoystickMoved += OnJoyStickAxisMoved;
-            window.JoystickButtonPressed += OnJoyStickButtonPressed;
-        }
-
-        public void DestroyMenu(ref RenderWindow window)
-        {
-            window.KeyPressed -= OnKeyPressed;
-            window.JoystickMoved -= OnJoyStickAxisMoved;
-            window.JoystickButtonPressed -= OnJoyStickButtonPressed;
-        }
-
-        public void OnKeyPressed(object sender, KeyEventArgs e)
-        {
-            if (e.Code == Keyboard.Key.Up)
-            {
-                try
-                {
-                    if ((_currentNode = _currentNode.Previous) != null)
-                    {
-                        _pointerSprite.Position = _currentNode.Value;
-                    }
-
-                }
-                catch (NullReferenceException exception)
-                {
-                    _currentNode = _pointerPositions.Last;
-                    _pointerSprite.Position = _currentNode.Value;
-                    Console.WriteLine(exception);
-                }
-            }
-            else if (e.Code == Keyboard.Key.Down)
-            {
-                try
-                {
-                    if ((_currentNode = _currentNode.Next) != null)
-                    {
-                        _pointerSprite.Position = _currentNode.Value;
-                    }
-                }
-                catch (NullReferenceException exception)
-                {
-                    _currentNode = _pointerPositions.First;
-                    _pointerSprite.Position = _currentNode.Value;
-                    Console.WriteLine(exception);
-                }
-            }
-        }
-
-        public void OnJoyStickButtonPressed(object sender, JoystickButtonEventArgs e)
-        {
-
-        }
-
-        public void OnJoyStickAxisMoved(object sender, JoystickMoveEventArgs e)
-        {
-            if ( e.Axis != (Joystick.Axis) Controller.Controller.XboxOneDirection.DPadYDir &&
-                e.Axis != (Joystick.Axis) Controller.Controller.XboxOneDirection.LThumbYDir)
+                // TODO: Log this error
                 return;
-                if (e.Position>5) { 
+            }
+            if (e.Axis != (Joystick.Axis)Controller.Controller.XboxOneDirection.DPadYDir &&
+                e.Axis != (Joystick.Axis)Controller.Controller.XboxOneDirection.LThumbYDir)
+                return;
+            if (e.Position > 5)
+            {
                 try
                 {
                     if ((_currentNode = _currentNode.Previous) != null)
                     {
-                        _pointerSprite.Position = _currentNode.Value;
+                        pointerPoition = _currentNode.Value;
                     }
 
                 }
                 catch (NullReferenceException exception)
                 {
                     _currentNode = _pointerPositions.Last;
-                    _pointerSprite.Position = _currentNode.Value;
-                    Console.WriteLine(exception);
+                    pointerPoition = _currentNode.Value;
+                    LogManager.LogWarning(exception.Message);
                 }
             }
-            else if (e.Position<-1)
+            else if (e.Position < -1)
             {
                 try
                 {
                     if ((_currentNode = _currentNode.Next) != null)
                     {
-                        _pointerSprite.Position = _currentNode.Value;
+                        pointerPoition = _currentNode.Value;
                     }
                 }
                 catch (NullReferenceException exception)
                 {
                     _currentNode = _pointerPositions.First;
-                    _pointerSprite.Position = _currentNode.Value;
-                    Console.WriteLine(exception);
+                    pointerPoition = _currentNode.Value;
+                    LogManager.LogWarning(exception.Message);
                 }
             }
+            Pointer.SetPosition(pointerPoition.Value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void OnJoyStickButtonPressed(object sender, JoystickButtonEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void OnKeyPressed(object sender, KeyEventArgs e)
+        {
+            Vector2f? pointerPoition;
+            if ((pointerPoition = Pointer.GetPosition()) == null)
+            {
+                // TODO: Log this error
+                return;
+            }
+            switch (e.Code)
+            {
+                case Keyboard.Key.Up:
+                    try
+                    {
+                        if ((_currentNode = _currentNode.Previous) != null)
+                        {
+                            pointerPoition = _currentNode.Value;
+                        }
+
+                    }
+                    catch (NullReferenceException exception)
+                    {
+                        _currentNode = _pointerPositions.Last;
+                        pointerPoition = _currentNode.Value;
+                        LogManager.LogWarning(exception.Message);
+                    }
+                    finally
+                    {
+                        ShiftSound.Play();
+                    }
+                    break;
+                case Keyboard.Key.Down:
+                    try
+                    {
+                        if ((_currentNode = _currentNode.Next) != null)
+                        {
+                            pointerPoition = _currentNode.Value;
+                        }
+                    }
+                    catch (NullReferenceException exception)
+                    {
+                        _currentNode = _pointerPositions.First;
+                        pointerPoition = _currentNode.Value;
+                        LogManager.LogWarning(exception.Message);
+                    }
+                    finally
+                    {
+                        ShiftSound.Play();
+                    }
+                    break;
+            }
+            Pointer.SetPosition(pointerPoition.Value);
         }
     }
 }

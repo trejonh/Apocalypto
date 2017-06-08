@@ -1,5 +1,4 @@
 ﻿using System;
-using Four_Old_Dudes.Players;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -8,7 +7,7 @@ namespace Four_Old_Dudes.Controller
 {
     public class Controller
     {
-        public  enum XboxOneButtonMappings
+        public enum XboxOneButtonMappings
         {
             A = 0,
             B = 1,
@@ -33,17 +32,15 @@ namespace Four_Old_Dudes.Controller
         }
         public bool JoyStickAvailable { get; } = Joystick.IsConnected(0);
         public RenderWindow CurrentGameWindow { get; }
-        public Playable User { get;}
         public Time FrameTime { get; set; }
         public Clock FrameClock { get; set; }
 
-        public Controller(ref RenderWindow gameWindow, Playable player)
+        public Controller()//ref RenderWindow gameWindow)
         {
-            CurrentGameWindow = gameWindow;
-            User = player;
+            /*CurrentGameWindow = gameWindow;
             if (CurrentGameWindow != null)
                 SetupEventListeners();
-            FrameClock = new Clock();
+            FrameClock = new Clock();*/
         }
 
         private void SetupEventListeners()
@@ -77,14 +74,13 @@ namespace Four_Old_Dudes.Controller
 
         void OnKeyPressed(object sender, KeyEventArgs e)
         {
-           
+
         }
         void OnKeyReleased(object sender, KeyEventArgs e)
         {
-           User.Stop();
         }
         void OnButtonPressed(object sender, JoystickButtonEventArgs e)
-        { 
+        {
             Console.WriteLine("button pressed");
             Console.WriteLine(e);
         }
