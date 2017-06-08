@@ -20,13 +20,16 @@ namespace Four_Old_Dudes.Utils
                                       "crossorigin=\'anonymous\'></script>\r\n" +
                                       "<script src=\'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\' " +
                                       "integrity=\'sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\' " +
-                                      "crossorigin=\'anonymous\'></script>\r\n<style>\r\n</style>\r\n</head>\r\n<body>";
+                                      "crossorigin=\'anonymous\'></script>\r\n<style>\r\n</style>\r\n</head>\r\n\r\n" +
+                                      "<link rel='stylesheet' href='.\\log.css'><body>";
 
-        private static readonly string _close = "\r\n</body>\r\n</html>";
+        private static readonly string _close = "\r\n<script='.\\log.js'></script>\r\n</body>\r\n</html>";
 
         public static void InitLogFile()
         {
-            if(File.Exists(LogFile))
+            if(!Directory.Exists(BaseFileLocation))
+                Directory.CreateDirectory(BaseFileLocation);
+            if (File.Exists(LogFile))
                 File.Delete(LogFile);
             var logFs = new FileStream(LogFile,FileMode.OpenOrCreate,FileAccess.Write);
             _log = new StreamWriter(logFs);

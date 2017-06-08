@@ -8,14 +8,16 @@ namespace Four_Old_Dudes
     class GameRunner
     {
         private const int Screenx = 1080, Screeny = 720;
+        private static  RenderWindow window;
         static void Main()
         {
             //_filePath = Directory.GetParent(_filePath).FullName;
             LogManager.InitLogFile();
             AssetManager.LoadAssets();
-            var window = new RenderWindow(new VideoMode(Screenx, Screeny), AssetManager.GetMessage("GameTitle"));
+            window = new RenderWindow(new VideoMode(Screenx, Screeny), AssetManager.GetMessage("GameTitle"));
             window.SetActive(true);
             var menu = new MainMenu(ref window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
+            window.Closed += Window_Closed;
             while (window.IsOpen)
             {
                 window.Clear();
@@ -23,6 +25,12 @@ namespace Four_Old_Dudes
                 window.Display();
                 window.DispatchEvents();
             }
+        }
+
+        private static void Window_Closed(object sender, System.EventArgs e)
+        {
+            LogManager.CloseLog();
+            window.Close();
         }
     }
 }

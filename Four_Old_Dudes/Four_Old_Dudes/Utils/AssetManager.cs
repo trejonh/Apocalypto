@@ -96,7 +96,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-               LogManager.LogError(ex.Message);
+               LogManager.LogError(ex.Message+","+ex.Source);
             }
             return text;
         }
@@ -116,7 +116,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "," + ex.Source);
             }
             return sound;
         }
@@ -135,7 +135,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "," + ex.Source);
             }
             return music;
         }
@@ -154,7 +154,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (KeyNotFoundException kex)
             {
-                LogManager.LogError(kex.Message);
+                LogManager.LogError(kex.Message + "," + kex.Source);
             }
             return mess;
         }
@@ -173,7 +173,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "," + ex.Source);
             }
             return font;
         }

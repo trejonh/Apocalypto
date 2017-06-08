@@ -44,4 +44,9 @@
     <name>ShiftThroughMenu</name>
     <location>\audio\menuClick.wav</location>
   </asset>
+  <asset>
+    <type>texture</type>
+    <name>TestPlayer</name>
+    <location>\sprites\player.png</location>
+  </asset>
 </assets>
