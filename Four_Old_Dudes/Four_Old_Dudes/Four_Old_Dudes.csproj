@@ -54,8 +54,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Box2DX">
-      <HintPath>..\lib\Box2DX.dll</HintPath>
+    <Reference Include="Box2CS">
+      <HintPath>..\lib\Box2CS.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\extlibs\OpenTK.dll</HintPath>
@@ -89,6 +89,7 @@
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="GameRunner.cs" />
     <Compile Include="GameWorld\GameWorld.cs" />
+    <Compile Include="Maps\GameMap.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />
@@ -108,12 +109,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\maps\map.tmx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\assets.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Assets\audio\menuClick.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -124,7 +126,9 @@
     <Content Include="Assets\maps\Tiles_32x32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\sprites\player.png" />
+    <Content Include="Assets\sprites\player.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-audio-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -152,6 +156,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\misc\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tiled.SFML\Tiled.SFML.csproj">
+      <Project>{B11DD8E6-1809-4ABE-BBA1-A6FC0CA7ED0A}</Project>
+      <Name>Tiled.SFML</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

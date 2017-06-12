@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Four_Old_Dudes.Maps;
+using Tiled.SFML;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -96,7 +98,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-               LogManager.LogError(ex.Message+","+ex.Source);
+               LogManager.LogError(ex.Message+ "\r\n" + ex.StackTrace);
             }
             return text;
         }
@@ -116,7 +118,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message + "," + ex.Source);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return sound;
         }
@@ -135,7 +137,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message + "," + ex.Source);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return music;
         }
@@ -162,7 +164,7 @@ namespace Four_Old_Dudes.Utils
         /// <summary>
         /// Load a font asset
         /// </summary>
-        /// <param name="name">The nme of the asset</param>
+        /// <param name="name">The name of the asset</param>
         /// <returns>The loaded font</returns>
         public static Font LoadFont(string name)
         {
@@ -173,9 +175,29 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message + "," + ex.Source);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return font;
+        }
+
+        /// <summary>
+        /// Load a game map asset
+        /// </summary>
+        /// <param name="name">The name of the asset</param>
+        /// <param name="view">The view inwhich to draw map to</param>
+        /// <returns>The loaded game map</returns>
+        public static GameMap LoadGameMap(string name,View view)
+        {
+            GameMap map = null;
+            try
+            {
+                map = new GameMap(MapAssets[name], view);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return map;
         }
     }
 }

@@ -49,4 +49,9 @@
     <name>TestPlayer</name>
     <location>\sprites\player.png</location>
   </asset>
+  <asset>
+    <type>map</type>
+    <name>DefaultMap</name>
+    <location>\maps\map.tmx</location>
+  </asset>
 </assets>

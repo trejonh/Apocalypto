@@ -9,7 +9,9 @@
 //-----------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 using TiledSharp;
 
@@ -23,8 +25,8 @@ namespace Tiled.SFML
 	////////////////////////////////////////////////////////////
 	public class Layer
 	{
-		private readonly List<Tile> _tiles;
-		private readonly Vector2f _tileSize;
+	    public List<Tile> Tiles { get; }
+	    private readonly Vector2f _tileSize;
 
 		/// <summary>Name of this layer</summary>
 		public string Name;
@@ -52,14 +54,14 @@ namespace Tiled.SFML
 		    Color = new Color(255, 255, 255,255);
 
 		    _tileSize = tileSize;
-			_tiles = new List<Tile>();
+			Tiles = new List<Tile>();
 
 			foreach (TmxLayerTile t in layer.Tiles)
 			{
 				var gid = t.Gid;
 
 				if (gid > 0 && gidDict[gid].Value != null)
-					_tiles.Add (new Tile (t, tileSize, gidDict[gid].Key, gidDict[gid].Value));
+					Tiles.Add (new Tile (t, tileSize, gidDict[gid].Key, gidDict[gid].Value));
 			}
 		}
 
@@ -74,7 +76,7 @@ namespace Tiled.SFML
 			if (!Visible || Color.A == 0)
 				return;
 
-			foreach (var tile in _tiles)
+			foreach (var tile in Tiles)
 			{
 				if ((tile.Position.X > (view.Center.X - (view.Size.X / 2))) ||
 				    (tile.Position.Y > (view.Center.Y - (view.Size.Y / 2))) ||
@@ -83,6 +85,5 @@ namespace Tiled.SFML
 					tile.Draw (Color, target, states);
 			}
 		}
-
 	}
 }

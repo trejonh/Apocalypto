@@ -1,27 +1,17 @@
-﻿using Box2DX.Collision;
-using Box2DX.Common;
-using Box2DX.Dynamics;
+﻿using Box2CS;
 
 namespace Four_Old_Dudes.GameWorld
 {
-    public sealed class GameWorld : World
+    public sealed class GameWorld
     {
-        private static GameWorld myWorld;
-        private GameWorld(AABB worldAABB, Vec2 gravity, bool doSleep = true) : base(worldAABB, gravity, doSleep)
+        private static World myWorld;
+        
+        public static World GetInstance()
         {
-        }
-
-        public static GameWorld GetInstance()
-        {
-            if (myWorld == null)
-            {
-                var aabb = new AABB();
-                aabb.UpperBound = new Vec2();
-                aabb.LowerBound = new Vec2();
-                myWorld = new GameWorld(aabb,new Vec2(0,-9.8f));
-                myWorld.SetContinuousPhysics(false);
-            }
+            if (myWorld != null) return myWorld;
+            myWorld = new World(new Vec2(0.0f,9.8f),true);
             return myWorld;
         }
+
     }
 }

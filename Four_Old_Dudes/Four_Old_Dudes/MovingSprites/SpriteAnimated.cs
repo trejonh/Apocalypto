@@ -1,5 +1,6 @@
 ﻿using Four_Old_Dudes.Utils;
 using SFML.Graphics;
+using SFML.System;
 
 namespace Four_Old_Dudes.MovingSprites
 {
@@ -11,7 +12,7 @@ namespace Four_Old_Dudes.MovingSprites
         private readonly int _frameWidth;
         private readonly int _frameHeight;
         private int _currentFrame, _firstFrame, _lastFrame, _interval, _clock;
-        bool _isAnimated;
+        protected bool IsAnimated;
         bool _isLooped;
 
         /// <summary>
@@ -38,10 +39,11 @@ namespace Four_Old_Dudes.MovingSprites
             _firstFrame = firstFrame;
             _currentFrame = firstFrame;
             _lastFrame = lastFrame;
-            _isAnimated = isAnimated;
+            IsAnimated = isAnimated;
             _isLooped = isLooped;
             _clock = 0;
             TextureRect = GetFramePosition(_currentFrame);
+            Position = new Vector2f(200,400);
         }
 
         /// <summary>
@@ -65,8 +67,8 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Update()
         {
-            _clock += GameTimer.FrameDelta.AsMilliseconds();
-            if (_isAnimated & _clock >= _interval)
+            _clock += GameTimer.GetFrameDelta().AsMilliseconds();
+            if (IsAnimated & _clock >= _interval)
             {
                 TextureRect = GetFramePosition(_currentFrame);
                 if (_currentFrame < _lastFrame)
@@ -78,7 +80,7 @@ namespace Four_Old_Dudes.MovingSprites
 
             if (!_isLooped & (_currentFrame == _lastFrame))
             {
-                _isAnimated = false;
+                IsAnimated = false;
             }
 
             Draw(_renderTarget, _renderStates);
@@ -105,7 +107,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Play()
         {
-            _isAnimated = true;
+            IsAnimated = true;
         }
 
         /// <summary>
@@ -113,7 +115,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Pause()
         {
-            _isAnimated = false;
+            IsAnimated = false;
         }
 
         /// <summary>
@@ -121,7 +123,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Reset()
         {
-            _isAnimated = false;
+            IsAnimated = false;
             _currentFrame = 0;
             TextureRect = new IntRect(0, 0, _frameWidth, _frameHeight);
         }
@@ -137,7 +139,7 @@ namespace Four_Old_Dudes.MovingSprites
         {
             _firstFrame = firstFrame;
             _lastFrame = lastFrame;
-            _isAnimated = isAnimated;
+            IsAnimated = isAnimated;
             _isLooped = isLooped;
 
             if (!isAnimated)
@@ -152,7 +154,7 @@ namespace Four_Old_Dudes.MovingSprites
         public void SetFrame(int frame)
         {
             _currentFrame = frame;
-            _isAnimated = true;
+            IsAnimated = true;
             _isLooped = false;
         }
     }
