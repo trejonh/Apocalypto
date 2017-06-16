@@ -1,5 +1,4 @@
-﻿using Box2CS;
-using Four_Old_Dudes.Utils;
+﻿using Four_Old_Dudes.Utils;
 using SFML.Graphics;
 using System.Collections.Generic;
 
@@ -26,35 +25,22 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
 
-        private readonly World _moveableWorld = GameWorld.GameWorld.GetInstance();
-        protected Body MyBody;
-
         private Dictionary<Direction, Animator> AnimationsDirections { get; }
         public Direction CurrentDirection { get; private set; } = Direction.Right;
-        protected Moveable(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
-            : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
+        protected const float GRAVITY = 9.8f;
+        protected float Friction = 0.6f;
+        protected const float LINEAR_VELOCITY = 1.38f * 15;
+        protected const float MAX_AIR_TIME = 1.2f;
+        protected Moveable(ref Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
+            : base(ref text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
             AnimationsDirections = new Dictionary<Direction, Animator>();
-            var bodyDef = new BodyDef
-            {
-                Position = new Vec2(Position.X, Position.Y),
-                BodyType = BodyType.Dynamic,
-            };
-            MyBody = _moveableWorld.CreateBody(bodyDef);
-            var dynamicBox = new PolygonShape();
-            dynamicBox.SetAsBox(frameWidth/2.0f, frameHeight/2.0f);
-            var fixtureDef = new FixtureDef
-            {
-                Density = 1.0f,
-                Shape = dynamicBox,
-                Friction = 0.6f
-            };
-            MyBody.CreateFixture(fixtureDef);
         }
 
         public abstract void Move();
 
-        public abstract void Move(Direction direction, bool jump = false);
+        public abstract void Move(float x, float y);
+        public abstract void DoJump();
         public abstract void Stop();
 
 

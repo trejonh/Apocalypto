@@ -78,9 +78,9 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         /// <param name="name">Name of the texture resource to load</param>
         /// <returns>The rendered texture</returns>
-        public static Texture LoadTexture(string name)
+        public static void LoadTexture(string name, out Texture text)
         {
-            return LoadTexture(name, new IntRect(0,0,32,32));
+            LoadTexture(name, new IntRect(0,0,32,32), out text);
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace Four_Old_Dudes.Utils
         /// <param name="name">Name of the texture to load</param>
         /// <param name="rect">The rectangle containing the texture</param>
         /// <returns>The loaded texture</returns>
-        public static Texture LoadTexture(string name, IntRect rect)
+        public static void LoadTexture(string name, IntRect rect, out Texture text)
         {
-            Texture text = null;
+            text = null;
             try
             {
                 text = new Texture(TextureAssests[name],rect);
@@ -100,7 +100,6 @@ namespace Four_Old_Dudes.Utils
             {
                LogManager.LogError(ex.Message+ "\r\n" + ex.StackTrace);
             }
-            return text;
         }
 
         /// <summary>

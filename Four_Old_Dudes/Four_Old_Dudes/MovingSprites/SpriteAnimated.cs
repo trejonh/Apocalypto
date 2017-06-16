@@ -11,7 +11,7 @@ namespace Four_Old_Dudes.MovingSprites
         private int _fps;
         private readonly int _frameWidth;
         private readonly int _frameHeight;
-        private int _currentFrame, _firstFrame, _lastFrame, _interval, _clock;
+        private int _currentFrame, _firstFrame, _lastFrame, _interval, _clock, _frameCount;
         protected bool IsAnimated;
         bool _isLooped;
 
@@ -28,7 +28,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="lastFrame">Last frame of animation sequence.</param>
         /// <param name="isAnimated">Should sequence be played immediately after creation? If false, first frame will be paused.</param>
         /// <param name="isLooped">Should sequence be looped? If false, animation will stop after one full sequence.</param>
-        public SpriteAnimated(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) : base(text)
+        public SpriteAnimated(ref Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) : base(text)
         {
             _renderTarget = rTarget;
             _renderStates = rStates;
@@ -36,6 +36,7 @@ namespace Four_Old_Dudes.MovingSprites
             _interval = 1000 / _fps;
             _frameWidth = frameWidth;
             _frameHeight = frameHeight;
+            _frameCount = lastFrame - firstFrame;
             _firstFrame = firstFrame;
             _currentFrame = firstFrame;
             _lastFrame = lastFrame;
@@ -43,7 +44,6 @@ namespace Four_Old_Dudes.MovingSprites
             _isLooped = isLooped;
             _clock = 0;
             TextureRect = GetFramePosition(_currentFrame);
-            Position = new Vector2f(200,400);
         }
 
         /// <summary>
@@ -55,9 +55,11 @@ namespace Four_Old_Dudes.MovingSprites
         {
             int wCount = (int)Texture.Size.X / _frameWidth;
             int xPos = frame % wCount;
-            int yPos = frame / wCount;
+            int yPos = frame / wCount;/// 3;
+            int left = _frameWidth * xPos;
+            int top = _frameHeight * yPos;
 
-            IntRect newPosition = new IntRect(_frameWidth * xPos, _frameHeight * yPos, _frameWidth, _frameHeight);
+            IntRect newPosition = new IntRect(left,top, _frameWidth, _frameHeight);
             return newPosition;
         }
 
@@ -67,7 +69,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Update()
         {
-            _clock += GameTimer.GetFrameDelta().AsMilliseconds();
+            _clock += GameRunner.Delta.AsMilliseconds();
             if (IsAnimated & _clock >= _interval)
             {
                 TextureRect = GetFramePosition(_currentFrame);
@@ -135,13 +137,14 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="lastFrame">Last frame of new sequence.</param>
         /// <param name="isAnimated">Should sequence be played immediately? If false, first sequence frame will be paused.</param>
         /// <param name="isLooped">Should sequence be looped? If false, animation will stop after one full sequence.</param>
-        public void SetAnimation(int firstFrame, int lastFrame, bool isAnimated = true, bool isLooped = true)
+        public void SetAnimation(int firstFrame, int lastFrame, bool isAnimated = false, bool isLooped = true)
         {
             _firstFrame = firstFrame;
             _lastFrame = lastFrame;
             IsAnimated = isAnimated;
             _isLooped = isLooped;
 
+            _frameCount = (_lastFrame + 1) - _firstFrame;
             if (!isAnimated)
             {
                 TextureRect = GetFramePosition(firstFrame);

@@ -54,9 +54,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Box2CS">
-      <HintPath>..\lib\Box2CS.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\extlibs\OpenTK.dll</HintPath>
     </Reference>
@@ -88,7 +85,6 @@
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="GameRunner.cs" />
-    <Compile Include="GameWorld\GameWorld.cs" />
     <Compile Include="Maps\GameMap.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />

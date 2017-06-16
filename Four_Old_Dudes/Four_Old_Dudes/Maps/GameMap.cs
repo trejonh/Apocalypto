@@ -5,22 +5,19 @@ using Four_Old_Dudes.Utils;
 using SFML.Graphics;
 using SFML.System;
 using Tiled.SFML;
-using Box2CS;
 
 namespace Four_Old_Dudes.Maps
 {
     public class GameMap : Map
     {
-        private readonly World _gameWorld;
         public Vector2f PlayerInitialPosition { get; }
 
         public GameMap(string filename, View view) : base(filename, view)
         {
-            _gameWorld = GameWorld.GameWorld.GetInstance();
             DevelopGround();
             try
             {
-                var playerObj = Objects.Single(obj => obj.Properties["playerStartLocation"].Equals("true"));
+                var playerObj = Objects.Single(obj => obj.Name.Equals("playerStartLocation"));
                 if (playerObj != null)
                     PlayerInitialPosition = playerObj.Position;
             }

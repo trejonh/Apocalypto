@@ -51,7 +51,8 @@ namespace Four_Old_Dudes.Menus
             var statsText = new Text() { Position = new Vector2f(stats.Position.X + 80, stats.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Stats"), Color = Color.Black, Font = font, CharacterSize = 60 };
             var exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 1) - 40) };
             var exitText = new Text() { Position = new Vector2f(exit.Position.X + 100, exit.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Exit"), Color = Color.Black, Font = font, CharacterSize = 60 };
-            var pointerTexture = AssetManager.LoadTexture("OldTimeyPointer");
+            Texture pointerTexture;
+            AssetManager.LoadTexture("OldTimeyPointer", out pointerTexture);
             pointerTexture.Smooth = true;
             var renderWindow = WinInstance;
             Pointer = new MenuPointer(ref renderWindow, pointerTexture);
