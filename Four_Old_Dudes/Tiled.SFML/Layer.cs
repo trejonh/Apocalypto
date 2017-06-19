@@ -59,7 +59,6 @@ namespace Tiled.SFML
 			foreach (TmxLayerTile t in layer.Tiles)
 			{
 				var gid = t.Gid;
-
 				if (gid > 0 && gidDict[gid].Value != null)
 					Tiles.Add (new Tile (t, tileSize, gidDict[gid].Key, gidDict[gid].Value));
 			}

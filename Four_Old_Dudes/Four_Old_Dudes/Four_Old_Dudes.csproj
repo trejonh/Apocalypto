@@ -86,6 +86,7 @@
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="GameRunner.cs" />
     <Compile Include="Maps\GameMap.cs" />
+    <Compile Include="Maps\World.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />

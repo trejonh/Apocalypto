@@ -15,11 +15,17 @@ namespace Four_Old_Dudes.MovingSprites
         private float _jumpAccel = -600.2f;
         private View playerView;
         private Vector2f initialPosition;
+        public Vector2f Ground {get;set;}
+        public bool IsGroundUnderMe { get; set; }
+        private bool _isFalling;
         public Player(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
                         RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
             initialPosition = Position;
+            Ground = Position;
+            IsGroundUnderMe = true;
+            _isFalling = false;
             var window = rTarget as RenderWindow;
             if (window != null) { 
                 _playerWindow = window;
@@ -44,6 +50,7 @@ namespace Four_Old_Dudes.MovingSprites
         {
             initialPosition = position;
             Position = initialPosition;
+            Ground = position;
         }
 
         public override void Move()
@@ -62,17 +69,18 @@ namespace Four_Old_Dudes.MovingSprites
         public override float DoJump()
         {
             float velocity = 0.0f;
-            if(Keyboard.IsKeyPressed(Keyboard.Key.Up) && !_isJumping)
+            if(Keyboard.IsKeyPressed(Keyboard.Key.Up) && !_isJumping && IsGroundUnderMe)
             {
                 _isJumping = true;
+                _isFalling = true;
             }
-            if (_isJumping)
+            if (_isJumping || _isFalling)
             {
-                if(_timeInAir == 0f)
+                if(_timeInAir == 0f && _isJumping)
                 {
                     velocity = _initialJumpSpeed;
                 }
-                else if(_timeInAir < MAX_AIR_TIME)
+                else if(_timeInAir < MAX_AIR_TIME && _isJumping)
                 {
                     velocity = _jumpAccel * GameRunner.Delta.AsSeconds()*10;
                 }
@@ -112,6 +120,21 @@ namespace Four_Old_Dudes.MovingSprites
             }
             dy = DoJump() * GameRunner.Delta.AsSeconds();
             Move(dx, dy);
+            if (Position.Y > Ground.Y && IsGroundUnderMe)
+            {
+                var tmp = Position;
+                tmp.Y = Ground.Y;
+                Position = tmp;
+                _isJumping = false;
+                _isFalling = false;
+                _timeInAir = 0.0f;
+            }
+            else if (Position.Y > Ground.Y && IsGroundUnderMe == false)
+            {
+                _isFalling = true;
+            }
+            if (IsGroundUnderMe == false)
+                _isFalling = true;
             Vector2f newCenter = playerView.Center;
             var xMovement = Position.X - initialPosition.X;
             var yMovement = Position.Y - initialPosition.Y;

@@ -10,7 +10,7 @@ namespace Four_Old_Dudes.Menus
     {
         private readonly Sprite _pointerSprite;
 
-        public Vector2u Size { get => (Vector2u)_pointerSprite?.Texture.Size;  }
+        public Vector2u Size { get { return (Vector2u)_pointerSprite?.Texture.Size; }  }
 
         /// <summary>
         /// Default constructor for a menu pointer with no texture nor window reference

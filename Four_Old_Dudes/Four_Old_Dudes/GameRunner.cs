@@ -3,6 +3,7 @@ using Four_Old_Dudes.MovingSprites;
 using SFML.Graphics;
 using SFML.Window;
 using SFML.System;
+using Four_Old_Dudes.Maps;
 
 namespace Four_Old_Dudes
 {
@@ -33,6 +34,7 @@ namespace Four_Old_Dudes
             if (map != null)
                 player.SetPosition(map.PlayerInitialPosition);
             //player.SetPosition(new Vector2f(200,400));
+            var world = new World(ref player, ref map);
             var clock = new Clock();
             while (_window.IsOpen)
             {

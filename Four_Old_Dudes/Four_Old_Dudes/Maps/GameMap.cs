@@ -11,6 +11,7 @@ namespace Four_Old_Dudes.Maps
     public class GameMap : Map
     {
         public Vector2f PlayerInitialPosition { get; }
+        public List<Tiled.SFML.Object> FloorObjects { get; private set; }
 
         public GameMap(string filename, View view) : base(filename, view)
         {
@@ -30,29 +31,15 @@ namespace Four_Old_Dudes.Maps
 
         private void DevelopGround()
         {
-            foreach (var layer in Layers)
+            try
             {
-                Console.WriteLine(layer.Tiles.Count);
-                foreach (var tile in layer.Tiles)
-                {
-                    try
-                    {
-                       /* var solid = tile.//.Properties["solid"];
-                        if (solid.Equals("false"))
-                            continue;
-                        var objShape = tile.Shape;
-                        var solidBodyDef = new BodyDef();
-                        solidBodyDef.Position.Set(objShape.Position.X, objShape.Position.Y);
-                        _gameWorld.CreateBody(solidBodyDef);
-                        var solidShapeDef = new PolygonDef();
-                        solidShapeDef.SetAsBox(tile.Size.X / 2, tile.Size.Y / 2);
-                        // solidBody.CreateFixture(solidShapeDef);*/
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        LogManager.LogWarning("Map object: " + tile + " does now have solid property set");
-                    }
-                }
+                FloorObjects = Objects.Where(obj => obj.Properties["ground"] == "true").ToList();
+                if (FloorObjects == null || FloorObjects.Count == 0)
+                    throw new Exception("No floor objects found.");
+            }
+            catch (Exception ex) when (ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
 
