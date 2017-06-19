@@ -22,9 +22,7 @@ namespace Four_Old_Dudes
             //var menu = new MainMenu(ref window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
             _window.Closed += Window_Closed;
             var map = AssetManager.LoadGameMap("DefaultMap", _window.GetView());
-            Texture playerText = new Texture(@"Assets/sprites/player.png");
-            //AssetManager.LoadTexture("TestPlayer", out playerText);
-            var player = new Player(ref playerText, 32, 32, 60, _window, RenderStates.Default, 0, 11,true,true);
+            var player = AssetManager.LoadPlayer("TestPlayer",_window,0,11);
             player.AddAnimation(Moveable.Direction.Down, 0, 2);
             player.AddAnimation(Moveable.Direction.Left, 3, 5);
             player.AddAnimation(Moveable.Direction.Right, 6, 8);

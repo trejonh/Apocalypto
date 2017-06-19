@@ -28,7 +28,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="lastFrame">Last frame of animation sequence.</param>
         /// <param name="isAnimated">Should sequence be played immediately after creation? If false, first frame will be paused.</param>
         /// <param name="isLooped">Should sequence be looped? If false, animation will stop after one full sequence.</param>
-        public SpriteAnimated(ref Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) : base(text)
+        public SpriteAnimated(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) : base(text)
         {
             _renderTarget = rTarget;
             _renderStates = rStates;

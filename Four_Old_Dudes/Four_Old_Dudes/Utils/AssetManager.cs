@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Four_Old_Dudes.Maps;
 using Tiled.SFML;
+using Four_Old_Dudes.MovingSprites;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -73,33 +74,34 @@ namespace Four_Old_Dudes.Utils
             fs.Close();
         }
 
-        /// <summary>
-        /// Load texture resource
-        /// </summary>
-        /// <param name="name">Name of the texture resource to load</param>
-        /// <returns>The rendered texture</returns>
-        public static void LoadTexture(string name, out Texture text)
+        public static Sprite LoadSprite(string name)
         {
-            LoadTexture(name, new IntRect(0,0,32,32), out text);
-        }
-
-        /// <summary>
-        /// Load texture resource
-        /// </summary>
-        /// <param name="name">Name of the texture to load</param>
-        /// <param name="rect">The rectangle containing the texture</param>
-        /// <returns>The loaded texture</returns>
-        public static void LoadTexture(string name, IntRect rect, out Texture text)
-        {
-            text = null;
+            Sprite sprite = null;
             try
             {
-                text = new Texture(TextureAssests[name],rect);
+                var text = new Texture(TextureAssests[name]) { Smooth = true };
+                sprite = new Sprite(text);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-               LogManager.LogError(ex.Message+ "\r\n" + ex.StackTrace);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
+            return sprite;
+        }
+
+        public static Player LoadPlayer(string name, RenderTarget window, int firstFrame, int lastFrame)
+        {
+            Player player = null;
+            try
+            {
+                var text = new Texture(TextureAssests[name]) { Smooth = true };
+                player = new Player(text, 32, 32, 60, window, RenderStates.Default, firstFrame, lastFrame);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return player;
         }
 
         /// <summary>

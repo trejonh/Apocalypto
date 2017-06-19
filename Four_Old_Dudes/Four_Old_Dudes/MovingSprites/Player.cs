@@ -9,21 +9,17 @@ namespace Four_Old_Dudes.MovingSprites
     public class Player : Moveable
     {
         private readonly RenderWindow _playerWindow;
-        private bool _canJump = true;
-        private bool _jumpReleased = true;
-        private bool _jumpPressed;
-        private bool _isMoving = false;
-        private bool _isTouchingGround = true;
+        private bool _isJumping = false;
         private float _timeInAir = 0.0f;
-        private float jumpImpulseTime = 0.2f;
-        private float jumpImpulseVel = -10.0f;
-        private float jumpAccel = -1.0f;
-        private float _myVelocityY = 0.0f;
-        private float _myAccelerationY = 0.0f;
-        public Player(ref Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
+        private float _initialJumpSpeed = -1050.0f;
+        private float _jumpAccel = -600.2f;
+        private View playerView;
+        private Vector2f initialPosition;
+        public Player(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
                         RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
-            : base(ref text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
+            : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
+            initialPosition = Position;
             var window = rTarget as RenderWindow;
             if (window != null) { 
                 _playerWindow = window;
@@ -32,6 +28,11 @@ namespace Four_Old_Dudes.MovingSprites
                 _playerWindow.JoystickButtonPressed += OnJoystickButtonPressed;
                 _playerWindow.JoystickButtonReleased += OnJoystickButtonReleased;
                 _playerWindow.JoystickMoved += OnJoystickAxisMoved;
+                playerView = window.GetView();
+                var tmp = playerView.Center;
+                tmp.X /= 2;
+                playerView.Center = tmp;
+                _playerWindow.SetView(playerView);
             }
             else
             {
@@ -41,7 +42,8 @@ namespace Four_Old_Dudes.MovingSprites
 
         public void SetPosition(Vector2f position)
         {
-            Position = position;
+            initialPosition = position;
+            Position = initialPosition;
         }
 
         public override void Move()
@@ -57,49 +59,30 @@ namespace Four_Old_Dudes.MovingSprites
             tmp.Y += y;
             Position = tmp;
         }
-        public override void DoJump()
+        public override float DoJump()
         {
-            Vector2f accel = new Vector2f(0.0f, 0.0f);
-            Vector2f vel = new Vector2f(0.0f, 0.0f);
-
-            // Allow player to jump
-            if (_isTouchingGround)
+            float velocity = 0.0f;
+            if(Keyboard.IsKeyPressed(Keyboard.Key.Up) && !_isJumping)
             {
-                _timeInAir = 0.0f;
-                accel.Y = 0.0f;
-                vel.Y = 0.0f;
+                _isJumping = true;
             }
-
-            // Handle vertical velocity and acceleration
-            if (_jumpPressed || !_isTouchingGround)
+            if (_isJumping)
             {
-                // First, jump up quickly..
-                if (_timeInAir < jumpImpulseTime)
+                if(_timeInAir == 0f)
                 {
-                    vel.Y = jumpImpulseVel;
+                    velocity = _initialJumpSpeed;
                 }
-                // Then slowly go higher.. 
-                else if (_timeInAir < MAX_AIR_TIME)
+                else if(_timeInAir < MAX_AIR_TIME)
                 {
-                    accel.Y = jumpAccel;
+                    velocity = _jumpAccel * GameRunner.Delta.AsSeconds()*10;
                 }
-                // Until finally falling
                 else
                 {
-                    accel.Y = GRAVITY;
+                    velocity = GRAVITY * GameRunner.Delta.AsSeconds()*10;
                 }
-                if (_timeInAir > 0 && !_isTouchingGround)
-                    vel.Y = accel.Y * _timeInAir;
             }
-            else
-            {
-                // Prevent double jumps
-                _timeInAir = MAX_AIR_TIME;
-                accel.Y = GRAVITY;
-            }
+            return velocity;
 
-            _myVelocityY = vel.Y;
-            _myAccelerationY = accel.Y;
         }
 
         public override void Stop()
@@ -109,17 +92,17 @@ namespace Four_Old_Dudes.MovingSprites
 
         public new void Update()
         {
-            float dx = 0f, dy = 0f;
+            float dx = 0f, dy=0f;
+            if (_isJumping)
+                _timeInAir += GameRunner.Delta.AsSeconds();
             if (Keyboard.IsKeyPressed(Keyboard.Key.Right)) { 
                 SetDirection(Direction.Right);
-                _isMoving = true;
                 dx = LINEAR_VELOCITY * Friction * GameRunner.Delta.AsSeconds();
                 Play();
             }
             else if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
             {
                 SetDirection(Direction.Left);
-                    _isMoving = true;
                     dx = -1 * LINEAR_VELOCITY * Friction * GameRunner.Delta.AsSeconds();
                     Play();
             }
@@ -127,7 +110,32 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 Stop();
             }
+            dy = DoJump() * GameRunner.Delta.AsSeconds();
             Move(dx, dy);
+            Vector2f newCenter = playerView.Center;
+            var xMovement = Position.X - initialPosition.X;
+            var yMovement = Position.Y - initialPosition.Y;
+            if (xMovement > 0)
+            {
+                newCenter.X += xMovement;
+            }
+            else
+            {
+                newCenter.X -= xMovement;
+            }
+            if (yMovement > 0)
+            {
+                newCenter.Y += yMovement;
+            }
+            else
+            {
+                newCenter.X -= xMovement;
+            }
+            //playerView.Move(Position);
+            //playerView.Center = newCenter;
+            Console.WriteLine("X: {0}, Y: {1}",dx,dy);
+            //playerView.Move(new Vector2f(xMovement, yMovement));
+            _playerWindow.SetView(playerView);
             base.Update();
         }
 
@@ -143,12 +151,6 @@ namespace Four_Old_Dudes.MovingSprites
             switch (Convert.ToInt32(button.Button))
             {
                 case (int)Controller.Controller.XboxOneButtonMappings.A:
-                    if (!_canJump || !_jumpReleased || _jumpPressed)
-                        break;
-                    _jumpReleased = false;
-                    _jumpPressed = true;
-                    _canJump = false;
-                    //Move(CurrentDirection, _isJumping);
                     break;
             }
         }
@@ -158,7 +160,6 @@ namespace Four_Old_Dudes.MovingSprites
             switch (Convert.ToInt32(button.Button))
             {
                 case (int)Controller.Controller.XboxOneButtonMappings.A:
-                    _jumpReleased = true;
                     break;
             }
         }
@@ -172,14 +173,12 @@ namespace Four_Old_Dudes.MovingSprites
                     if (Joystick.GetAxisPosition(0, axis.Axis) > 0)
                     {
                         SetDirection(Direction.Right);
-                        _isMoving = true;
                         dx = LINEAR_VELOCITY * Friction * GameTimer.GetFrameDelta().AsSeconds();
                         Play();
                     }
                     else if (Joystick.GetAxisPosition(0, axis.Axis) < 0)
                     {
                         SetDirection(Direction.Left);
-                        _isMoving = true;
                         dx = -1 * LINEAR_VELOCITY * Friction * GameTimer.GetFrameDelta().AsSeconds();
                         Play();
                     }
