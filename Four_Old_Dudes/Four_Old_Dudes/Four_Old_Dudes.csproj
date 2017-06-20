@@ -91,6 +91,7 @@
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\MenuPointer.cs" />
+    <Compile Include="MovingSprites\Enemy.cs" />
     <Compile Include="MovingSprites\Moveable.cs" />
     <Compile Include="MovingSprites\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

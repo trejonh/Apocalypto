@@ -22,28 +22,19 @@ namespace Four_Old_Dudes
             _window.SetFramerateLimit(60);
             //var menu = new MainMenu(ref window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
             _window.Closed += Window_Closed;
-            var map = AssetManager.LoadGameMap("DefaultMap", _window.GetView());
-            var player = AssetManager.LoadPlayer("TestPlayer",_window,0,11);
-            player.AddAnimation(Moveable.Direction.Down, 0, 2);
-            player.AddAnimation(Moveable.Direction.Left, 3, 5);
-            player.AddAnimation(Moveable.Direction.Right, 6, 8);
-            player.AddAnimation(Moveable.Direction.Up, 9, 11);
-            player.SetDirection(Moveable.Direction.Down);
-            player.Play();
-            player.Stop();
-            if (map != null)
-                player.SetPosition(map.PlayerInitialPosition);
             //player.SetPosition(new Vector2f(200,400));
-            var world = new World(ref player, ref map);
+            var world = new World(ref _window, "DefaultMap","TestPlayer", 0, 11);
+            world.AddPlayerAnimation(Moveable.Direction.Down, 0, 2);
+            world.AddPlayerAnimation(Moveable.Direction.Left, 3, 5);
+            world.AddPlayerAnimation(Moveable.Direction.Right, 6, 8);
+            world.AddPlayerAnimation(Moveable.Direction.Up, 9, 11);
             var clock = new Clock();
             while (_window.IsOpen)
             {
                 _window.DispatchEvents();
                 _window.Clear();
                 Delta = clock.Restart();
-                if (map!=null)
-                    _window.Draw(map);
-                player.Update();
+                world.Draw();
                 _window.Display();
             }
         }

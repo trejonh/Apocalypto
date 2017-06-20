@@ -12,10 +12,12 @@ namespace Four_Old_Dudes.Maps
     {
         public Vector2f PlayerInitialPosition { get; }
         public List<Tiled.SFML.Object> FloorObjects { get; private set; }
+        public List<Tiled.SFML.Object> EnemySpawns { get; private set; }
 
         public GameMap(string filename, View view) : base(filename, view)
         {
             DevelopGround();
+            FindEnemySpawns();
             try
             {
                 var playerObj = Objects.Single(obj => obj.Name.Equals("playerStartLocation"));
@@ -28,7 +30,19 @@ namespace Four_Old_Dudes.Maps
                 PlayerInitialPosition = new Vector2f(0f,0f);
             }
         }
-
+        private void FindEnemySpawns()
+        {
+            try
+            {
+                EnemySpawns = Objects.Where(obj => obj.Properties["enemySpawn"] == "true").ToList();
+                if (EnemySpawns == null || EnemySpawns.Count == 0)
+                    throw new Exception("No enemy spawns objects found.");
+            }
+            catch (Exception ex) when (ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+        }
         private void DevelopGround()
         {
             try

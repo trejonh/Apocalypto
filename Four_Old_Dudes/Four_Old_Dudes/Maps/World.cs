@@ -1,33 +1,48 @@
 ﻿
 using Four_Old_Dudes.MovingSprites;
 using Four_Old_Dudes.Utils;
+using SFML.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using static Four_Old_Dudes.MovingSprites.Moveable;
 
 namespace Four_Old_Dudes.Maps
 {
-    public class World
+    public class World : Core.Drawable
     {
         private Player _worldPlayer;
         private GameMap _worldMap;
         private bool _isRunning = true;
         private Thread _collisionThread;
+        private RenderWindow _winInstance;
+        private List<Enemy> _enemiesOnMap;
         public World()
         {
             _worldPlayer = null;
             _worldPlayer = null;
         }
 
-        public World(ref Player player, ref GameMap gameMap)
+        public World(ref RenderWindow window, string mapName, string playerName,int firstPlayerFrame, int lastPlayerFrame)
         {
-            _worldMap = gameMap;
-            _worldPlayer = player;
+            _winInstance = window;
+            _worldMap = AssetManager.LoadGameMap(mapName, window.GetView());
+            _worldPlayer = AssetManager.LoadPlayer(playerName, window, firstPlayerFrame, lastPlayerFrame);
+            _worldPlayer.SetPosition(_worldMap.PlayerInitialPosition);
+            _enemiesOnMap = SpawnEnemies();
             var ts = new ThreadStart(CollisionDetection);
             _collisionThread = new Thread(ts);
             _collisionThread.Priority = ThreadPriority.AboveNormal;
             _collisionThread.IsBackground = true;
             _collisionThread.Start();
+        }
+
+        private List<Enemy> SpawnEnemies()
+        {
+            var enemyObjs = _worldMap.EnemySpawns;
+            var enemies = new List<Enemy>();
+            return enemies;
         }
         
         private void CollisionDetection()
@@ -109,6 +124,18 @@ namespace Four_Old_Dudes.Maps
             _worldMap = map;
             _worldPlayer = player;
             StartCollisonDetection();
+        }
+
+        public override void Draw()
+        {
+            _winInstance.Draw(_worldMap);
+            _worldPlayer.Update();
+            
+        }
+
+        public void AddPlayerAnimation(Direction direction, int firstFrame, int lastFrame)
+        {
+            _worldPlayer.AddAnimation(direction, firstFrame, lastFrame);
         }
     }
 }
