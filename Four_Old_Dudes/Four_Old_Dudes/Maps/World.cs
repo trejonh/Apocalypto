@@ -42,7 +42,9 @@ namespace Four_Old_Dudes.Maps
         {
             var enemyObjs = _worldMap.EnemySpawns;
             var enemies = new List<Enemy>();
-            foreach(var enemy in enemyObjs)
+            if (enemyObjs == null || enemyObjs.Count == 0)
+                return enemies;
+            foreach (var enemy in enemyObjs)
             {
                 var en = AssetManager.LoadEnemy(enemyName, _winInstance, _worldPlayer,firstFrame, lastFrame);
                 en.SetPosition(enemy.Position);
@@ -61,15 +63,15 @@ namespace Four_Old_Dudes.Maps
             {
                 _isRunning = false;
                 LogManager.LogError("Could not find floor objects for collision detection.");
-                _worldPlayer.IsGroundUnderMe = false;
+                _worldPlayer.IsGroundUnderMe = true;
             }
             try
             {
                 while (_isRunning)
                 {
                     var currPosition = _worldPlayer.Position;
-                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 50);
-                    var closestTile = closeTiles.Where(tile => tile.Position.X < currPosition.X && tile.Position.Y < currPosition.Y).Max();
+                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 500);
+                    var closestTile = closeTiles.Where(tile => tile.Position.X <= currPosition.X && tile.Position.Y >= currPosition.Y).Max();
                     _worldPlayer.Ground = closestTile.Position;
                     var dx = Math.Abs(closestTile.Position.X - currPosition.X);
                     if (dx > closestTile.Size.X)
@@ -139,8 +141,16 @@ namespace Four_Old_Dudes.Maps
         public override void Draw()
         {
             _winInstance.Draw(_worldMap);
-            foreach (var floor in _worldMap.FloorObjects)
-                _winInstance.Draw(floor);
+            if (_worldMap.FloorObjects != null)
+            {
+                foreach (var floor in _worldMap.FloorObjects)
+                    _winInstance.Draw(floor);
+            }
+            if (_enemiesOnMap != null)
+            {
+                foreach (var enemy in _enemiesOnMap)
+                    enemy.Update();
+            }
             _worldPlayer.Update();
             
         }

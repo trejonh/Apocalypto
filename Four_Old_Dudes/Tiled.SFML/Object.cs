@@ -70,12 +70,11 @@ namespace Tiled.SFML
 		{
 			if (ObjectType == ObjectType.Graphic)
 			{
-				if ((Position.X < (_view.Center.X - (_view.Size.X / 2))) ||
-					(Position.Y < (_view.Center.Y - (_view.Size.Y / 2))) ||
-					(Position.X + Size.X > (_view.Center.X + (_view.Size.X / 2))) ||
-					(Position.Y + Size.Y > (_view.Center.Y + (_view.Size.Y / 2))))
-					return;
-
+                if ((Position.X < (_view.Center.X - (_view.Size.X / 2))))   return;
+                if ((Position.Y < (_view.Center.Y - (_view.Size.Y / 2))))   return;
+                //if ((Position.X + Size.X > (_view.Center.X + (_view.Size.X / 2)))) return;
+				//if ((Position.Y + Size.Y > (_view.Center.Y + (_view.Size.Y / 2)))) return;
+                Texture.Smooth = true;
 				var sprite = new Sprite (Texture)
 				{
 					Position = Position,

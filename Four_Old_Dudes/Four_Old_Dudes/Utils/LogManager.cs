@@ -23,7 +23,7 @@ namespace Four_Old_Dudes.Utils
                                       "crossorigin=\'anonymous\'></script>\r\n<style>\r\n</style>\r\n</head>\r\n\r\n" +
                                       "<link rel='stylesheet' href='.\\log.css'><body>";
 
-        private static readonly string _close = "\r\n<script='.\\log.js'></script>\r\n</body>\r\n</html>";
+        private static readonly string _close = "\r\n<script src='.\\log.js'></script>\r\n</body>\r\n</html>";
 
         public static void InitLogFile()
         {

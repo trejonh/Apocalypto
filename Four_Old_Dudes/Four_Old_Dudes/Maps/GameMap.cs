@@ -34,11 +34,12 @@ namespace Four_Old_Dudes.Maps
         {
             try
             {
-                EnemySpawns = Objects.Where(obj => obj.Properties["enemySpawn"] == "true").ToList();
+                //{[enemySpawn, true]}
+                EnemySpawns = Objects.Where(obj => obj.Name.Equals("enemySpawn")).ToList();
                 if (EnemySpawns == null || EnemySpawns.Count == 0)
                     throw new Exception("No enemy spawns objects found.");
             }
-            catch (Exception ex) when (ex is KeyNotFoundException)
+            catch (Exception ex)
             {
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
@@ -47,11 +48,11 @@ namespace Four_Old_Dudes.Maps
         {
             try
             {
-                FloorObjects = Objects.Where(obj => obj.Properties["ground"] == "true").ToList();
+                FloorObjects = Objects.Where(obj => obj.Name.Equals("groundFloor")).ToList();
                 if (FloorObjects == null || FloorObjects.Count == 0)
                     throw new Exception("No floor objects found.");
             }
-            catch (Exception ex) when (ex is KeyNotFoundException)
+            catch (Exception ex)
             {
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
