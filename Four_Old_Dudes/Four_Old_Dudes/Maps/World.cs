@@ -30,7 +30,7 @@ namespace Four_Old_Dudes.Maps
             _worldMap = AssetManager.LoadGameMap(mapName, window.GetView());
             _worldPlayer = AssetManager.LoadPlayer(playerName, window, firstPlayerFrame, lastPlayerFrame);
             _worldPlayer.SetPosition(_worldMap.PlayerInitialPosition);
-            _enemiesOnMap = SpawnEnemies();
+            _enemiesOnMap = SpawnEnemies(playerName,firstPlayerFrame,lastPlayerFrame);
             var ts = new ThreadStart(CollisionDetection);
             _collisionThread = new Thread(ts);
             _collisionThread.Priority = ThreadPriority.AboveNormal;
@@ -38,10 +38,20 @@ namespace Four_Old_Dudes.Maps
             _collisionThread.Start();
         }
 
-        private List<Enemy> SpawnEnemies()
+        private List<Enemy> SpawnEnemies(string enemyName, int firstFrame, int lastFrame)
         {
             var enemyObjs = _worldMap.EnemySpawns;
             var enemies = new List<Enemy>();
+            foreach(var enemy in enemyObjs)
+            {
+                var en = AssetManager.LoadEnemy(enemyName, _winInstance, _worldPlayer,firstFrame, lastFrame);
+                en.SetPosition(enemy.Position);
+                en.AddAnimation(Direction.Down, 0, 2);
+                en.AddAnimation(Direction.Left, 3, 5);
+                en.AddAnimation(Direction.Right, 6, 8);
+                en.AddAnimation(Direction.Up, 9, 11);
+                enemies.Add(en);
+            }
             return enemies;
         }
         
@@ -129,6 +139,8 @@ namespace Four_Old_Dudes.Maps
         public override void Draw()
         {
             _winInstance.Draw(_worldMap);
+            foreach (var floor in _worldMap.FloorObjects)
+                _winInstance.Draw(floor);
             _worldPlayer.Update();
             
         }

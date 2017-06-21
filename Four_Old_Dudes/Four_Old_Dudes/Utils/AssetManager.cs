@@ -29,6 +29,7 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
+        private static Texture _enemyText;
 
         /// <summary>
         /// Load in file locations of all assest found in assets.xml to be used for the game
@@ -102,6 +103,22 @@ namespace Four_Old_Dudes.Utils
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return player;
+        }
+
+        public static Enemy LoadEnemy(string name, RenderTarget window,Player player, int firstFrame, int lastFrame)
+        {
+            Enemy enemy = null;
+            try
+            {
+                if(_enemyText == null)
+                    _enemyText = new Texture(TextureAssests[name]) { Smooth = true };
+                enemy = new Enemy(_enemyText, 32, 32, 60, window, RenderStates.Default, player, firstFrame, lastFrame);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return enemy;
         }
 
         /// <summary>
