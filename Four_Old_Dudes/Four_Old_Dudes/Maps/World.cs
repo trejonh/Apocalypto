@@ -70,7 +70,7 @@ namespace Four_Old_Dudes.Maps
                 while (_isRunning)
                 {
                     var currPosition = _worldPlayer.Position;
-                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 500);
+                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
                     var closestTile = closeTiles.Where(tile => tile.Position.X <= currPosition.X && tile.Position.Y >= currPosition.Y).Max();
                     _worldPlayer.Ground = closestTile.Position;
                     var dx = Math.Abs(closestTile.Position.X - currPosition.X);
