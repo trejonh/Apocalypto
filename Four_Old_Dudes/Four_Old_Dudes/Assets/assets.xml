@@ -16,6 +16,11 @@
   </asset>
   <asset>
     <type>text</type>
+    <name>Health</name>
+    <text>Health</text>
+  </asset>
+  <asset>
+    <type>text</type>
     <name>Exit</name>
     <text>Exit</text>
   </asset>

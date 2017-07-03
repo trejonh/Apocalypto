@@ -18,6 +18,7 @@ namespace Four_Old_Dudes.MovingSprites
         public Vector2f Ground {get;set;}
         public bool IsGroundUnderMe { get; set; }
         private bool _isFalling;
+        public float Health = 100.0f;
         public Player(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
                         RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
@@ -120,10 +121,11 @@ namespace Four_Old_Dudes.MovingSprites
             }
             dy = DoJump() * GameRunner.Delta.AsSeconds();
             Move(dx, dy);
-            if (Position.Y > Ground.Y && IsGroundUnderMe)
+            var dyGround = (Position.Y + Height) - Ground.Y;
+            if (dyGround > 0 && IsGroundUnderMe)
             {
                 var tmp = Position;
-                tmp.Y = Ground.Y;
+                tmp.Y = Ground.Y - Height;
                 Position = tmp;
                 _isJumping = false;
                 _isFalling = false;
@@ -213,6 +215,11 @@ namespace Four_Old_Dudes.MovingSprites
                    // Stop();
                     break;
             }
-        }        
+        }
+        
+        public void Attack()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

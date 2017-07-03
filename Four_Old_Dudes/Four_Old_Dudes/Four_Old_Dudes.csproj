@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
+    <Compile Include="Extensions\RoundedRectangle.cs" />
     <Compile Include="GameRunner.cs" />
     <Compile Include="Maps\GameMap.cs" />
     <Compile Include="Maps\World.cs" />
