@@ -1,6 +1,7 @@
 ﻿
 using Four_Old_Dudes.MovingSprites;
 using Four_Old_Dudes.Utils;
+using MoreLinq;
 using SFML.Graphics;
 using System;
 using System.Collections.Generic;
@@ -72,8 +73,33 @@ namespace Four_Old_Dudes.Maps
                     var currPosition = _worldPlayer.Position;
                     var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
                     var closestTile = closeTiles.Where(tile => tile.Position.X <= currPosition.X && tile.Position.Y >= currPosition.Y).Max();
+                    var pSize = _worldPlayer.Size;
+                    var dy = 0.0f;
+                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 500);
+                    var closestTile = closeTiles.TakeUntil(tile =>
+                                                    (Math.Abs(tile.Position.X - currPosition.X) <= (pSize.X + 5))
+                                                    &&
+                                                    ((tile.Position.Y - currPosition.Y) >= dy))
+                                                 .LastOrDefault();
+                    if(closestTile == null)
+                    {
+                        _worldPlayer.IsGroundUnderMe = false;
+                        return;
+                    }
+                   // Console.WriteLine("closet tile X:{0}, Y:{1}", closestTile.Position.X, closestTile.Position.Y);
                     _worldPlayer.Ground = closestTile.Position;
-                    var dx = Math.Abs(closestTile.Position.X - currPosition.X);
+                    var dx =_worldPlayer.Ground.X - currPosition.X;
+                   // Console.WriteLine("DX: {0}", dx);
+                   //right of tile
+                   if(dx < 0.0f)
+                    {
+
+                    }
+                    else //left of tile
+                    {
+
+                    }
+                    Console.WriteLine("tile size x: {0}", closestTile.Size.X);
                     if (dx > closestTile.Size.X)
                         _worldPlayer.IsGroundUnderMe = false;
                     else

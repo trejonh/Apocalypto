@@ -156,7 +156,7 @@ namespace Four_Old_Dudes.MovingSprites
             }
             //playerView.Move(Position);
             //playerView.Center = newCenter;
-            Console.WriteLine("X: {0}, Y: {1}",dx,dy);
+           // Console.WriteLine("X: {0}, Y: {1}",dx,dy);
             //playerView.Move(new Vector2f(xMovement, yMovement));
             _playerWindow.SetView(playerView);
             base.Update();

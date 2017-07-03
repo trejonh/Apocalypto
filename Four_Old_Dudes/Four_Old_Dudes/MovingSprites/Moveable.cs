@@ -1,5 +1,6 @@
 ﻿using Four_Old_Dudes.Utils;
 using SFML.Graphics;
+using SFML.System;
 using System.Collections.Generic;
 
 namespace Four_Old_Dudes.MovingSprites
@@ -31,6 +32,7 @@ namespace Four_Old_Dudes.MovingSprites
         protected float Friction = 0.6f;
         protected const float LINEAR_VELOCITY = 1.38f * 150;
         protected const float MAX_AIR_TIME = 0.92f;
+        public Vector2u Size {get { return Texture.Size; } }
         protected Moveable(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
