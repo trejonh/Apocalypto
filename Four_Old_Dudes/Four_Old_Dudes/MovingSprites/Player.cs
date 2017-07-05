@@ -122,10 +122,10 @@ namespace Four_Old_Dudes.MovingSprites
             dy = DoJump() * GameRunner.Delta.AsSeconds();
             Move(dx, dy);
             var dyGround = (Position.Y + Height) - Ground.Y;
-            if (dyGround > 0 && IsGroundUnderMe)
+            if (dyGround > 0f && IsGroundUnderMe)
             {
                 var tmp = Position;
-                tmp.Y = Ground.Y - Height;
+                tmp.Y = Ground.Y - Height - 0.01f;
                 Position = tmp;
                 _isJumping = false;
                 _isFalling = false;

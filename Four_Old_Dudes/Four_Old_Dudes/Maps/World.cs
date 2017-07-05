@@ -87,21 +87,35 @@ namespace Four_Old_Dudes.Maps
                     var currPosition = _worldPlayer.Position;
                     var pWidth = _worldPlayer.Width;
                     var dy = 0.0f;
-                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 500);
-                    var closestTile = closeTiles.TakeUntil(tile =>
-                                                    (Math.Abs(tile.Position.X - currPosition.X) <= (pWidth + 5))
-                                                    &&
-                                                    ((tile.Position.Y - currPosition.Y) >= dy))
-                                                 .LastOrDefault();
-                    if(closestTile != null)
+                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
+                    var floor = new List<Vector2f>();
+                    foreach(var tile in closeTiles)
+                    {
+                        floor.Add(tile.Position);
+                    }
+                    if(floor.Count > 0)
+                    {
+                        var list = SortByDistance(currPosition, floor);
+                        var closestTile = closeTiles.Where(tile => tile.Position.Equals(list[0])).First();
+                        var bottomPosition = currPosition.Y - _worldPlayer.Height;
+                        if (closestTile != null)
+                        {
+                            _worldPlayer.Ground = closestTile.Position;
+                            var dx = Math.Abs(_worldPlayer.Ground.X - currPosition.X);
+                            Console.WriteLine("Dx: {0}", dx);
+                            if (dx < (closestTile.Size.X * 0.73f) && bottomPosition <= _worldPlayer.Ground.Y)
+                                _worldPlayer.IsGroundUnderMe = true;
+                            else if (dx >= (closestTile.Size.X * 0.73f))
+                                _worldPlayer.IsGroundUnderMe = false;
+                        }
+                        else
+                        {
+                            _worldPlayer.IsGroundUnderMe = false;
+                        }
+                    }
+                    else
                     {
                         _worldPlayer.IsGroundUnderMe = false;
-                        _worldPlayer.Ground = closestTile.Position;
-                        var dx = _worldPlayer.Ground.X - currPosition.X;
-                        if (dx > closestTile.Size.X)
-                            _worldPlayer.IsGroundUnderMe = false;
-                        else
-                            _worldPlayer.IsGroundUnderMe = true;
                     }
                    /*if(dx < 0.0f)
                     {
@@ -149,7 +163,6 @@ namespace Four_Old_Dudes.Maps
                             {
                                 enemy.Attack(_worldPlayer);
                             }
-                            Console.WriteLine("Health: {0}",_worldPlayer.Health);
                         }
                     }
                 }
@@ -238,6 +251,42 @@ namespace Four_Old_Dudes.Maps
         public void AddPlayerAnimation(Direction direction, int firstFrame, int lastFrame)
         {
             _worldPlayer.AddAnimation(direction, firstFrame, lastFrame);
+        }
+
+        private List<Vector2f> SortByDistance(Vector2f src, List<Vector2f> lst)
+        {
+            var output = new List<Vector2f>();
+            output.Add(lst[NearestPoint(src, lst)]);
+            lst.Remove(output[0]);
+            int x = 0;
+            for (int i = 0; i < lst.Count + x; i++)
+            {
+                output.Add(lst[NearestPoint(output[output.Count - 1], lst)]);
+                lst.Remove(output[output.Count - 1]);
+                x++;
+            }
+            return output;
+        }
+
+        private int NearestPoint(Vector2f srcPt, List<Vector2f> lookIn)
+        {
+           var smallestDistance = new KeyValuePair<double, int>();
+            for (int i = 0; i < lookIn.Count; i++)
+            {
+                double distance = Math.Sqrt(Math.Pow(srcPt.X - lookIn[i].X, 2) + Math.Pow(srcPt.Y - lookIn[i].Y, 2));
+                if (i == 0)
+                {
+                    smallestDistance = new KeyValuePair<double, int>(distance, i);
+                }
+                else
+                {
+                    if (distance < smallestDistance.Key)
+                    {
+                        smallestDistance = new KeyValuePair<double, int>(distance, i);
+                    }
+                }
+            }
+            return smallestDistance.Value;
         }
     }
 }
