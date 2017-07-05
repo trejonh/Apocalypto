@@ -24,6 +24,7 @@ namespace Four_Old_Dudes.Maps
         private View _worldView;
         private RoundedRectangle _healthBar;
         private Text _healthText;
+        public Color BGColor { get; set; }
         public World()
         {
             _worldPlayer = null;
@@ -39,6 +40,7 @@ namespace Four_Old_Dudes.Maps
             _worldPlayer.SetPosition(_worldMap.PlayerInitialPosition);
             _enemiesOnMap = SpawnEnemies(playerName,firstPlayerFrame,lastPlayerFrame);
             _worldView.Center = _worldPlayer.Position;
+            BGColor = _worldMap.BGColor;
             var ts = new ThreadStart(CollisionDetection);
             _collisionThread = new Thread(ts);
             _collisionThread.Priority = ThreadPriority.AboveNormal;
@@ -119,10 +121,25 @@ namespace Four_Old_Dudes.Maps
                             {
                                 var leftEdge = edgeTiles.Count(tiles => tiles.Position.X <= enemy.Position.X);
                                 var rightEdge = edgeTiles.Count(tiles => tiles.Position.X > enemy.Position.X);
-                                if (leftEdge <= 1 || rightEdge <= 1)
+                                if (leftEdge <= 1)
+                                {
                                     enemy.IsNearEdge = true;
+                                    enemy.TurnRight = true;
+                                    enemy.TurnLeft = false;
+
+                                }
+                                else if (rightEdge <= 1)
+                                {
+                                    enemy.IsNearEdge = true;
+                                    enemy.TurnRight = false;
+                                    enemy.TurnLeft = true;
+                                }
                                 else
+                                {
                                     enemy.IsNearEdge = false;
+                                    enemy.TurnRight = false;
+                                    enemy.TurnLeft = false;
+                                }
                             }
                             else
                             {

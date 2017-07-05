@@ -32,7 +32,7 @@ namespace Four_Old_Dudes
             while (_window.IsOpen)
             {
                 _window.DispatchEvents();
-                _window.Clear();
+                _window.Clear(world.BGColor);
                 Delta = clock.Restart();
                 world.Draw();
                 _window.Display();

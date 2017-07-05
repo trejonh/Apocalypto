@@ -5,6 +5,7 @@ using Four_Old_Dudes.Utils;
 using SFML.Graphics;
 using SFML.System;
 using Tiled.SFML;
+using System.Windows.Media;
 
 namespace Four_Old_Dudes.Maps
 {
@@ -13,11 +14,23 @@ namespace Four_Old_Dudes.Maps
         public Vector2f PlayerInitialPosition { get; }
         public List<Tiled.SFML.Object> FloorObjects { get; private set; }
         public List<Tiled.SFML.Object> EnemySpawns { get; private set; }
+        public SFML.Graphics.Color BGColor { get; set; }
 
         public GameMap(string filename, View view) : base(filename, view)
         {
             DevelopGround();
             FindEnemySpawns();
+            try
+            {
+                var hexColor = Properties["BGC"];
+                var color = (System.Windows.Media.Color)ColorConverter.ConvertFromString(hexColor);
+                BGColor = new SFML.Graphics.Color(color.R,color.G,color.B,color.A);
+            }
+            catch (KeyNotFoundException)
+            {
+                BGColor = new SFML.Graphics.Color(SFML.Graphics.Color.White);
+                LogManager.LogWarning("No background color found for " + filename);
+            }
             try
             {
                 var playerObj = Objects.Single(obj => obj.Name.Equals("playerStartLocation"));

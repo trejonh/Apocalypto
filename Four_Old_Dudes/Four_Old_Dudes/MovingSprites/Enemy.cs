@@ -10,7 +10,9 @@ namespace Four_Old_Dudes.MovingSprites
         private Player _playerOnMap;
         private const float Max_Time_Between_Turns = 5.0f;
         private float _timeBetweenTurns = 0.0f;
-        public bool IsNearEdge { get; set; }
+        public bool IsNearEdge { get; set; } = false;
+        public bool TurnRight { get; set; } = false;
+        public bool TurnLeft { get; set; } = false;
         private bool _isPlayerNear;
         private float _PlayerIsCloseMultiplier;
         private float _attackSpeed = 80.0f;
@@ -46,19 +48,25 @@ namespace Four_Old_Dudes.MovingSprites
             float dx = 0.0f, dy = 0.0f;
           if(_timeBetweenTurns >= Max_Time_Between_Turns || IsNearEdge)
             {
-                if (_isPlayerNear == false)
+                if (_isPlayerNear == false && IsNearEdge == false)
                 {
                     if (CurrentDirection == Direction.Right)
                         SetDirection(Direction.Left);
                     else
                         SetDirection(Direction.Right);
                 }
-                else if(_isPlayerNear)
+                else if(_isPlayerNear && IsNearEdge == false)
                 {
                     if (_playerOnMap.CurrentDirection == Direction.Right)
                         SetDirection(Direction.Left);
                     else
                         SetDirection(Direction.Right);
+                }else if (IsNearEdge)
+                {
+                    if (TurnRight)
+                        SetDirection(Direction.Right);
+                    if (TurnLeft)
+                        SetDirection(Direction.Left);
                 }
                 _timeBetweenTurns = 0.0f;
             }
