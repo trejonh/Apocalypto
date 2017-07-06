@@ -99,6 +99,8 @@ namespace Four_Old_Dudes.MovingSprites
 
         public new void Update()
         {
+            if (IsAnimated == false)
+                return;
             var dx = _playerOnMap.Position.X - Position.X;
             dx = Math.Abs(dx);
             if (dx < 100.0f && dx > Height && Position.Y == _playerOnMap.Position.Y)

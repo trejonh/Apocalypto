@@ -227,6 +227,8 @@ namespace Four_Old_Dudes.Maps
 
         public override void Draw()
         {
+            if (_worldMap.BGMusic != null && _worldMap.BGMusic.Status != SFML.Audio.SoundStatus.Playing)
+                _worldMap.BGMusic.Play();
             _worldView.Center = _worldPlayer.Position;
             _winInstance.SetView(_worldView);
             _healthBar.Position = new Vector2f(_worldPlayer.Position.X,_worldView.Center.Y-350);
@@ -239,8 +241,28 @@ namespace Four_Old_Dudes.Maps
             }
             if (_enemiesOnMap != null)
             {
+                var center = _worldView.Center;
+                var size = new Vector2f(_worldView.Size.X / 2, _worldView.Size.Y / 2);
+                var leftX = center.X - size.X;
+                var rightX = center.X + size.X;
+                var topY = center.Y - size.Y;
+                var bottomY = center.Y + size.Y;
                 foreach (var enemy in _enemiesOnMap)
+                {
+                    var enePos = enemy.Position;
+                    if((enePos.Y < topY)
+                        || (enePos.Y > bottomY)
+                        || (enePos.X > rightX)
+                        || (enePos.X < leftX))
+                    {
+                        enemy.Stop();
+                    }
+                    else
+                    {
+                        enemy.Play();
+                    }
                     enemy.Update();
+                }
             }
             _worldPlayer.Update();
             _winInstance.Draw(_healthBar);

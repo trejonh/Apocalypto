@@ -6,6 +6,7 @@ using SFML.Graphics;
 using SFML.System;
 using Tiled.SFML;
 using System.Windows.Media;
+using SFML.Audio;
 
 namespace Four_Old_Dudes.Maps
 {
@@ -15,6 +16,7 @@ namespace Four_Old_Dudes.Maps
         public List<Tiled.SFML.Object> FloorObjects { get; private set; }
         public List<Tiled.SFML.Object> EnemySpawns { get; private set; }
         public SFML.Graphics.Color BGColor { get; set; }
+        public Music BGMusic { get; set; }
 
         public GameMap(string filename, View view) : base(filename, view)
         {
@@ -24,12 +26,22 @@ namespace Four_Old_Dudes.Maps
             {
                 var hexColor = Properties["BGC"];
                 var color = (System.Windows.Media.Color)ColorConverter.ConvertFromString(hexColor);
-                BGColor = new SFML.Graphics.Color(color.R,color.G,color.B,color.A);
+                BGColor = new SFML.Graphics.Color(color.R, color.G, color.B, color.A);
             }
             catch (KeyNotFoundException)
             {
                 BGColor = new SFML.Graphics.Color(SFML.Graphics.Color.White);
                 LogManager.LogWarning("No background color found for " + filename);
+            }
+            try
+            {
+                var music = Properties["BGMusic"];
+                BGMusic = AssetManager.LoadMusic(music);
+            }
+            catch (KeyNotFoundException)
+            {
+                BGMusic = null;
+                LogManager.LogWarning("No background music found for " + filename);
             }
             try
             {
