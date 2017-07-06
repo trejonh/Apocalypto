@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 using SFML.Graphics;
-using SFML.Window;
+using SFML.System;
 using TiledSharp;
 
 namespace Tiled.SFML

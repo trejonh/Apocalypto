@@ -51,17 +51,16 @@ namespace Four_Old_Dudes.Menus
             var statsText = new Text() { Position = new Vector2f(stats.Position.X + 80, stats.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Stats"), Color = Color.Black, Font = font, CharacterSize = 60 };
             var exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 1) - 40) };
             var exitText = new Text() { Position = new Vector2f(exit.Position.X + 100, exit.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Exit"), Color = Color.Black, Font = font, CharacterSize = 60 };
-            var pointerTexture = AssetManager.LoadTexture("OldTimeyPointer");
-            pointerTexture.Smooth = true;
+            var pointerSpite = AssetManager.LoadSprite("OldTimeyPointer");
             var renderWindow = WinInstance;
-            Pointer = new MenuPointer(ref renderWindow, pointerTexture);
+            Pointer = new MenuPointer(ref renderWindow, pointerSpite);
             MenuItems.Add(new MenuItem(ref renderWindow, newGameText, newGame));
             MenuItems.Add(new MenuItem(ref renderWindow, loadGameText, loadGame));
             MenuItems.Add(new MenuItem(ref renderWindow, statsText, stats));
             MenuItems.Add(new MenuItem(ref renderWindow, exitText, exit));
-            Pointer.SetPosition(new Vector2f((newGame.Position.X - pointerTexture.Size.X / 2f), newGame.Position.Y));
+            Pointer.SetPosition(new Vector2f((newGame.Position.X - Pointer.Size.X / 2f), newGame.Position.Y));
             Pointer.SetScale(new Vector2f(0.5f, 0.5f));
-            _pointerPositions = new LinkedList<Vector2f>(new[] { Pointer.GetPosition().Value, new Vector2f((loadGame.Position.X - pointerTexture.Size.X / 2f), loadGame.Position.Y), new Vector2f((stats.Position.X - pointerTexture.Size.X / 2f), stats.Position.Y), new Vector2f((exit.Position.X - pointerTexture.Size.X / 2f), exit.Position.Y) });
+            _pointerPositions = new LinkedList<Vector2f>(new[] { Pointer.GetPosition().Value, new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y), new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y), new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y) });
         }
 
         /// <summary>

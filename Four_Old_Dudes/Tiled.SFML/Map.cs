@@ -10,7 +10,7 @@
 
 using System.Collections.Generic;
 using SFML.Graphics;
-using SFML.Window;
+using SFML.System;
 using TiledSharp;
 
 namespace Tiled.SFML
@@ -156,46 +156,46 @@ namespace Tiled.SFML
 					{
 						Name = o.Name,
 						Type = o.Type,
-						Position = new Vector2f ( o.X,  o.Y),
-						Size = new Vector2f ( o.Width,  o.Height),
+						Position = new Vector2f ((float)o.X, (float)o.Y),
+						Size = new Vector2f ((float)o.Width, (float)o.Height),
 						Properties = o.Properties
 					};
 
-					if (o.ObjectType == TmxObjectGroup.TmxObjectType.Basic)
+					if (o.ObjectType == TmxObjectType.Basic)
 					{
 						obj.ObjectType = ObjectType.Rectangle;
 						obj.Shape = new RectangleShape (obj.Size);
 						obj.Shape.Position = obj.Position;
 					}
 
-					if (o.ObjectType == TmxObjectGroup.TmxObjectType.Ellipse)
+					if (o.ObjectType == TmxObjectType.Ellipse)
 					{
 						obj.ObjectType = ObjectType.Ellipse;
-						obj.Shape = new CircleShape (o.Width / 2);
+						obj.Shape = new CircleShape ((float)o.Width / 2);
 						obj.Shape.Position = obj.Position;
 					}
 
-					if (o.ObjectType == TmxObjectGroup.TmxObjectType.Polyline)
+					if (o.ObjectType == TmxObjectType.Polyline)
 					{
 						obj.ObjectType = ObjectType.Polyline;
 						var shape = new ConvexShape ((uint)o.Points.Count);
 						for (var i = 0; i < o.Points.Count; i++)
-							shape.SetPoint ((uint)i, new Vector2f (o.Points [i].Item1, o.Points [i].Item2));
+							shape.SetPoint ((uint)i, new Vector2f ((float)o.Points [i].X, (float)o.Points [i].Y));
 						obj.Shape = shape;
 						obj.Shape.Position = obj.Position;
 					}
 
-					if (o.ObjectType == TmxObjectGroup.TmxObjectType.Polygon)
+					if (o.ObjectType == TmxObjectType.Polygon)
 					{
 						obj.ObjectType = ObjectType.Polygon;
 						var shape = new ConvexShape ((uint)o.Points.Count);
 						for (var i = 0; i < o.Points.Count; i++)
-							shape.SetPoint ((uint)i, new Vector2f (o.Points[i].Item1, o.Points[i].Item2));
+							shape.SetPoint ((uint)i, new Vector2f ((float)o.Points[i].X, (float)o.Points[i].Y));
 						obj.Shape = shape;
 						obj.Shape.Position = obj.Position;
 					}
 
-					if (o.ObjectType == TmxObjectGroup.TmxObjectType.Tile)
+					if (o.ObjectType == TmxObjectType.Tile)
 					{
 						obj.Position.Y -= (float)o.Height;
 						obj.ObjectType = ObjectType.Graphic;

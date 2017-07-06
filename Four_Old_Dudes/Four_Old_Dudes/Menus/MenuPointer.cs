@@ -10,6 +10,8 @@ namespace Four_Old_Dudes.Menus
     {
         private readonly Sprite _pointerSprite;
 
+        public Vector2u Size { get { return (Vector2u)_pointerSprite?.Texture.Size; }  }
+
         /// <summary>
         /// Default constructor for a menu pointer with no texture nor window reference
         /// </summary>
@@ -23,11 +25,9 @@ namespace Four_Old_Dudes.Menus
         /// </summary>
         /// <param name="window">Reference to the window to draw to</param>
         /// <param name="pointerTexture">The texture for the pointer's sprite</param>
-        public MenuPointer(ref RenderWindow window, Texture pointerTexture) : base (ref window)
+        public MenuPointer(ref RenderWindow window, Sprite pointerSprite) : base (ref window)
         {
-            var pointerTexture1 = pointerTexture;
-            pointerTexture1.Smooth = true;
-            _pointerSprite = new Sprite(pointerTexture1);
+            _pointerSprite = pointerSprite;
         }
 
         /// <summary>

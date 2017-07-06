@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Four_Old_Dudes.Maps;
+using Tiled.SFML;
+using Four_Old_Dudes.MovingSprites;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -26,6 +29,7 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
+        private static Texture _enemyText;
 
         /// <summary>
         /// Load in file locations of all assest found in assets.xml to be used for the game
@@ -71,34 +75,50 @@ namespace Four_Old_Dudes.Utils
             fs.Close();
         }
 
-        /// <summary>
-        /// Load texture resource
-        /// </summary>
-        /// <param name="name">Name of the texture resource to load</param>
-        /// <returns>The rendered texture</returns>
-        public static Texture LoadTexture(string name)
+        public static Sprite LoadSprite(string name)
         {
-            return LoadTexture(name, new IntRect(0,0,32,32));
-        }
-
-        /// <summary>
-        /// Load texture resource
-        /// </summary>
-        /// <param name="name">Name of the texture to load</param>
-        /// <param name="rect">The rectangle containing the texture</param>
-        /// <returns>The loaded texture</returns>
-        public static Texture LoadTexture(string name, IntRect rect)
-        {
-            Texture text = null;
+            Sprite sprite = null;
             try
             {
-                text = new Texture(TextureAssests[name],rect);
+                var text = new Texture(TextureAssests[name]) { Smooth = true };
+                sprite = new Sprite(text);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-               LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
-            return text;
+            return sprite;
+        }
+
+        public static Player LoadPlayer(string name, RenderTarget window, int firstFrame, int lastFrame)
+        {
+            Player player = null;
+            try
+            {
+                var text = new Texture(TextureAssests[name]) { Smooth = true };
+                player = new Player(text, 32, 32, 60, window, RenderStates.Default, firstFrame, lastFrame);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return player;
+        }
+
+        public static Enemy LoadEnemy(string name, RenderTarget window,Player player, int firstFrame, int lastFrame)
+        {
+            Enemy enemy = null;
+            try
+            {
+                if(_enemyText == null)
+                    _enemyText = new Texture(TextureAssests[name]) { Smooth = true };
+                enemy = new Enemy(_enemyText, 32, 32, 60, window, RenderStates.Default, player, firstFrame, lastFrame);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return enemy;
         }
 
         /// <summary>
@@ -116,7 +136,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return sound;
         }
@@ -135,7 +155,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return music;
         }
@@ -154,7 +174,7 @@ namespace Four_Old_Dudes.Utils
             }
             catch (KeyNotFoundException kex)
             {
-                LogManager.LogError(kex.Message);
+                LogManager.LogError(kex.Message + "," + kex.Source);
             }
             return mess;
         }
@@ -162,7 +182,7 @@ namespace Four_Old_Dudes.Utils
         /// <summary>
         /// Load a font asset
         /// </summary>
-        /// <param name="name">The nme of the asset</param>
+        /// <param name="name">The name of the asset</param>
         /// <returns>The loaded font</returns>
         public static Font LoadFont(string name)
         {
@@ -173,9 +193,29 @@ namespace Four_Old_Dudes.Utils
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
-                LogManager.LogError(ex.Message);
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return font;
+        }
+
+        /// <summary>
+        /// Load a game map asset
+        /// </summary>
+        /// <param name="name">The name of the asset</param>
+        /// <param name="view">The view inwhich to draw map to</param>
+        /// <returns>The loaded game map</returns>
+        public static GameMap LoadGameMap(string name,View view)
+        {
+            GameMap map = null;
+            try
+            {
+                map = new GameMap(MapAssets[name], view);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return map;
         }
     }
 }

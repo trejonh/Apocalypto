@@ -16,6 +16,11 @@
   </asset>
   <asset>
     <type>text</type>
+    <name>Health</name>
+    <text>Health</text>
+  </asset>
+  <asset>
+    <type>text</type>
     <name>Exit</name>
     <text>Exit</text>
   </asset>
@@ -43,5 +48,20 @@
     <type>audio</type>
     <name>ShiftThroughMenu</name>
     <location>\audio\menuClick.wav</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>Funkadelic</name>
+    <location>\audio\funky.wav</location>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>TestPlayer</name>
+    <location>\sprites\player.png</location>
+  </asset>
+  <asset>
+    <type>map</type>
+    <name>DefaultMap</name>
+    <location>\maps\map.tmx</location>
   </asset>
 </assets>
