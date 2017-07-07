@@ -2,7 +2,6 @@
 using Four_Old_Dudes.Extensions;
 using Four_Old_Dudes.MovingSprites;
 using Four_Old_Dudes.Utils;
-using MoreLinq;
 using SFML.Graphics;
 using SFML.System;
 using System;
@@ -13,6 +12,9 @@ using static Four_Old_Dudes.MovingSprites.Moveable;
 
 namespace Four_Old_Dudes.Maps
 {
+    /// <summary>
+    /// An instance of the game world
+    /// </summary>
     public class World : Core.Drawable
     {
         private Player _worldPlayer;
@@ -25,12 +27,24 @@ namespace Four_Old_Dudes.Maps
         private RoundedRectangle _healthBar;
         private Text _healthText;
         public Color BGColor { get; set; }
+
+        /// <summary>
+        /// Create an empty world
+        /// </summary>
         public World()
         {
             _worldPlayer = null;
             _worldPlayer = null;
         }
 
+        /// <summary>
+        /// Create a full world
+        /// </summary>
+        /// <param name="window">A window to draw the world's entities.</param>
+        /// <param name="mapName">Name of the map to load</param>
+        /// <param name="playerName">NAme of the player to load</param>
+        /// <param name="firstPlayerFrame">The first frame of the player</param>
+        /// <param name="lastPlayerFrame">The last frame of the player</param>
         public World(ref RenderWindow window, string mapName, string playerName,int firstPlayerFrame, int lastPlayerFrame)
         {
             _winInstance = window;
@@ -53,6 +67,13 @@ namespace Four_Old_Dudes.Maps
 
         }
 
+        /// <summary>
+        /// Spawn enemies based off their locations in the map
+        /// </summary>
+        /// <param name="enemyName">Name of the enemy to spawn</param>
+        /// <param name="firstFrame">First frame of the enemy</param>
+        /// <param name="lastFrame">Last frame of the enemy</param>
+        /// <returns>List of enemies</returns>
         private List<Enemy> SpawnEnemies(string enemyName, int firstFrame, int lastFrame)
         {
             var enemyObjs = _worldMap.EnemySpawns;
@@ -72,6 +93,9 @@ namespace Four_Old_Dudes.Maps
             return enemies;
         }
         
+        /// <summary>
+        /// Detect sprite collisions and ground collisions
+        /// </summary>
         private void CollisionDetection()
         {
             if (_worldMap.FloorObjects == null || _worldMap.FloorObjects.Count == 0)
@@ -86,7 +110,12 @@ namespace Four_Old_Dudes.Maps
                 {
                     var currPosition = _worldPlayer.Position;
                     var pWidth = _worldPlayer.Width;
-                    var dy = 0.0f;
+                    /*
+                     * Find the ground tiles closest to the player
+                     * Calculate the distance between the player and said tile
+                     * if that distance is greater than the size of tile  then 
+                     * the player needs to fall
+                     */
                     var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
                     var floor = new List<Vector2f>();
                     foreach(var tile in closeTiles)
@@ -117,16 +146,11 @@ namespace Four_Old_Dudes.Maps
                     {
                         _worldPlayer.IsGroundUnderMe = false;
                     }
-                   /*if(dx < 0.0f)
-                    {
-
-                    }
-                    else //left of tile
-                    {
-
-                    }*/
                     if(_enemiesOnMap.Count != 0)
                     {
+                        /*
+                         * Detect if the enemy is near an edge, if so then change its direction
+                         */
                         foreach (var enemy in _enemiesOnMap)
                         {
                             var edgeTiles = _worldMap.FloorObjects
@@ -177,6 +201,9 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Stop the collision detection thread
+        /// </summary>
         public void StopCollisionDetection()
         {
             if (_isRunning == false)
@@ -188,6 +215,9 @@ namespace Four_Old_Dudes.Maps
             _collisionThread.Abort();
         }
 
+        /// <summary>
+        /// Start collision detection thread
+        /// </summary>
         public void StartCollisonDetection()
         {
             if (_isRunning)
@@ -203,6 +233,10 @@ namespace Four_Old_Dudes.Maps
             _collisionThread.Start();
         }
         
+        /// <summary>
+        /// Set a new player for the world
+        /// </summary>
+        /// <param name="player">The new player to add</param>
         public void SetPlayer(Player player)
         {
             StopCollisionDetection();
@@ -210,6 +244,10 @@ namespace Four_Old_Dudes.Maps
             StartCollisonDetection();
         }
 
+        /// <summary>
+        /// Set a new map for the world
+        /// </summary>
+        /// <param name="map">The new map</param>
         public void SetMap(GameMap map)
         {
             StopCollisionDetection();
@@ -217,6 +255,11 @@ namespace Four_Old_Dudes.Maps
             StartCollisonDetection();
         }
 
+        /// <summary>
+        /// Setup a new world entity
+        /// </summary>
+        /// <param name="player">The new player</param>
+        /// <param name="map">The new map</param>
         public void SetupNewWorld(Player player, GameMap map)
         {
             StopCollisionDetection();
@@ -225,6 +268,9 @@ namespace Four_Old_Dudes.Maps
             StartCollisonDetection();
         }
 
+        /// <summary>
+        /// Draw all of the world entities to the window
+        /// </summary>
         public override void Draw()
         {
             if (_worldMap.BGMusic != null && _worldMap.BGMusic.Status != SFML.Audio.SoundStatus.Playing)
@@ -270,26 +316,44 @@ namespace Four_Old_Dudes.Maps
             
         }
 
+        /// <summary>
+        /// Add a player animation
+        /// </summary>
+        /// <param name="direction">The direction of the frame</param>
+        /// <param name="firstFrame">The first frame of the animation</param>
+        /// <param name="lastFrame">The last frame of the animation</param>
         public void AddPlayerAnimation(Direction direction, int firstFrame, int lastFrame)
         {
             _worldPlayer.AddAnimation(direction, firstFrame, lastFrame);
         }
 
-        private List<Vector2f> SortByDistance(Vector2f src, List<Vector2f> lst)
+        /// <summary>
+        /// Sort the list of positions by proximity to target
+        /// </summary>
+        /// <param name="target">Position target</param>
+        /// <param name="listOfPositions">List of positions surrounding target</param>
+        /// <returns>List of position with closet position being first</returns>
+        private List<Vector2f> SortByDistance(Vector2f target, List<Vector2f> listOfPositions)
         {
             var output = new List<Vector2f>();
-            output.Add(lst[NearestPoint(src, lst)]);
-            lst.Remove(output[0]);
+            output.Add(listOfPositions[NearestPoint(target, listOfPositions)]);
+            listOfPositions.Remove(output[0]);
             int x = 0;
-            for (int i = 0; i < lst.Count + x; i++)
+            for (int i = 0; i < listOfPositions.Count + x; i++)
             {
-                output.Add(lst[NearestPoint(output[output.Count - 1], lst)]);
-                lst.Remove(output[output.Count - 1]);
+                output.Add(listOfPositions[NearestPoint(output[output.Count - 1], listOfPositions)]);
+                listOfPositions.Remove(output[output.Count - 1]);
                 x++;
             }
             return output;
         }
 
+        /// <summary>
+        /// Find the nearest point
+        /// </summary>
+        /// <param name="srcPt">The point of origin</param>
+        /// <param name="lookIn">The points surrounding the origin</param>
+        /// <returns></returns>
         private int NearestPoint(Vector2f srcPt, List<Vector2f> lookIn)
         {
            var smallestDistance = new KeyValuePair<double, int>();

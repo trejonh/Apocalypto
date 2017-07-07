@@ -75,6 +75,11 @@ namespace Four_Old_Dudes.Utils
             fs.Close();
         }
 
+        /// <summary>
+        /// Load a sprite
+        /// </summary>
+        /// <param name="name">The name of the texture for the sprite</param>
+        /// <returns>The loaded sprite</returns>
         public static Sprite LoadSprite(string name)
         {
             Sprite sprite = null;
@@ -90,6 +95,14 @@ namespace Four_Old_Dudes.Utils
             return sprite;
         }
 
+        /// <summary>
+        /// Load a Player
+        /// </summary>
+        /// <param name="name">The name of the texture to load</param>
+        /// <param name="window">The rendertarget to draw the player to</param>
+        /// <param name="firstFrame">The first frame</param>
+        /// <param name="lastFrame">The last frame</param>
+        /// <returns>The loaded player</returns>
         public static Player LoadPlayer(string name, RenderTarget window, int firstFrame, int lastFrame)
         {
             Player player = null;
@@ -105,6 +118,15 @@ namespace Four_Old_Dudes.Utils
             return player;
         }
 
+        /// <summary>
+        /// Load an enemy
+        /// </summary>
+        /// <param name="name">The name of the texture to load</param>
+        /// <param name="window">The rendertarget to draw the player to</param>
+        /// <param name="player">The player on the map</param>
+        /// <param name="firstFrame">The first frame</param>
+        /// <param name="lastFrame">The last frame</param>
+        /// <returns>The loaded player</returns>
         public static Enemy LoadEnemy(string name, RenderTarget window,Player player, int firstFrame, int lastFrame)
         {
             Enemy enemy = null;

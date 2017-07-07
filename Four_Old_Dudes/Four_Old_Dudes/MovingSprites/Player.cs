@@ -6,6 +6,9 @@ using SFML.System;
 
 namespace Four_Old_Dudes.MovingSprites
 {
+    /// <summary>
+    /// A movable sprite that is controlled by a user
+    /// </summary>
     public class Player : Moveable
     {
         private readonly RenderWindow _playerWindow;
@@ -15,10 +18,32 @@ namespace Four_Old_Dudes.MovingSprites
         private float _jumpAccel = -600.2f;
         private View playerView;
         private Vector2f initialPosition;
+        /// <summary>
+        /// The position of the ground
+        /// </summary>
         public Vector2f Ground {get;set;}
+        /// <summary>
+        /// Is there a ground tile under me
+        /// </summary>
         public bool IsGroundUnderMe { get; set; }
         private bool _isFalling;
+        /// <summary>
+        /// Current health level
+        /// </summary>
         public float Health = 100.0f;
+        /// <summary>
+        /// Create a new player instance
+        /// </summary>
+        /// <param name="text">The texture needed for the sprite</param>
+        /// <param name="frameWidth">The width of each frame</param>
+        /// <param name="frameHeight">The height of each frame</param>
+        /// <param name="framesPerSecond">The frames per second desired</param>
+        /// <param name="rTarget">The render target to draw to</param>
+        /// <param name="rStates">The render states</param>
+        /// <param name="firstFrame">The first frame</param>
+        /// <param name="lastFrame">The last frmae</param>
+        /// <param name="isAnimated">Is it initially animated</param>
+        /// <param name="isLooped">Is it looped</param>
         public Player(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
                         RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
@@ -30,8 +55,8 @@ namespace Four_Old_Dudes.MovingSprites
             var window = rTarget as RenderWindow;
             if (window != null) { 
                 _playerWindow = window;
-               // _playerWindow.KeyPressed += OnKeyPressed;
-               // _playerWindow.KeyReleased += OnKeyReleased;
+                _playerWindow.KeyPressed += OnKeyPressed;
+                _playerWindow.KeyReleased += OnKeyReleased;
                 _playerWindow.JoystickButtonPressed += OnJoystickButtonPressed;
                 _playerWindow.JoystickButtonReleased += OnJoystickButtonReleased;
                 _playerWindow.JoystickMoved += OnJoystickAxisMoved;
@@ -47,6 +72,10 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
 
+        /// <summary>
+        /// Set the player's position
+        /// </summary>
+        /// <param name="position">The new position</param>
         public void SetPosition(Vector2f position)
         {
             initialPosition = position;
@@ -54,12 +83,20 @@ namespace Four_Old_Dudes.MovingSprites
             Ground = position;
         }
 
+        /// <summary>
+        /// Move the player
+        /// </summary>
         public override void Move()
         {
             if (IsAnimated == false)
                 Play();
         }
 
+        /// <summary>
+        /// Move the player
+        /// </summary>
+        /// <param name="x">Pixels in the X axis to move by</param>
+        /// <param name="y">Pixels in the Y axis to move by</param>
         public override void Move(float x, float y)
         {
             var tmp = Position;
@@ -67,7 +104,12 @@ namespace Four_Old_Dudes.MovingSprites
             tmp.Y += y;
             Position = tmp;
         }
-        public override float DoJump()
+
+        /// <summary>
+        /// Allow player to jump or fall
+        /// </summary>
+        /// <returns>Players vertical velocity</returns>
+        public override float Jump()
         {
             float velocity = 0.0f;
             if(Keyboard.IsKeyPressed(Keyboard.Key.Up) && !_isJumping && IsGroundUnderMe)
@@ -91,20 +133,26 @@ namespace Four_Old_Dudes.MovingSprites
                 }
             }
             return velocity;
-
         }
 
+        /// <summary>
+        /// Stop player
+        /// </summary>
         public override void Stop()
         {
             Pause();
         }
 
+        /// <summary>
+        /// Update player's position on the screen
+        /// </summary>
         public new void Update()
         {
             float dx = 0f, dy=0f;
             if (_isJumping)
                 _timeInAir += GameRunner.Delta.AsSeconds();
-            if (Keyboard.IsKeyPressed(Keyboard.Key.Right)) { 
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+            { 
                 SetDirection(Direction.Right);
                 dx = LINEAR_VELOCITY * Friction * GameRunner.Delta.AsSeconds();
                 Play();
@@ -119,7 +167,7 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 Stop();
             }
-            dy = DoJump() * GameRunner.Delta.AsSeconds();
+            dy = Jump() * GameRunner.Delta.AsSeconds();
             Move(dx, dy);
             var dyGround = (Position.Y + Height) - Ground.Y;
             if (dyGround > 0f && IsGroundUnderMe)
@@ -156,21 +204,33 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 newCenter.X -= xMovement;
             }
-            //playerView.Move(Position);
-            //playerView.Center = newCenter;
-           // Console.WriteLine("X: {0}, Y: {1}",dx,dy);
-            //playerView.Move(new Vector2f(xMovement, yMovement));
             _playerWindow.SetView(playerView);
             base.Update();
         }
 
+        /// <summary>
+        /// Handle key presses
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="key"></param>
         public void OnKeyPressed(object sender, KeyEventArgs key)
         {
         }
+
+        /// <summary>
+        /// Handle key releases
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="key"></param>
         public void OnKeyReleased(object sender, KeyEventArgs key)
         {           
         }
 
+        /// <summary>
+        /// Handle joystick button presses
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="button"></param>
         public void OnJoystickButtonPressed(object sender, JoystickButtonEventArgs button)
         {
             switch (Convert.ToInt32(button.Button))
@@ -180,6 +240,11 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
 
+        /// <summary>
+        /// Handle joystick button releases
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="button"></param>
         public void OnJoystickButtonReleased(object sender, JoystickButtonEventArgs button)
         {
             switch (Convert.ToInt32(button.Button))
@@ -189,6 +254,11 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
 
+        /// <summary>
+        /// Handle if the joystick axis is moved
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="axis"></param>
         public void OnJoystickAxisMoved(object sender, JoystickMoveEventArgs axis)
         {
             switch (axis.Axis)
@@ -217,6 +287,9 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
         
+        /// <summary>
+        /// Play attack animation
+        /// </summary>
         public void Attack()
         {
             throw new NotImplementedException();

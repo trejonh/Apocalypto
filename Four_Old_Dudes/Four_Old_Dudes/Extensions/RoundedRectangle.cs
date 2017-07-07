@@ -4,11 +4,21 @@ using SFML.System;
 
 namespace Four_Old_Dudes.Extensions
 {
+    /// <summary>
+    /// A rectangle shape with rounded corners
+    /// </summary>
     public class RoundedRectangle : Shape
     {
         private Vector2f Size;
         private float Radius;
         private uint CornerPointCount;
+
+        /// <summary>
+        /// Creates a rectangle with rounded corners
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="radius"></param>
+        /// <param name="cornerPointCount"></param>
         public RoundedRectangle(Vector2f size, float radius = 0, uint cornerPointCount = 0)
         {
             Size = size;
@@ -16,6 +26,11 @@ namespace Four_Old_Dudes.Extensions
             CornerPointCount = cornerPointCount;
             Update();
         }
+
+        /// <summary>
+        /// Set the size of the rectangle
+        /// </summary>
+        /// <param name="size">The new size</param>
         public void SetSize(Vector2f size)
         {
             Size = size;
@@ -23,33 +38,59 @@ namespace Four_Old_Dudes.Extensions
 
 
         }
+
+        /// <summary>
+        /// Get the size
+        /// </summary>
+        /// <returns>The size</returns>
         public Vector2f GetSize()
         {
             return Size;
         }
 
+        /// <summary>
+        /// Set the radius of the corners
+        /// </summary>
+        /// <param name="radius">The new radius</param>
         public void SetCornersRadius(float radius)
         {
             Radius = radius;
             Update();
         }
 
+        /// <summary>
+        /// Get the radius of the corners
+        /// </summary>
+        /// <returns>The radius</returns>
         public float GetCornersRadius()
         {
             return Radius;
         }
 
-        public void setCornerPointCount(uint count)
+        /// <summary>
+        /// Set the number of rounded corners
+        /// </summary>
+        /// <param name="count">The number of corners</param>
+        public void SetCornerPointCount(uint count)
         {
             CornerPointCount = count;
             Update();
         }
 
+        /// <summary>
+        /// Get the number of corners
+        /// </summary>
+        /// <returns>The point count</returns>
         public override uint GetPointCount()
         {
             return CornerPointCount * 4;
         }
 
+        /// <summary>
+        /// Get the point
+        /// </summary>
+        /// <param name="index">The point</param>
+        /// <returns></returns>
         public override Vector2f GetPoint(uint index)
         {
             if (index >= CornerPointCount * 4)
