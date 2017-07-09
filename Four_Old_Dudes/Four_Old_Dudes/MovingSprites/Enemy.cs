@@ -5,6 +5,9 @@ using SFML.System;
 
 namespace Four_Old_Dudes.MovingSprites
 {
+    /// <summary>
+    /// An enemy styled NPC
+    /// </summary>
     public class Enemy : Moveable
     {
         private Player _playerOnMap;
@@ -18,6 +21,21 @@ namespace Four_Old_Dudes.MovingSprites
         private float _attackSpeed = 80.0f;
         private float _timeSinceLastAttack = 80.0f;
         public float AttackPower = 5.0f;
+
+        /// <summary>
+        /// Create a new player instance
+        /// </summary>
+        /// <param name="text">The texture needed for the sprite</param>
+        /// <param name="frameWidth">The width of each frame</param>
+        /// <param name="frameHeight">The height of each frame</param>
+        /// <param name="framesPerSecond">The frames per second desired</param>
+        /// <param name="rTarget">The render target to draw to</param>
+        /// <param name="rStates">The render states</param>
+        /// <param name="player">The player on the map</param>
+        /// <param name="firstFrame">The first frame</param>
+        /// <param name="lastFrame">The last frmae</param>
+        /// <param name="isAnimated">Is it initially animated</param>
+        /// <param name="isLooped">Is it looped</param>
         public Enemy(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates,  Player player,
             int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
@@ -28,16 +46,27 @@ namespace Four_Old_Dudes.MovingSprites
             _PlayerIsCloseMultiplier = 1.0f;
         }
 
+        /// <summary>
+        /// Set the position of the enemy
+        /// </summary>
+        /// <param name="position">The new position</param>
         public void SetPosition(Vector2f position)
         {
             Position = position;
         }
 
-        public override float DoJump()
+        /// <summary>
+        /// Allow enemy to jump
+        /// </summary>
+        /// <returns>Vertical velocity</returns>
+        public override float Jump()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Move the enemy
+        /// </summary>
         public override void Move()
         {
           if(_playerOnMap == null)
@@ -84,6 +113,11 @@ namespace Four_Old_Dudes.MovingSprites
             Move(dx,dy);
         }
 
+        /// <summary>
+        /// Move the enemy
+        /// </summary>
+        /// <param name="x">Pixels in the X axis to move by</param>
+        /// <param name="y">Pixels in the Y axis to move by</param>
         public override void Move(float x, float y)
         {
             var tmp = Position;
@@ -92,11 +126,17 @@ namespace Four_Old_Dudes.MovingSprites
             Position = tmp;
         }
 
+        /// <summary>
+        /// Stop the enemy from animating
+        /// </summary>
         public override void Stop()
         {
             Pause();
         }
 
+        /// <summary>
+        /// Update the enemy's position on the window
+        /// </summary>
         public new void Update()
         {
             if (IsAnimated == false)
@@ -119,6 +159,10 @@ namespace Four_Old_Dudes.MovingSprites
             base.Update();
         }
 
+        /// <summary>
+        /// Attack the player
+        /// </summary>
+        /// <param name="player">The player to be attacked</param>
         public void Attack(Player player)
         {
             if (_timeSinceLastAttack >= _attackSpeed)

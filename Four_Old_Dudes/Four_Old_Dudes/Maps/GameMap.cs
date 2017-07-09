@@ -10,6 +10,9 @@ using SFML.Audio;
 
 namespace Four_Old_Dudes.Maps
 {
+    /// <summary>
+    /// A game map
+    /// </summary>
     public class GameMap : Map
     {
         public Vector2f PlayerInitialPosition { get; }
@@ -18,6 +21,11 @@ namespace Four_Old_Dudes.Maps
         public SFML.Graphics.Color BGColor { get; set; }
         public Music BGMusic { get; set; }
 
+        /// <summary>
+        /// Create an instance of a game map
+        /// </summary>
+        /// <param name="filename">The name of the map to load</param>
+        /// <param name="view">The view to render it too</param>
         public GameMap(string filename, View view) : base(filename, view)
         {
             DevelopGround();
@@ -55,11 +63,14 @@ namespace Four_Old_Dudes.Maps
                 PlayerInitialPosition = new Vector2f(0f,0f);
             }
         }
+
+        /// <summary>
+        /// Locate the enemy spawn points
+        /// </summary>
         private void FindEnemySpawns()
         {
             try
             {
-                //{[enemySpawn, true]}
                 EnemySpawns = Objects.Where(obj => obj.Name.Equals("enemySpawn")).ToList();
                 if (EnemySpawns == null || EnemySpawns.Count == 0)
                     throw new Exception("No enemy spawns objects found.");
@@ -69,6 +80,10 @@ namespace Four_Old_Dudes.Maps
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
+
+        /// <summary>
+        /// Find all the ground object tiles
+        /// </summary>
         private void DevelopGround()
         {
             try

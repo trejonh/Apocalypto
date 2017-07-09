@@ -25,6 +25,9 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly string _close = "\r\n<script src='.\\log.js'></script>\r\n</body>\r\n</html>";
 
+        /// <summary>
+        /// Create a log file for latest run
+        /// </summary>
         public static void InitLogFile()
         {
             if(!Directory.Exists(BaseFileLocation))
@@ -36,6 +39,10 @@ namespace Four_Old_Dudes.Utils
             _log.WriteLine(_head);
         }
 
+        /// <summary>
+        /// Log an error to the log file
+        /// </summary>
+        /// <param name="error">The error message</param>
         public static void LogError(string error)
         {
             const string eleO = "<error class=\'text-danger\'>";
@@ -43,6 +50,10 @@ namespace Four_Old_Dudes.Utils
             _log.WriteLine(eleO + error + eleC);
         }
 
+        /// <summary>
+        /// Log a warning to the log file
+        /// </summary>
+        /// <param name="warning">The warning message</param>
         public static void LogWarning(string warning)
         {
             const string eleO = "<warning class=\'text-warning\'>";
@@ -50,6 +61,10 @@ namespace Four_Old_Dudes.Utils
             _log.WriteLine(eleO + warning + eleC);
         }
 
+        /// <summary>
+        /// Log a general message
+        /// </summary>
+        /// <param name="log">The message to log</param>
         public static void Log(string log)
         {
             const string eleO = "<info class=\'text-info\'>";
@@ -57,6 +72,9 @@ namespace Four_Old_Dudes.Utils
             _log.WriteLine(eleO+log+eleC);
         }
 
+        /// <summary>
+        /// Close the log file
+        /// </summary>
         public static void CloseLog()
         {
             _log.Write(_close);
