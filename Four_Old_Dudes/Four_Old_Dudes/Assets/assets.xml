@@ -46,6 +46,11 @@
   </asset>
   <asset>
     <type>text</type>
+    <name>Back</name>
+    <text>Back</text>
+  </asset>
+  <asset>
+    <type>text</type>
     <name>NewGame</name>
     <text>New Game</text>
   </asset>
@@ -98,5 +103,10 @@
     <type>map</type>
     <name>DefaultMap</name>
     <location>\maps\map.tmx</location>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>MackStill</name>
+    <location>\images\mackDaddy.png</location>
   </asset>
 </assets>

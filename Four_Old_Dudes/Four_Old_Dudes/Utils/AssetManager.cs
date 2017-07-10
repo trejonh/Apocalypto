@@ -26,6 +26,8 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly Dictionary<string, string> FontAssets = new Dictionary<string, string>();
 
+        private static readonly Dictionary<string, string> ImageAssets = new Dictionary<string, string>();
+
         private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
         private static Texture _enemyText;
@@ -65,6 +67,9 @@ namespace Four_Old_Dudes.Utils
                         break;
                     case "text":
                         StringAssets.Add(asset.Name, asset.Text);
+                        break;
+                    case "image":
+                        ImageAssets.Add(asset.Name, asset.Text);
                         break;
                     default:
                         LogManager.LogWarning("Following asset could not be mapped"+asset);
@@ -217,6 +222,44 @@ namespace Four_Old_Dudes.Utils
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return font;
+        }
+
+        /// <summary>
+        /// Load an image asset
+        /// </summary>
+        /// <param name="name">The name of the asset</param>
+        /// <returns>The loaded image</returns>
+        public static Image LoadImage(string name)
+        {
+            Image image = null;
+            try
+            {
+                image = new Image(ImageAssets[name]);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return image;
+        }
+
+        /// <summary>
+        /// Load an texture asset
+        /// </summary>
+        /// <param name="name">The name of the asset</param>
+        /// <returns>The loaded image</returns>
+        public static Texture LoadTexture(string name)
+        {
+            Texture text = null;
+            try
+            {
+                text = new Texture(TextureAssests[name]);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return text;
         }
 
         /// <summary>

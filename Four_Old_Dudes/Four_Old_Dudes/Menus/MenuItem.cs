@@ -3,10 +3,11 @@ using SFML.Graphics;
 using SFML.System;
 
 namespace Four_Old_Dudes.Menus
-{
+{    
     /// <summary>
     /// Representaive of an on screen item for a menu
     /// </summary>
+    [SerializableAttribute]
     public class MenuItem : Core.Drawable
     {
         protected Text ItemText { get; set; }

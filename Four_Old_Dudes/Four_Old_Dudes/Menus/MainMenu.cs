@@ -20,6 +20,7 @@ namespace Four_Old_Dudes.Menus
         private List<MenuItem> _charMenuItems;
         private List<MenuItem> _originalMenuItems;
         private LinkedList<Vector2f> _originalPointerPos;
+        private List<Sprite> _characterStills;
         private int _itemIndex;
         /// <summary>
         /// The menu title
@@ -60,18 +61,28 @@ namespace Four_Old_Dudes.Menus
             var pointerSpite = AssetManager.LoadSprite("OldTimeyPointer");
             var renderWindow = WinInstance;
             Pointer = new MenuPointer(ref renderWindow, pointerSpite);
-            MenuItems.Add(new MenuItem(ref renderWindow, loadGameText, loadGame));
-            MenuItems.Add(new MenuItem(ref renderWindow, statsText, stats));
+            var loadGameItem = new MenuItem(ref renderWindow, loadGameText, loadGame);
+            var statsItem = new MenuItem(ref renderWindow, statsText, stats);
             var newGameItem = new MenuItem(ref renderWindow, newGameText, newGame);
-            newGameItem.AddAction(NewGameFunc);
             var exitItem = new MenuItem(ref renderWindow, exitText, exit);
+            newGameItem.AddAction(NewGameFunc);
+            loadGameItem.AddAction(LoadGameFunc);
+            statsItem.AddAction(DisplayStats);
             exitItem.AddAction(ExitGameFunc);
             MenuItems.Add(newGameItem);
+            MenuItems.Add(loadGameItem);
+            MenuItems.Add(statsItem);
             MenuItems.Add(exitItem);
+            _originalMenuItems = new List<MenuItem>();
+            _originalMenuItems.Add(newGameItem);
+            _originalMenuItems.Add(loadGameItem);
+            _originalMenuItems.Add(statsItem);
+            _originalMenuItems.Add(exitItem);
             Pointer.SetPosition(new Vector2f((newGame.Position.X - Pointer.Size.X / 2f), newGame.Position.Y));
             Pointer.SetScale(new Vector2f(0.5f, 0.5f));
             var vector2F = Pointer.GetPosition();
             if (vector2F != null)
+            {
                 _pointerPositions = new LinkedList<Vector2f>(new[]
                 {
                     vector2F.Value,
@@ -79,6 +90,14 @@ namespace Four_Old_Dudes.Menus
                     new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
                     new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
                 });
+                _originalPointerPos = new LinkedList<Vector2f>(new[]
+                {
+                    vector2F.Value,
+                    new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y),
+                    new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
+                    new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
+                });
+            }
         }
 
         /// <summary>
@@ -90,8 +109,13 @@ namespace Four_Old_Dudes.Menus
                 MenuItems = _charMenuItems;
             else if (_originalMenuItems != null && _originalMenuItems.Count != 0)
                 MenuItems = _originalMenuItems;
-            WinInstance.Clear();
+            WinInstance.Clear(Color.Magenta);
             base.Draw();
+            if (_displayChars && _characterStills != null)
+            {
+                foreach (var still in _characterStills)
+                    WinInstance.Draw(still);
+            }
             Pointer.Draw();
         }
 
@@ -105,7 +129,7 @@ namespace Four_Old_Dudes.Menus
             Vector2f? pointerPoition;
             if ((pointerPoition = Pointer.GetPosition()) == null)
             {
-                // TODO: Log this error
+                LogManager.LogWarning("The main menu pointer has no location.");
                 return;
             }
             if (e.Axis != (Joystick.Axis)Controller.Controller.XboxOneDirection.DPadYDir &&
@@ -243,14 +267,17 @@ namespace Four_Old_Dudes.Menus
 
         private bool NewGameFunc()
         {
-            /*var player = DisplayCharacters();
-            var renderWindow = WinInstance;
-            var world = new World(ref renderWindow, "DefaultMap",player, 0, 11);
-            world.AddPlayerAnimation(Moveable.Direction.Down, 0, 2);
-            world.AddPlayerAnimation(Moveable.Direction.Left, 3, 5);
-            world.AddPlayerAnimation(Moveable.Direction.Right, 6, 8);
-            world.AddPlayerAnimation(Moveable.Direction.Up, 9, 11);*/
             DisplayCharacters();
+            return true;
+        }
+        private bool LoadGameFunc()
+        {
+            Console.WriteLine("loading game");
+            return true;
+        }
+        private bool DisplayStats()
+        {
+            Console.WriteLine("displaying stats");
             return true;
         }
 
@@ -271,17 +298,25 @@ namespace Four_Old_Dudes.Menus
                 Text text;
                 if (i <= 3)
                 {
-                    shape = new CircleShape(64.0f)
-                    {
-                        OutlineThickness = 2,
-                        FillColor = Color.Transparent,
-                        Position = new Vector2f(((float) screenSize.X / 4), ((float) screenSize.Y / 5) + (i * 64))
-                    };
+                    if (i == 0)
+                        shape = new CircleShape(64.0f)
+                        {
+                            OutlineThickness = 2,
+                            FillColor = Color.Transparent,
+                            Position = new Vector2f(((float)screenSize.X / 4) + 50, ((float)screenSize.Y / 16))
+                        };
+                    else
+                        shape = new CircleShape(64.0f)
+                        {
+                            OutlineThickness = 2,
+                            FillColor = Color.Transparent,
+                            Position = new Vector2f(((float)screenSize.X / 4) + 50, ((float)screenSize.Y / 16) + (i * 128) + (i * 32))
+                        };
                     text = new Text(names[i], font)
                     {
                         CharacterSize = 60,
                         Color = Color.Black,
-                        Position = new Vector2f(shape.Position.X, shape.Position.Y + 124)
+                        Position = new Vector2f(shape.Position.X + 200, shape.Position.Y + 32)
                     };
                 }
                 else
@@ -289,13 +324,13 @@ namespace Four_Old_Dudes.Menus
                     shape = new RectangleShape(new Vector2f(ButtonX, ButtonY))
                     {
                         FillColor = new Color(128, 128, 128),
-                        Position = new Vector2f(((float) screenSize.X / 4), ((float) screenSize.Y / 5) + (i * 64))
+                        Position = new Vector2f(screenSize.X / 1.5f + 50, ((float) screenSize.Y / 12) + (i * 128) + 20)
                     };
                     text = new Text(AssetManager.GetMessage("Back"), font)
                     {
                         Color = Color.Black,
                         CharacterSize = 60,
-                        Position = new Vector2f(shape.Position.X + 60, shape.Position.Y)
+                        Position = new Vector2f(shape.Position.X + 90, shape.Position.Y + 15)
                     };
                 }
                 var renderWindow = WinInstance;
@@ -303,24 +338,36 @@ namespace Four_Old_Dudes.Menus
             }
             _displayChars = true;
             var newPos = new LinkedList<Vector2f>();
-            /*             
-                _pointerPositions = new LinkedList<Vector2f>(new[]
-                {
-                    vector2F.Value,
-                    new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y),
-                    new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
-                    new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
-                });
-             */
             foreach (var t in _charMenuItems)
             {
                 var pos = t.Position;
                 newPos.AddLast(new Vector2f((pos.X - Pointer.Size.X / 2f), pos.Y));
             }
-            _originalMenuItems = GenericCopier<List<MenuItem>>.DeepCopy(MenuItems);
-            _originalPointerPos = GenericCopier<LinkedList<Vector2f>>.DeepCopy(_pointerPositions);
+            var scale = new Vector2f(2.5f, 2.5f);
+            try
+            {
+                var mack = AssetManager.LoadSprite("MackStill");
+                mack.Scale = scale;
+                mack.Position = new Vector2f(_charMenuItems[0].Position.X + 32, _charMenuItems[0].Position.Y + 32);
+                var doug = AssetManager.LoadSprite("MackStill");
+                doug.Scale = scale;
+                doug.Position = new Vector2f(_charMenuItems[1].Position.X + 32, _charMenuItems[1].Position.Y + 32);
+                var lou = AssetManager.LoadSprite("MackStill");
+                lou.Scale = scale;
+                lou.Position = new Vector2f(_charMenuItems[2].Position.X + 32, _charMenuItems[2].Position.Y + 32);
+                var rob = AssetManager.LoadSprite("MackStill");
+                rob.Scale = scale;
+                rob.Position = new Vector2f(_charMenuItems[3].Position.X + 32, _charMenuItems[3].Position.Y + 32);
+                _characterStills = new List<Sprite>(new[] {
+                mack,doug,lou,rob
+                });
+            }
+            catch (NullReferenceException)
+            {
+                LogManager.LogError("Could not load character stills.");
+            }
             _pointerPositions = newPos;
-            Pointer.SetPosition(_pointerPositions.First.Value);
+            Pointer.Move(_pointerPositions.First.Value);
             _currentNode = _pointerPositions.First;
         }
     }
