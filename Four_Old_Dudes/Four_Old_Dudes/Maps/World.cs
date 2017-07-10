@@ -1,5 +1,5 @@
 ﻿
-using Four_Old_Dudes.Extensions;
+using Four_Old_Dudes.Misc;
 using Four_Old_Dudes.MovingSprites;
 using Four_Old_Dudes.Utils;
 using SFML.Graphics;
@@ -21,12 +21,11 @@ namespace Four_Old_Dudes.Maps
         private GameMap _worldMap;
         private bool _isRunning = true;
         private Thread _collisionThread;
-        private RenderWindow _winInstance;
-        private List<Enemy> _enemiesOnMap;
-        private View _worldView;
-        private RoundedRectangle _healthBar;
-        private Text _healthText;
-        public Color BGColor { get; set; }
+        private readonly RenderWindow _winInstance;
+        private readonly List<Enemy> _enemiesOnMap;
+        private readonly View _worldView;
+        private readonly HealthBar _healthBar;
+        public Color BgColor { get; set; }
 
         /// <summary>
         /// Create an empty world
@@ -54,17 +53,15 @@ namespace Four_Old_Dudes.Maps
             _worldPlayer.SetPosition(_worldMap.PlayerInitialPosition);
             _enemiesOnMap = SpawnEnemies(playerName,firstPlayerFrame,lastPlayerFrame);
             _worldView.Center = _worldPlayer.Position;
-            BGColor = _worldMap.BGColor;
+            BgColor = _worldMap.BgColor;
             var ts = new ThreadStart(CollisionDetection);
-            _collisionThread = new Thread(ts);
-            _collisionThread.Priority = ThreadPriority.AboveNormal;
-            _collisionThread.IsBackground = true;
+            _collisionThread = new Thread(ts)
+            {
+                Priority = ThreadPriority.AboveNormal,
+                IsBackground = true
+            };
             _collisionThread.Start();
-            var fillColor = new Color(138,7,7,125);
-            var font = AssetManager.LoadFont("OrangeJuice");
-            _healthBar = new RoundedRectangle(new Vector2f(200.0f, 75.0f),5,4) { FillColor = fillColor, Position = new Vector2f(_worldPlayer.Position.X,100), OutlineThickness = 3};
-            _healthText = new Text() { Position = _healthBar.Position, DisplayedString = AssetManager.GetMessage("Health"), Color = Color.Black, Font = font, CharacterSize = 60 };
-
+            _healthBar = new HealthBar(ref _winInstance, _worldPlayer.Position);
         }
 
         /// <summary>
@@ -109,33 +106,35 @@ namespace Four_Old_Dudes.Maps
                 while (_isRunning)
                 {
                     var currPosition = _worldPlayer.Position;
-                    var pWidth = _worldPlayer.Width;
                     /*
                      * Find the ground tiles closest to the player
                      * Calculate the distance between the player and said tile
                      * if that distance is greater than the size of tile  then 
                      * the player needs to fall
                      */
-                    var closeTiles = _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
-                    var floor = new List<Vector2f>();
-                    foreach(var tile in closeTiles)
+                    if (_worldMap.FloorObjects != null || _worldMap.FloorObjects.Count != 0)
                     {
-                        floor.Add(tile.Position);
-                    }
-                    if(floor.Count > 0)
-                    {
-                        var list = SortByDistance(currPosition, floor);
-                        var closestTile = closeTiles.Where(tile => tile.Position.Equals(list[0])).First();
-                        var bottomPosition = currPosition.Y - _worldPlayer.Height;
-                        if (closestTile != null)
+                        var closeTiles =
+                            _worldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
+                        var floor = closeTiles.Select(tile => tile.Position).ToList();
+                        if (floor.Count > 0)
                         {
-                            _worldPlayer.Ground = closestTile.Position;
-                            var dx = Math.Abs(_worldPlayer.Ground.X - currPosition.X);
-                            Console.WriteLine("Dx: {0}", dx);
-                            if (dx < (closestTile.Size.X * 0.73f) && bottomPosition <= _worldPlayer.Ground.Y)
-                                _worldPlayer.IsGroundUnderMe = true;
-                            else if (dx >= (closestTile.Size.X * 0.73f))
+                            var list = SortByDistance(currPosition, floor);
+                            var closestTile = closeTiles.First(tile => tile.Position.Equals(list[0]));
+                            var bottomPosition = currPosition.Y - _worldPlayer.Height;
+                            if (closestTile != null)
+                            {
+                                _worldPlayer.Ground = closestTile.Position;
+                                var dx = Math.Abs(_worldPlayer.Ground.X - currPosition.X);
+                                if (dx < (closestTile.Size.X * 0.73f) && bottomPosition <= _worldPlayer.Ground.Y)
+                                    _worldPlayer.IsGroundUnderMe = true;
+                                else if (dx >= (closestTile.Size.X * 0.73f))
+                                    _worldPlayer.IsGroundUnderMe = false;
+                            }
+                            else
+                            {
                                 _worldPlayer.IsGroundUnderMe = false;
+                            }
                         }
                         else
                         {
@@ -144,9 +143,9 @@ namespace Four_Old_Dudes.Maps
                     }
                     else
                     {
-                        _worldPlayer.IsGroundUnderMe = false;
+                        LogManager.LogError("No floor found on: "+_worldMap.Name);
                     }
-                    if(_enemiesOnMap.Count != 0)
+                    if (_enemiesOnMap.Count == 0) continue;
                     {
                         /*
                          * Detect if the enemy is near an edge, if so then change its direction
@@ -154,9 +153,7 @@ namespace Four_Old_Dudes.Maps
                         foreach (var enemy in _enemiesOnMap)
                         {
                             var edgeTiles = _worldMap.FloorObjects
-                                                    .Where(tile => tile.Position.Y >= (enemy.Position.Y - enemy.Height) && Math.Abs(tile.Position.X - enemy.Position.X) < enemy.Width * 10);
-                            if (edgeTiles != null)
-                            {
+                                .Where(tile => tile.Position.Y >= (enemy.Position.Y - enemy.Height) && Math.Abs(tile.Position.X - enemy.Position.X) < enemy.Width * 10);
                                 var leftEdge = edgeTiles.Count(tiles => tiles.Position.X <= enemy.Position.X);
                                 var rightEdge = edgeTiles.Count(tiles => tiles.Position.X > enemy.Position.X);
                                 if (leftEdge <= 1)
@@ -178,11 +175,6 @@ namespace Four_Old_Dudes.Maps
                                     enemy.TurnRight = false;
                                     enemy.TurnLeft = false;
                                 }
-                            }
-                            else
-                            {
-                                enemy.IsNearEdge = true;
-                            }
                             if (_worldPlayer.IsIntersecting(enemy.Position))
                             {
                                 enemy.Attack(_worldPlayer);
@@ -273,12 +265,11 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         public override void Draw()
         {
-            if (_worldMap.BGMusic != null && _worldMap.BGMusic.Status != SFML.Audio.SoundStatus.Playing)
-                _worldMap.BGMusic.Play();
+            if (_worldMap.BgMusic != null && _worldMap.BgMusic.Status != SFML.Audio.SoundStatus.Playing)
+                _worldMap.BgMusic.Play();
             _worldView.Center = _worldPlayer.Position;
             _winInstance.SetView(_worldView);
-            _healthBar.Position = new Vector2f(_worldPlayer.Position.X,_worldView.Center.Y-350);
-            _healthText.Position = new Vector2f(_healthBar.Position.X + 15, _healthBar.Position.Y);
+            _healthBar.SetPosition(new Vector2f(_worldPlayer.Position.X,_worldView.Center.Y-350));
             _winInstance.Draw(_worldMap);
             if (_worldMap.FloorObjects != null)
             {
@@ -311,8 +302,8 @@ namespace Four_Old_Dudes.Maps
                 }
             }
             _worldPlayer.Update();
-            _winInstance.Draw(_healthBar);
-            _winInstance.Draw(_healthText);
+            _healthBar.UpdateHealth(_worldPlayer.Health);
+            _healthBar.Draw();
             
         }
 

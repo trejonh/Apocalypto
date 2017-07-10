@@ -1,5 +1,7 @@
 ﻿using System;
 using SFML.Graphics;
+using SFML.System;
+
 namespace Four_Old_Dudes.Menus
 {
     /// <summary>
@@ -9,7 +11,8 @@ namespace Four_Old_Dudes.Menus
     {
         protected Text ItemText { get; set; }
         protected Shape ItemShape { get; set; }
-        private readonly Func<bool> _action;
+        public Vector2f Position => ItemShape.Position;
+        private Func<bool> _action;
 
         /// <summary>
         /// Default constructor setting all properties to null
@@ -76,6 +79,15 @@ namespace Four_Old_Dudes.Menus
         public bool DoAction()
         {
             return _action != null && _action();
+        }
+
+        /// <summary>
+        /// Set a new action for the menu item
+        /// </summary>
+        /// <param name="action">The new action</param>
+        public void AddAction(Func<bool> action)
+        {
+            _action = action;
         }
     }
 }

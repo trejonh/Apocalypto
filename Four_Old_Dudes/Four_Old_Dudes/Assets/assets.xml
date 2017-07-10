@@ -16,6 +16,26 @@
   </asset>
   <asset>
     <type>text</type>
+    <name>Mack</name>
+    <text>Mack</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Lou</name>
+    <text>Lou</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Rob</name>
+    <text>Rob</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Doug</name>
+    <text>Doug</text>
+  </asset>
+  <asset>
+    <type>text</type>
     <name>Health</name>
     <text>Health</text>
   </asset>
@@ -31,8 +51,23 @@
   </asset>
   <asset>
     <type>text</type>
+    <name>ResumeGame</name>
+    <text>Resume</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>SaveGame</name>
+    <text>Save Game</text>
+  </asset>
+  <asset>
+    <type>text</type>
     <name>LoadGame</name>
     <text>Load Game</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>PauseMenu</name>
+    <text>Paused</text>
   </asset>
   <asset>
     <type>text</type>

@@ -44,12 +44,12 @@ namespace Four_Old_Dudes.MovingSprites
 
         private Dictionary<Direction, Animation> AnimationsDirections { get; }
         public Direction CurrentDirection { get; private set; } = Direction.Right;
-        protected const float GRAVITY = 988.8f;
+        protected const float Gravity = 988.8f;
         protected float Friction = 0.6f;
-        protected const float LINEAR_VELOCITY = 1.38f * 150;
-        protected const float MAX_AIR_TIME = 0.92f;
-        public int Height { get { return TextureRect.Height; } }
-        public int Width { get { return TextureRect.Width; } }
+        protected const float LinearVelocity = 1.38f * 150;
+        protected const float MaxAirTime = 0.92f;
+        public int Height => TextureRect.Height;
+        public int Width => TextureRect.Width;
 
         /// <summary>
         /// Create a new moveable instance

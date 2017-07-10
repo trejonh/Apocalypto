@@ -10,14 +10,14 @@ namespace Four_Old_Dudes.MovingSprites
     /// </summary>
     public class Enemy : Moveable
     {
-        private Player _playerOnMap;
-        private const float Max_Time_Between_Turns = 5.0f;
-        private float _timeBetweenTurns = 0.0f;
-        public bool IsNearEdge { get; set; } = false;
+        private readonly Player _playerOnMap;
+        private const float MaxTimeBetweenTurns = 5.0f;
+        private float _timeBetweenTurns;
+        public bool IsNearEdge { get; set; }
         public bool TurnRight { get; set; } = false;
         public bool TurnLeft { get; set; } = false;
         private bool _isPlayerNear;
-        private float _PlayerIsCloseMultiplier;
+        private float _playerIsCloseMultiplier;
         private float _attackSpeed = 80.0f;
         private float _timeSinceLastAttack = 80.0f;
         public float AttackPower = 5.0f;
@@ -43,7 +43,7 @@ namespace Four_Old_Dudes.MovingSprites
             _playerOnMap = player;
             _isPlayerNear = false;
             IsNearEdge = false;
-            _PlayerIsCloseMultiplier = 1.0f;
+            _playerIsCloseMultiplier = 1.0f;
         }
 
         /// <summary>
@@ -74,8 +74,9 @@ namespace Four_Old_Dudes.MovingSprites
                 LogManager.LogError("No player was found in world");
                 return;
             }
-            float dx = 0.0f, dy = 0.0f;
-          if(_timeBetweenTurns >= Max_Time_Between_Turns || IsNearEdge)
+            float dx;
+            const float dy = 0.0f;
+          if(_timeBetweenTurns >= MaxTimeBetweenTurns || IsNearEdge)
             {
                 if (_isPlayerNear == false && IsNearEdge == false)
                 {
@@ -107,9 +108,9 @@ namespace Four_Old_Dudes.MovingSprites
                     SetDirection(Direction.Right);
             }
             if (CurrentDirection == Direction.Left)
-                dx = -1 * Friction * LINEAR_VELOCITY * GameRunner.Delta.AsSeconds() *_PlayerIsCloseMultiplier;
+                dx = -1 * Friction * LinearVelocity * GameMaster.Delta.AsSeconds() *_playerIsCloseMultiplier;
             else
-                dx = Friction * LINEAR_VELOCITY * GameRunner.Delta.AsSeconds() * _PlayerIsCloseMultiplier;
+                dx = Friction * LinearVelocity * GameMaster.Delta.AsSeconds() * _playerIsCloseMultiplier;
             Move(dx,dy);
         }
 
@@ -143,19 +144,16 @@ namespace Four_Old_Dudes.MovingSprites
                 return;
             var dx = _playerOnMap.Position.X - Position.X;
             dx = Math.Abs(dx);
-            if (dx < 100.0f && dx > Height && Position.Y == _playerOnMap.Position.Y)
+            if (dx < 100.0f && dx > Height && Math.Abs(Position.Y - _playerOnMap.Position.Y) < 0.0001f)
                 _isPlayerNear = true;
             else
                 _isPlayerNear = false;
             if (IsNearEdge)
-                _timeBetweenTurns = Max_Time_Between_Turns;
-            if (_isPlayerNear)
-                _PlayerIsCloseMultiplier = 1.5f;
-            else
-                _PlayerIsCloseMultiplier = 1.0f;
+                _timeBetweenTurns = MaxTimeBetweenTurns;
+            _playerIsCloseMultiplier = _isPlayerNear ? 1.5f : 1.0f;
             Move();
             Play();
-            _timeBetweenTurns += GameRunner.Delta.AsSeconds();
+            _timeBetweenTurns += GameMaster.Delta.AsSeconds();
             base.Update();
         }
 
@@ -171,7 +169,7 @@ namespace Four_Old_Dudes.MovingSprites
                 _timeSinceLastAttack = 0;
             }
             else
-                _timeSinceLastAttack += GameRunner.Delta.AsSeconds();
+                _timeSinceLastAttack += GameMaster.Delta.AsSeconds();
 
         }
     }

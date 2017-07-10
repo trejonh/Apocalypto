@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using System;
+using SFML.Graphics;
 namespace Four_Old_Dudes.Core
 {
     /// <summary>

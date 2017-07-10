@@ -12,12 +12,12 @@ namespace Four_Old_Dudes.MovingSprites
     public class Player : Moveable
     {
         private readonly RenderWindow _playerWindow;
-        private bool _isJumping = false;
-        private float _timeInAir = 0.0f;
-        private float _initialJumpSpeed = -1050.0f;
+        private bool _isJumping;
+        private float _timeInAir;
+        private const float InitialJumpSpeed = -1050.0f;
         private float _jumpAccel = -600.2f;
-        private View playerView;
-        private Vector2f initialPosition;
+        private readonly View _playerView;
+        private Vector2f _initialPosition;
         /// <summary>
         /// The position of the ground
         /// </summary>
@@ -48,7 +48,7 @@ namespace Four_Old_Dudes.MovingSprites
                         RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
-            initialPosition = Position;
+            _initialPosition = Position;
             Ground = Position;
             IsGroundUnderMe = true;
             _isFalling = false;
@@ -60,11 +60,11 @@ namespace Four_Old_Dudes.MovingSprites
                 _playerWindow.JoystickButtonPressed += OnJoystickButtonPressed;
                 _playerWindow.JoystickButtonReleased += OnJoystickButtonReleased;
                 _playerWindow.JoystickMoved += OnJoystickAxisMoved;
-                playerView = window.GetView();
-                var tmp = playerView.Center;
+                _playerView = window.GetView();
+                var tmp = _playerView.Center;
                 tmp.X /= 2;
-                playerView.Center = tmp;
-                _playerWindow.SetView(playerView);
+                _playerView.Center = tmp;
+                _playerWindow.SetView(_playerView);
             }
             else
             {
@@ -78,8 +78,8 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="position">The new position</param>
         public void SetPosition(Vector2f position)
         {
-            initialPosition = position;
-            Position = initialPosition;
+            _initialPosition = position;
+            Position = _initialPosition;
             Ground = position;
         }
 
@@ -111,26 +111,24 @@ namespace Four_Old_Dudes.MovingSprites
         /// <returns>Players vertical velocity</returns>
         public override float Jump()
         {
-            float velocity = 0.0f;
+            var velocity = 0.0f;
             if(Keyboard.IsKeyPressed(Keyboard.Key.Up) && !_isJumping && IsGroundUnderMe)
             {
                 _isJumping = true;
                 _isFalling = true;
             }
-            if (_isJumping || _isFalling)
+            if (!_isJumping && !_isFalling) return velocity;
+            if(Math.Abs(_timeInAir) < 0.0001f && _isJumping)
             {
-                if(_timeInAir == 0f && _isJumping)
-                {
-                    velocity = _initialJumpSpeed;
-                }
-                else if(_timeInAir < MAX_AIR_TIME && _isJumping)
-                {
-                    velocity = _jumpAccel * GameRunner.Delta.AsSeconds()*10;
-                }
-                else
-                {
-                    velocity = GRAVITY * GameRunner.Delta.AsSeconds()*10;
-                }
+                velocity = InitialJumpSpeed;
+            }
+            else if(_timeInAir < MaxAirTime && _isJumping)
+            {
+                velocity = _jumpAccel * GameMaster.Delta.AsSeconds()*10;
+            }
+            else
+            {
+                velocity = Gravity * GameMaster.Delta.AsSeconds()*10;
             }
             return velocity;
         }
@@ -148,26 +146,26 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public new void Update()
         {
-            float dx = 0f, dy=0f;
+            var dx = 0f;
             if (_isJumping)
-                _timeInAir += GameRunner.Delta.AsSeconds();
+                _timeInAir += GameMaster.Delta.AsSeconds();
             if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
             { 
                 SetDirection(Direction.Right);
-                dx = LINEAR_VELOCITY * Friction * GameRunner.Delta.AsSeconds();
+                dx = LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
                 Play();
             }
             else if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
             {
                 SetDirection(Direction.Left);
-                    dx = -1 * LINEAR_VELOCITY * Friction * GameRunner.Delta.AsSeconds();
+                    dx = -1 * LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
                     Play();
             }
             else
             {
                 Stop();
             }
-            dy = Jump() * GameRunner.Delta.AsSeconds();
+            var dy = Jump() * GameMaster.Delta.AsSeconds();
             Move(dx, dy);
             var dyGround = (Position.Y + Height) - Ground.Y;
             if (dyGround > 0f && IsGroundUnderMe)
@@ -185,9 +183,9 @@ namespace Four_Old_Dudes.MovingSprites
             }
             if (IsGroundUnderMe == false)
                 _isFalling = true;
-            Vector2f newCenter = playerView.Center;
-            var xMovement = Position.X - initialPosition.X;
-            var yMovement = Position.Y - initialPosition.Y;
+            Vector2f newCenter = _playerView.Center;
+            var xMovement = Position.X - _initialPosition.X;
+            var yMovement = Position.Y - _initialPosition.Y;
             if (xMovement > 0)
             {
                 newCenter.X += xMovement;
@@ -204,7 +202,7 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 newCenter.X -= xMovement;
             }
-            _playerWindow.SetView(playerView);
+            _playerWindow.SetView(_playerView);
             base.Update();
         }
 
@@ -268,21 +266,18 @@ namespace Four_Old_Dudes.MovingSprites
                     if (Joystick.GetAxisPosition(0, axis.Axis) > 0)
                     {
                         SetDirection(Direction.Right);
-                        dx = LINEAR_VELOCITY * Friction * GameTimer.GetFrameDelta().AsSeconds();
+                        dx = LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
                         Play();
                     }
                     else if (Joystick.GetAxisPosition(0, axis.Axis) < 0)
                     {
                         SetDirection(Direction.Left);
-                        dx = -1 * LINEAR_VELOCITY * Friction * GameTimer.GetFrameDelta().AsSeconds();
+                        dx = -1 * LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
                         Play();
                     }
                     Move(dx, dy);
                     break;
                 case (Joystick.Axis)Controller.Controller.XboxOneDirection.Triggers:
-                    break;
-                default:
-                   // Stop();
                     break;
             }
         }

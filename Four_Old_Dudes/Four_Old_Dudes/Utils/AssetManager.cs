@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Four_Old_Dudes.Maps;
-using Tiled.SFML;
 using Four_Old_Dudes.MovingSprites;
 
 namespace Four_Old_Dudes.Utils

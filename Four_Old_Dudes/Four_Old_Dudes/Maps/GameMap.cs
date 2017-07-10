@@ -5,8 +5,8 @@ using Four_Old_Dudes.Utils;
 using SFML.Graphics;
 using SFML.System;
 using Tiled.SFML;
-using System.Windows.Media;
 using SFML.Audio;
+using static System.Windows.Media.ColorConverter;
 
 namespace Four_Old_Dudes.Maps
 {
@@ -18,8 +18,9 @@ namespace Four_Old_Dudes.Maps
         public Vector2f PlayerInitialPosition { get; }
         public List<Tiled.SFML.Object> FloorObjects { get; private set; }
         public List<Tiled.SFML.Object> EnemySpawns { get; private set; }
-        public SFML.Graphics.Color BGColor { get; set; }
-        public Music BGMusic { get; set; }
+        public Color BgColor { get; set; }
+        public Music BgMusic { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Create an instance of a game map
@@ -28,27 +29,32 @@ namespace Four_Old_Dudes.Maps
         /// <param name="view">The view to render it too</param>
         public GameMap(string filename, View view) : base(filename, view)
         {
+            Name = filename;
             DevelopGround();
             FindEnemySpawns();
             try
             {
                 var hexColor = Properties["BGC"];
-                var color = (System.Windows.Media.Color)ColorConverter.ConvertFromString(hexColor);
-                BGColor = new SFML.Graphics.Color(color.R, color.G, color.B, color.A);
+                var convertFromString = ConvertFromString(hexColor);
+                if (convertFromString != null)
+                {
+                    var color = (System.Windows.Media.Color)convertFromString;
+                    BgColor = new Color(color.R, color.G, color.B, color.A);
+                }
             }
             catch (KeyNotFoundException)
             {
-                BGColor = new SFML.Graphics.Color(SFML.Graphics.Color.White);
+                BgColor = Color.White;
                 LogManager.LogWarning("No background color found for " + filename);
             }
             try
             {
                 var music = Properties["BGMusic"];
-                BGMusic = AssetManager.LoadMusic(music);
+                BgMusic = AssetManager.LoadMusic(music);
             }
             catch (KeyNotFoundException)
             {
-                BGMusic = null;
+                BgMusic = null;
                 LogManager.LogWarning("No background music found for " + filename);
             }
             try

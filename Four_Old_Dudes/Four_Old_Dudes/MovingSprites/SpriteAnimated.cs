@@ -1,6 +1,5 @@
 ﻿using Four_Old_Dudes.Utils;
 using SFML.Graphics;
-using SFML.System;
 
 namespace Four_Old_Dudes.MovingSprites
 {
@@ -11,7 +10,7 @@ namespace Four_Old_Dudes.MovingSprites
         private int _fps;
         private readonly int _frameWidth;
         private readonly int _frameHeight;
-        private int _currentFrame, _firstFrame, _lastFrame, _interval, _clock, _frameCount;
+        private int _currentFrame, _firstFrame, _lastFrame, _interval, _clock;
         protected bool IsAnimated;
         bool _isLooped;
 
@@ -36,7 +35,6 @@ namespace Four_Old_Dudes.MovingSprites
             _interval = 1000 / _fps;
             _frameWidth = frameWidth;
             _frameHeight = frameHeight;
-            _frameCount = lastFrame - firstFrame;
             _firstFrame = firstFrame;
             _currentFrame = firstFrame;
             _lastFrame = lastFrame;
@@ -53,13 +51,13 @@ namespace Four_Old_Dudes.MovingSprites
         /// <returns>Returns frame coordinates as IntRect.</returns>
         public IntRect GetFramePosition(int frame)
         {
-            int wCount = (int)Texture.Size.X / _frameWidth;
-            int xPos = frame % wCount;
-            int yPos = frame / wCount;/// 3;
-            int left = _frameWidth * xPos;
-            int top = _frameHeight * yPos;
+            var wCount = (int)Texture.Size.X / _frameWidth;
+            var xPos = frame % wCount;
+            var yPos = frame / wCount;
+            var left = _frameWidth * xPos;
+            var top = _frameHeight * yPos;
 
-            IntRect newPosition = new IntRect(left,top, _frameWidth, _frameHeight);
+            var newPosition = new IntRect(left,top, _frameWidth, _frameHeight);
             return newPosition;
         }
 
@@ -69,7 +67,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Update()
         {
-            _clock += GameRunner.Delta.AsMilliseconds();
+            _clock += GameMaster.Delta.AsMilliseconds();
             if (IsAnimated & _clock >= _interval)
             {
                 TextureRect = GetFramePosition(_currentFrame);
@@ -144,7 +142,6 @@ namespace Four_Old_Dudes.MovingSprites
             IsAnimated = isAnimated;
             _isLooped = isLooped;
 
-            _frameCount = (_lastFrame + 1) - _firstFrame;
             if (!isAnimated)
             {
                 TextureRect = GetFramePosition(firstFrame);

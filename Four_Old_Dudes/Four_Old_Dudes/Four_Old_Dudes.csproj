@@ -99,6 +99,8 @@
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\MenuPointer.cs" />
+    <Compile Include="Menus\PauseMenu.cs" />
+    <Compile Include="Misc\HealthBar.cs" />
     <Compile Include="MovingSprites\Enemy.cs" />
     <Compile Include="MovingSprites\Moveable.cs" />
     <Compile Include="MovingSprites\Player.cs" />
@@ -106,7 +108,8 @@
     <Compile Include="Core\Drawable.cs" />
     <Compile Include="MovingSprites\SpriteAnimated.cs" />
     <Compile Include="Utils\AssetManager.cs" />
-    <Compile Include="Utils\GameTimer.cs" />
+    <Compile Include="Utils\GameMaster.cs" />
+    <Compile Include="Utils\GenericCopier.cs" />
     <Compile Include="Utils\LogManager.cs" />
   </ItemGroup>
   <ItemGroup>
