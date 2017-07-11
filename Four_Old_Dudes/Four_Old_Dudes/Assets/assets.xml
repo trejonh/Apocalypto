@@ -103,6 +103,7 @@
     <type>map</type>
     <name>DefaultMap</name>
     <location>\maps\map.tmx</location>
+    <order>0</order>
   </asset>
   <asset>
     <type>texture</type>

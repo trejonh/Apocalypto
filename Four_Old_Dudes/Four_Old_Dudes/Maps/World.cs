@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using static Four_Old_Dudes.MovingSprites.Animation;
 using static Four_Old_Dudes.MovingSprites.Moveable;
 
 namespace Four_Old_Dudes.Maps
@@ -21,10 +22,11 @@ namespace Four_Old_Dudes.Maps
         private GameMap _worldMap;
         private bool _isRunning = true;
         private Thread _collisionThread;
-        private readonly RenderWindow _winInstance;
-        private readonly List<Enemy> _enemiesOnMap;
+        private RenderWindow _winInstance;
+        private List<Enemy> _enemiesOnMap;
         private readonly View _worldView;
-        private readonly HealthBar _healthBar;
+        private HealthBar _healthBar;
+        public int CurrentMap;
         public Color BgColor { get; set; }
 
         /// <summary>
@@ -44,11 +46,11 @@ namespace Four_Old_Dudes.Maps
         /// <param name="playerName">NAme of the player to load</param>
         /// <param name="firstPlayerFrame">The first frame of the player</param>
         /// <param name="lastPlayerFrame">The last frame of the player</param>
-        public World(ref RenderWindow window, string mapName, string playerName,int firstPlayerFrame, int lastPlayerFrame)
+        public World(ref RenderWindow window)
         {
             _winInstance = window;
             _worldView = new View(new FloatRect(new Vector2f(0.0f,0.0f), new Vector2f(window.Size.X,window.Size.Y)));
-            _worldMap = AssetManager.LoadGameMap(mapName, window.GetView());
+            /*_worldMap = AssetManager.LoadGameMap(mapName, window.GetView());
             _worldPlayer = AssetManager.LoadPlayer(playerName, window, firstPlayerFrame, lastPlayerFrame);
             _worldPlayer.SetPosition(_worldMap.PlayerInitialPosition);
             _enemiesOnMap = SpawnEnemies(playerName,firstPlayerFrame,lastPlayerFrame);
@@ -61,7 +63,7 @@ namespace Four_Old_Dudes.Maps
                 IsBackground = true
             };
             _collisionThread.Start();
-            _healthBar = new HealthBar(ref _winInstance, _worldPlayer.Position);
+            _healthBar = new HealthBar(ref _winInstance, _worldPlayer.Position);*/
         }
 
         /// <summary>
@@ -364,6 +366,25 @@ namespace Four_Old_Dudes.Maps
                 }
             }
             return smallestDistance.Value;
+        }
+        public void NewGame(string playerName, int firstPlayerFrame, int lastPlayerFrame, Dictionary<Direction, AnimationFrames> frames)
+        {
+            CurrentMap = 0;
+            _worldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
+            _worldPlayer = AssetManager.LoadPlayer(playerName, _winInstance, firstPlayerFrame, lastPlayerFrame);
+            _worldPlayer.SetPosition(_worldMap.PlayerInitialPosition);
+            _worldPlayer.SetAnimationFrames(frames);
+            _enemiesOnMap = SpawnEnemies(playerName,firstPlayerFrame,lastPlayerFrame);
+            _worldView.Center = _worldPlayer.Position;
+            BgColor = _worldMap.BgColor;
+            var ts = new ThreadStart(CollisionDetection);
+            _collisionThread = new Thread(ts)
+            {
+                Priority = ThreadPriority.AboveNormal,
+                IsBackground = true
+            };
+            _collisionThread.Start();
+            _healthBar = new HealthBar(ref _winInstance, _worldPlayer.Position);
         }
     }
 }

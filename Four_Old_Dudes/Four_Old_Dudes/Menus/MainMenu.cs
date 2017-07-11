@@ -5,6 +5,8 @@ using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using static Four_Old_Dudes.MovingSprites.Moveable;
+using static Four_Old_Dudes.MovingSprites.Animation;
 
 namespace Four_Old_Dudes.Menus
 {
@@ -198,47 +200,37 @@ namespace Four_Old_Dudes.Menus
             switch (e.Code)
             {
                 case Keyboard.Key.Up:
-                    try
-                    {
                         if ((_currentNode = _currentNode.Previous) != null)
                         {
                             pointerPosition = _currentNode.Value;
-                            _itemIndex--;
+                            if(_itemIndex > 0)
+                                _itemIndex--;
                         }
-
-                    }
-                    catch (NullReferenceException exception)
-                    {
-                        _currentNode = _pointerPositions.Last;
-                        _itemIndex = 3;
-                        pointerPosition = _currentNode.Value;
-                        LogManager.LogWarning(exception.Message);
-                    }
-                    finally
-                    {
+                        else
+                        {
+                            _currentNode = _pointerPositions.Last;
+                            if (_displayChars)
+                                _itemIndex = 4;
+                            else
+                                _itemIndex = 3;
+                            pointerPosition = _currentNode.Value;
+                        }                        
                         ShiftSound.Play();
-                    }
                     break;
                 case Keyboard.Key.Down:
-                    try
-                    {
                         if ((_currentNode = _currentNode.Next) != null)
                         {
                             pointerPosition = _currentNode.Value;
                             _itemIndex++;
                         }
-                    }
-                    catch (NullReferenceException exception)
-                    {
-                        _currentNode = _pointerPositions.First;
-                        _itemIndex = 0;
-                        pointerPosition = _currentNode.Value;
-                        LogManager.LogWarning(exception.Message);
-                    }
-                    finally
-                    {
+                        else
+                        {
+                            _currentNode = _pointerPositions.First;
+                            _itemIndex = 0;
+                            pointerPosition = _currentNode.Value;
+
+                        }
                         ShiftSound.Play();
-                    }
                     break;
                 case Keyboard.Key.Return:
                     try
@@ -281,6 +273,41 @@ namespace Four_Old_Dudes.Menus
             return true;
         }
 
+        private bool DisplayCharMenuItemFunc()
+        {
+            switch (_itemIndex)
+            {
+                case 0:
+                    Console.WriteLine("Mack");
+
+                    var frame = new Dictionary<Direction, AnimationFrames>();
+                    frame.Add(Direction.Down, new AnimationFrames(0, 2));
+                    frame.Add(Direction.Left, new AnimationFrames(3, 5));
+                    frame.Add(Direction.Right, new AnimationFrames( 6, 8));
+                    frame.Add(Direction.Up,new AnimationFrames( 9, 11));
+                    GameMaster.NewGame("TestPlayer", 0, 11, frame);
+                    GameMaster.IsMainMenuOpen = false;
+                    break;
+                case 1:
+                    Console.WriteLine("Rob");
+                    break;
+                case 2:
+                    Console.WriteLine("Doug");
+                    break;
+                case 3:
+                    Console.WriteLine("Lou");
+                    break;
+                case 4:
+                    _displayChars = false;
+                    _itemIndex = 0;
+                    _pointerPositions = _originalPointerPos;
+                    _currentNode = _pointerPositions.First;
+                    Pointer.Move(_originalPointerPos.First.Value);
+                    break;
+            }
+            return true;
+        }
+
         private void DisplayCharacters()
         {
             Console.WriteLine("in display");
@@ -308,7 +335,7 @@ namespace Four_Old_Dudes.Menus
                     else
                         shape = new CircleShape(64.0f)
                         {
-                            OutlineThickness = 2,
+                            OutlineThickness = 3,
                             FillColor = Color.Transparent,
                             Position = new Vector2f(((float)screenSize.X / 4) + 50, ((float)screenSize.Y / 16) + (i * 128) + (i * 32))
                         };
@@ -334,7 +361,7 @@ namespace Four_Old_Dudes.Menus
                     };
                 }
                 var renderWindow = WinInstance;
-                _charMenuItems.Add(new MenuItem(ref renderWindow, text, shape));
+                _charMenuItems.Add(new MenuItem(ref renderWindow, text, shape, DisplayCharMenuItemFunc));
             }
             _displayChars = true;
             var newPos = new LinkedList<Vector2f>();
@@ -348,16 +375,16 @@ namespace Four_Old_Dudes.Menus
             {
                 var mack = AssetManager.LoadSprite("MackStill");
                 mack.Scale = scale;
-                mack.Position = new Vector2f(_charMenuItems[0].Position.X + 32, _charMenuItems[0].Position.Y + 32);
+                mack.Position = new Vector2f(_charMenuItems[0].Position.X + 24, _charMenuItems[0].Position.Y + 24);
                 var doug = AssetManager.LoadSprite("MackStill");
                 doug.Scale = scale;
-                doug.Position = new Vector2f(_charMenuItems[1].Position.X + 32, _charMenuItems[1].Position.Y + 32);
+                doug.Position = new Vector2f(_charMenuItems[1].Position.X + 24, _charMenuItems[1].Position.Y + 24);
                 var lou = AssetManager.LoadSprite("MackStill");
                 lou.Scale = scale;
-                lou.Position = new Vector2f(_charMenuItems[2].Position.X + 32, _charMenuItems[2].Position.Y + 32);
+                lou.Position = new Vector2f(_charMenuItems[2].Position.X + 24, _charMenuItems[2].Position.Y + 24);
                 var rob = AssetManager.LoadSprite("MackStill");
                 rob.Scale = scale;
-                rob.Position = new Vector2f(_charMenuItems[3].Position.X + 32, _charMenuItems[3].Position.Y + 32);
+                rob.Position = new Vector2f(_charMenuItems[3].Position.X + 24, _charMenuItems[3].Position.Y + 24);
                 _characterStills = new List<Sprite>(new[] {
                 mack,doug,lou,rob
                 });
@@ -369,6 +396,7 @@ namespace Four_Old_Dudes.Menus
             _pointerPositions = newPos;
             Pointer.Move(_pointerPositions.First.Value);
             _currentNode = _pointerPositions.First;
+            _itemIndex = 0;
         }
     }
 }

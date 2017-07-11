@@ -22,7 +22,7 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly Dictionary<string, string> AudioAssets = new Dictionary<string, string>();
 
-        private static readonly Dictionary<string, string> MapAssets = new Dictionary<string, string>();
+        private static readonly List<MapAsset> MapAssets = new List<MapAsset>();
 
         private static readonly Dictionary<string, string> FontAssets = new Dictionary<string, string>();
 
@@ -46,7 +46,8 @@ namespace Four_Old_Dudes.Utils
                             Type = (string)u.Element("type"),
                             Name = (string)u.Element("name"),
                             Location = BaseFileLocation + (string)u.Element("location"),
-                            Text = (string)u.Element("text")
+                            Text = (string)u.Element("text"),
+                            Order = (string)u.Element("order")
                         };
 
             foreach (var asset in assets)
@@ -60,7 +61,7 @@ namespace Four_Old_Dudes.Utils
                         TextureAssests.Add(asset.Name, asset.Location);
                         break;
                     case "map":
-                        MapAssets.Add(asset.Name, asset.Location);
+                        MapAssets.Add(new MapAsset(asset.Name, asset.Location, int.Parse(asset.Order)));
                         break;
                     case "audio":
                         AudioAssets.Add(asset.Name, asset.Location);
@@ -77,6 +78,7 @@ namespace Four_Old_Dudes.Utils
                 }
             }
             fs.Close();
+           MapAssets.OrderBy(map => map.Order);
         }
 
         /// <summary>
@@ -265,21 +267,35 @@ namespace Four_Old_Dudes.Utils
         /// <summary>
         /// Load a game map asset
         /// </summary>
-        /// <param name="name">The name of the asset</param>
+        /// <param name="order">The order of the map</param>
         /// <param name="view">The view inwhich to draw map to</param>
         /// <returns>The loaded game map</returns>
-        public static GameMap LoadGameMap(string name,View view)
+        public static GameMap LoadGameMap(int order,View view)
         {
             GameMap map = null;
             try
             {
-                map = new GameMap(MapAssets[name], view);
+                map = new GameMap(MapAssets[order].Location, view);
             }
-            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            catch (Exception ex) when (ex is LoadingFailedException || ex is NullReferenceException || ex is IndexOutOfRangeException)
             {
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
             return map;
+        }
+
+        private class MapAsset
+        {
+            public string Location { get; }
+            public int Order { get; }
+            public string Name { get; }
+
+            public MapAsset(string name, string location, int order)
+            {
+                Name = name;
+                Location = location;
+                Order = order;
+            }
         }
     }
 }

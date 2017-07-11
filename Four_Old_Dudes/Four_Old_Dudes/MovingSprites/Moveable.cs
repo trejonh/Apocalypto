@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using static Four_Old_Dudes.MovingSprites.Animation;
 
 namespace Four_Old_Dudes.MovingSprites
 {
@@ -22,10 +23,10 @@ namespace Four_Old_Dudes.MovingSprites
             Down
         }
 
-        /// <summary>
+       /* /// <summary>
         /// Keeps track of which frames and their direction
         /// </summary>
-        private struct Animation
+        public struct Animation
         {
             public readonly int FirstFrame;
             public readonly int LastFrame;
@@ -41,8 +42,8 @@ namespace Four_Old_Dudes.MovingSprites
                 LastFrame = lastFrame;
             }
         }
-
-        private Dictionary<Direction, Animation> AnimationsDirections { get; }
+        */
+        private Dictionary<Direction, AnimationFrames> AnimationsDirections { get; set; }
         public Direction CurrentDirection { get; private set; } = Direction.Right;
         protected const float Gravity = 988.8f;
         protected float Friction = 0.6f;
@@ -67,7 +68,7 @@ namespace Four_Old_Dudes.MovingSprites
         protected Moveable(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
-            AnimationsDirections = new Dictionary<Direction, Animation>();
+            AnimationsDirections = new Dictionary<Direction, AnimationFrames>();
         }
 
         /// <summary>
@@ -104,7 +105,7 @@ namespace Four_Old_Dudes.MovingSprites
             CurrentDirection = direction;
             try
             {
-                Animation frame = AnimationsDirections[CurrentDirection];
+                var frame = AnimationsDirections[CurrentDirection];
                 SetAnimation(frame.FirstFrame, frame.LastFrame);
             }catch(KeyNotFoundException)
             {
@@ -112,13 +113,15 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
 
+        public void SetAnimationFrames(Dictionary<Direction, AnimationFrames> frames) => AnimationsDirections = frames;
+
         /// <summary>
         /// Add an animation
         /// </summary>
         /// <param name="direction">The direction of the frames</param>
         /// <param name="firstFrame">The first frame</param>
         /// <param name="lastFrame">The last frame</param>
-        public void AddAnimation(Direction direction, int firstFrame, int lastFrame) => AnimationsDirections.Add(direction,new Animation(firstFrame,lastFrame));
+        public void AddAnimation(Direction direction, int firstFrame, int lastFrame) => AnimationsDirections.Add(direction,new AnimationFrames(firstFrame,lastFrame));
 
         /// <summary>
         /// Determine if the sprite is intersecting some object

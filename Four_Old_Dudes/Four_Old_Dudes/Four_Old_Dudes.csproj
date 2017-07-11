@@ -101,6 +101,7 @@
     <Compile Include="Menus\MenuPointer.cs" />
     <Compile Include="Menus\PauseMenu.cs" />
     <Compile Include="Misc\HealthBar.cs" />
+    <Compile Include="MovingSprites\Animation.cs" />
     <Compile Include="MovingSprites\Enemy.cs" />
     <Compile Include="MovingSprites\Moveable.cs" />
     <Compile Include="MovingSprites\Player.cs" />

@@ -1,9 +1,11 @@
-﻿using System.Threading;
-using Four_Old_Dudes.Maps;
+﻿using Four_Old_Dudes.Maps;
 using Four_Old_Dudes.Menus;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using static Four_Old_Dudes.MovingSprites.Moveable;
+using static Four_Old_Dudes.MovingSprites.Animation;
+using System.Collections.Generic;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -13,16 +15,16 @@ namespace Four_Old_Dudes.Utils
         private static RenderWindow _window;
         public static Time Delta;
         private readonly Clock _gameClock;
-        public bool _isMainMenuOpen { get; set; }
+        public static bool IsMainMenuOpen { get; set; }
         private readonly MainMenu _mainMenu;
-        public World GameWorld { get; set; }
+        public static World GameWorld { get; set; }
 
         public GameMaster()
         {
             //_filePath = Directory.GetParent(_filePath).FullName;
             LogManager.InitLogFile();
             AssetManager.LoadAssets();
-            _isMainMenuOpen = true;
+            IsMainMenuOpen = true;
             _window = new RenderWindow(new VideoMode(Screenx, Screeny), AssetManager.GetMessage("GameTitle"));
             _window.SetActive(true);
             _window.SetFramerateLimit(60);
@@ -34,14 +36,11 @@ namespace Four_Old_Dudes.Utils
             world.AddPlayerAnimation(Moveable.Direction.Right, 6, 8);
             world.AddPlayerAnimation(Moveable.Direction.Up, 9, 11);*/
             _gameClock = new Clock();
-           /* var gameTs = new ThreadStart(DrawThread);
-            var mainGameThread = new Thread(gameTs) {Priority = ThreadPriority.Highest};
-            mainGameThread.Start();*/
             while (_window.IsOpen)
             {
                 _window.DispatchEvents();
                 Delta = _gameClock.Restart();
-                if (_isMainMenuOpen)
+                if (IsMainMenuOpen)
                     _mainMenu.Draw();
                 else
                 {
@@ -51,8 +50,11 @@ namespace Four_Old_Dudes.Utils
             }
         }
 
-        private void DrawThread()
+        public static void NewGame(string playerName, int firstFrame, int lastFrame, Dictionary<Direction, AnimationFrames> frames)
         {
+            if (GameWorld == null)
+                GameWorld = new World(ref _window);
+            GameWorld.NewGame(playerName, firstFrame, lastFrame, frames);
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
