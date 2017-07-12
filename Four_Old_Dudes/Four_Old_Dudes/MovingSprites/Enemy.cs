@@ -18,13 +18,14 @@ namespace Four_Old_Dudes.MovingSprites
         public bool TurnLeft { get; set; } = false;
         private bool _isPlayerNear;
         private float _playerIsCloseMultiplier;
-        private float _attackSpeed = 80.0f;
+        private const float AttackSpeed = 80.0f;
         private float _timeSinceLastAttack = 80.0f;
         public float AttackPower = 5.0f;
 
         /// <summary>
         /// Create a new player instance
         /// </summary>
+        /// <param name="name">Name of player</param>
         /// <param name="text">The texture needed for the sprite</param>
         /// <param name="frameWidth">The width of each frame</param>
         /// <param name="frameHeight">The height of each frame</param>
@@ -36,9 +37,9 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="lastFrame">The last frmae</param>
         /// <param name="isAnimated">Is it initially animated</param>
         /// <param name="isLooped">Is it looped</param>
-        public Enemy(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates,  Player player,
+        public Enemy(string name, Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates,  Player player,
             int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
-            : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
+            : base(name,text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
             _playerOnMap = player;
             _isPlayerNear = false;
@@ -140,7 +141,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public new void Update()
         {
-            if (IsAnimated == false)
+            if (IsAnimated == false || GameMaster.IsGamePaused)
                 return;
             var dx = _playerOnMap.Position.X - Position.X;
             dx = Math.Abs(dx);
@@ -163,7 +164,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="player">The player to be attacked</param>
         public void Attack(Player player)
         {
-            if (_timeSinceLastAttack >= _attackSpeed)
+            if (_timeSinceLastAttack >= AttackSpeed)
             {
                 player.Health -= AttackPower;
                 _timeSinceLastAttack = 0;

@@ -66,6 +66,11 @@
   </asset>
   <asset>
     <type>text</type>
+    <name>SaveGameMess</name>
+    <text>mysave</text>
+  </asset>
+  <asset>
+    <type>text</type>
     <name>LoadGame</name>
     <text>Load Game</text>
   </asset>

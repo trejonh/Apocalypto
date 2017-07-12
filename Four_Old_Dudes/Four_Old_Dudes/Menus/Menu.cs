@@ -58,6 +58,13 @@ namespace Four_Old_Dudes.Menus
             WinInstance.JoystickMoved += OnJoyStickAxisMoved;
         }
 
+        public void AddMenuSelectionAction()
+        {
+            WinInstance.KeyPressed += OnKeyPressed;
+            WinInstance.JoystickButtonPressed += OnJoyStickButtonPressed;
+            WinInstance.JoystickMoved += OnJoyStickAxisMoved;
+        }
+
         /// <summary>
         /// Add menu item to exisiting list
         /// </summary>

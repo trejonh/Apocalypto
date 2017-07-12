@@ -28,7 +28,7 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly Dictionary<string, string> ImageAssets = new Dictionary<string, string>();
 
-        private static readonly string BaseFileLocation =Environment.CurrentDirectory + @"\Assets";
+        private static readonly string BaseFileLocation = Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
         private static Texture _enemyText;
 
@@ -115,7 +115,7 @@ namespace Four_Old_Dudes.Utils
             try
             {
                 var text = new Texture(TextureAssests[name]) { Smooth = true };
-                player = new Player(text, 32, 32, 60, window, RenderStates.Default, firstFrame, lastFrame);
+                player = new Player(name,text, 32, 32, 60, window, RenderStates.Default, firstFrame, lastFrame);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -140,7 +140,7 @@ namespace Four_Old_Dudes.Utils
             {
                 if(_enemyText == null)
                     _enemyText = new Texture(TextureAssests[name]) { Smooth = true };
-                enemy = new Enemy(_enemyText, 32, 32, 60, window, RenderStates.Default, player, firstFrame, lastFrame);
+                enemy = new Enemy(name, _enemyText, 32, 32, 60, window, RenderStates.Default, player, firstFrame, lastFrame);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {

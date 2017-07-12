@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using Four_Old_Dudes.Maps;
 using Four_Old_Dudes.Utils;
 using SFML.Audio;
 using SFML.Graphics;
@@ -19,6 +20,8 @@ namespace Four_Old_Dudes.Menus
         /// The menu title
         /// </summary>
         public string MenuTitle { get; set; }
+
+        private World _worldInstance;
 
         /// <summary>
         /// Construct a new main menu
@@ -51,11 +54,9 @@ namespace Four_Old_Dudes.Menus
             var pointerSpite = AssetManager.LoadSprite("OldTimeyPointer");
             var renderWindow = WinInstance;
             Pointer = new MenuPointer(ref renderWindow, pointerSpite);
-            MenuItems.Add(new MenuItem(ref renderWindow, resumeGameText, resumeGame));
-            MenuItems.Add(new MenuItem(ref renderWindow, saveGameText, saveGame));
-            var exitItem = new MenuItem(ref renderWindow, exitText, exit);
-            exitItem.AddAction(ExitGameFunc);
-            MenuItems.Add(exitItem);
+            MenuItems.Add(new MenuItem(ref renderWindow, resumeGameText, resumeGame, ResumeGameFunc));
+            MenuItems.Add(new MenuItem(ref renderWindow, saveGameText, saveGame, SaveGameFunc));
+            MenuItems.Add( new MenuItem(ref renderWindow, exitText, exit, ExitGameFunc));
             Pointer.SetPosition(new Vector2f((resumeGame.Position.X - Pointer.Size.X / 2f), resumeGame.Position.Y));
             Pointer.SetScale(new Vector2f(0.5f, 0.5f));
             var vector2F = Pointer.GetPosition();
@@ -68,11 +69,25 @@ namespace Four_Old_Dudes.Menus
                 });
         }
 
+        private bool SaveGameFunc()
+        {
+            return GameState.SaveGame(_worldInstance);
+        }
+
+        private bool ResumeGameFunc()
+        {
+            GameMaster.IsGamePaused = false;
+            DestroyMenu();
+            return true;
+        }
+
         /// <summary>
         /// Draw menu items and  pointer to the window
         /// </summary>
         public override void Draw()
         {
+            WinInstance.Clear();
+            WinInstance.SetView(WinInstance.DefaultView);
             base.Draw();
             Pointer.Draw();
         }
@@ -155,47 +170,29 @@ namespace Four_Old_Dudes.Menus
             switch (e.Code)
             {
                 case Keyboard.Key.Up:
-                    try
+                    if (_currentNode != null && (_currentNode = _currentNode.Previous) != null)
                     {
-                        if ((_currentNode = _currentNode.Previous) != null)
-                        {
-                            pointerPosition = _currentNode.Value;
-                            _itemIndex--;
-                        }
-
+                        pointerPosition = _currentNode.Value;
                     }
-                    catch (NullReferenceException exception)
+                    else
                     {
                         _currentNode = _pointerPositions.Last;
-                        _itemIndex = 3;
                         pointerPosition = _currentNode.Value;
-                        LogManager.LogWarning(exception.Message);
                     }
-                    finally
-                    {
-                        ShiftSound.Play();
-                    }
+                    ShiftSound.Play();
                     break;
                 case Keyboard.Key.Down:
-                    try
+                    if (_currentNode != null && (_currentNode = _currentNode.Next) != null)
                     {
-                        if ((_currentNode = _currentNode.Next) != null)
-                        {
-                            pointerPosition = _currentNode.Value;
-                            _itemIndex++;
-                        }
+                        pointerPosition = _currentNode.Value;
                     }
-                    catch (NullReferenceException exception)
+                    else
                     {
                         _currentNode = _pointerPositions.First;
-                        _itemIndex = 0;
                         pointerPosition = _currentNode.Value;
-                        LogManager.LogWarning(exception.Message);
+
                     }
-                    finally
-                    {
-                        ShiftSound.Play();
-                    }
+                    ShiftSound.Play();
                     break;
                 case Keyboard.Key.Return:
                     try
@@ -210,6 +207,15 @@ namespace Four_Old_Dudes.Menus
                         LogManager.LogWarning("No menu item found at index: " + _itemIndex);
                     }
                     break;
+                case Keyboard.Key.Escape:
+                    GameMaster.IsGamePaused = false;
+                    DestroyMenu();
+                    break;
+            }
+            for (var i = 0; i < MenuItems.Count; i++)
+            {
+                if ((Math.Abs(pointerPosition.Value.Y - MenuItems[i].Position.Y) <= 0.1))
+                    _itemIndex = i;
             }
             Pointer.SetPosition(pointerPosition.Value);
         }
@@ -221,5 +227,7 @@ namespace Four_Old_Dudes.Menus
             WinInstance.Close();
             return true;
         }
+
+        public void SetWorld(ref World world) => _worldInstance = world;
     }
 }

@@ -22,27 +22,6 @@ namespace Four_Old_Dudes.MovingSprites
             Up,
             Down
         }
-
-       /* /// <summary>
-        /// Keeps track of which frames and their direction
-        /// </summary>
-        public struct Animation
-        {
-            public readonly int FirstFrame;
-            public readonly int LastFrame;
-
-            /// <summary>
-            /// Create a new animation
-            /// </summary>
-            /// <param name="firstFrame">First frame of the animation</param>
-            /// <param name="lastFrame">Last frame if the animation</param>
-            public Animation(int firstFrame, int lastFrame)
-            {
-                FirstFrame = firstFrame;
-                LastFrame = lastFrame;
-            }
-        }
-        */
         private Dictionary<Direction, AnimationFrames> AnimationsDirections { get; set; }
         public Direction CurrentDirection { get; private set; } = Direction.Right;
         protected const float Gravity = 988.8f;
@@ -51,10 +30,12 @@ namespace Four_Old_Dudes.MovingSprites
         protected const float MaxAirTime = 0.92f;
         public int Height => TextureRect.Height;
         public int Width => TextureRect.Width;
+        public string Name { get; }
 
         /// <summary>
         /// Create a new moveable instance
         /// </summary>
+        /// <param name="name">Name of player</param>
         /// <param name="text">The texture needed for the sprite</param>
         /// <param name="frameWidth">The width of each frame</param>
         /// <param name="frameHeight">The height of each frame</param>
@@ -65,9 +46,10 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="lastFrame">The last frmae</param>
         /// <param name="isAnimated">Is it initially animated</param>
         /// <param name="isLooped">Is it looped</param>
-        protected Moveable(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
+        protected Moveable(string name, Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
+            Name = name;
             AnimationsDirections = new Dictionary<Direction, AnimationFrames>();
         }
 

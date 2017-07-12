@@ -75,31 +75,25 @@ namespace Four_Old_Dudes.Menus
             MenuItems.Add(loadGameItem);
             MenuItems.Add(statsItem);
             MenuItems.Add(exitItem);
-            _originalMenuItems = new List<MenuItem>();
-            _originalMenuItems.Add(newGameItem);
-            _originalMenuItems.Add(loadGameItem);
-            _originalMenuItems.Add(statsItem);
-            _originalMenuItems.Add(exitItem);
+            _originalMenuItems = new List<MenuItem> {newGameItem, loadGameItem, statsItem, exitItem};
             Pointer.SetPosition(new Vector2f((newGame.Position.X - Pointer.Size.X / 2f), newGame.Position.Y));
             Pointer.SetScale(new Vector2f(0.5f, 0.5f));
             var vector2F = Pointer.GetPosition();
-            if (vector2F != null)
+            if (vector2F == null) return;
+            _pointerPositions = new LinkedList<Vector2f>(new[]
             {
-                _pointerPositions = new LinkedList<Vector2f>(new[]
-                {
-                    vector2F.Value,
-                    new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y),
-                    new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
-                    new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
-                });
-                _originalPointerPos = new LinkedList<Vector2f>(new[]
-                {
-                    vector2F.Value,
-                    new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y),
-                    new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
-                    new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
-                });
-            }
+                vector2F.Value,
+                new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y),
+                new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
+                new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
+            });
+            _originalPointerPos = new LinkedList<Vector2f>(new[]
+            {
+                vector2F.Value,
+                new Vector2f((loadGame.Position.X - Pointer.Size.X / 2f), loadGame.Position.Y),
+                new Vector2f((stats.Position.X - Pointer.Size.X / 2f), stats.Position.Y),
+                new Vector2f((exit.Position.X - Pointer.Size.X / 2f), exit.Position.Y)
+            });
         }
 
         /// <summary>
@@ -190,7 +184,6 @@ namespace Four_Old_Dudes.Menus
         /// <param name="e"></param>
         public override void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("item index: {0}",_itemIndex);
             Vector2f? pointerPosition;
             if ((pointerPosition = Pointer.GetPosition()) == null)
             {
@@ -200,33 +193,25 @@ namespace Four_Old_Dudes.Menus
             switch (e.Code)
             {
                 case Keyboard.Key.Up:
-                        if ((_currentNode = _currentNode.Previous) != null)
+                        if (_currentNode != null && (_currentNode = _currentNode.Previous) != null)
                         {
                             pointerPosition = _currentNode.Value;
-                            if(_itemIndex > 0)
-                                _itemIndex--;
                         }
                         else
                         {
                             _currentNode = _pointerPositions.Last;
-                            if (_displayChars)
-                                _itemIndex = 4;
-                            else
-                                _itemIndex = 3;
                             pointerPosition = _currentNode.Value;
                         }                        
                         ShiftSound.Play();
                     break;
                 case Keyboard.Key.Down:
-                        if ((_currentNode = _currentNode.Next) != null)
+                        if (_currentNode != null && (_currentNode = _currentNode.Next) != null)
                         {
                             pointerPosition = _currentNode.Value;
-                            _itemIndex++;
                         }
                         else
                         {
                             _currentNode = _pointerPositions.First;
-                            _itemIndex = 0;
                             pointerPosition = _currentNode.Value;
 
                         }
@@ -245,6 +230,22 @@ namespace Four_Old_Dudes.Menus
                         LogManager.LogWarning("No menu item found at index: "+_itemIndex);
                     }
                     break;
+                case Keyboard.Key.Escape:
+                    if (_displayChars)
+                    {
+                        _itemIndex = 4;
+                        DisplayCharMenuItemFunc();
+                    }
+                    else
+                    {
+                        ExitGameFunc();
+                    }
+                    break;
+            }
+            for (var i = 0; i < MenuItems.Count; i++)
+            {
+                if ((Math.Abs(pointerPosition.Value.Y - MenuItems[i].Position.Y) <= 0.1))
+                    _itemIndex = i;
             }
             Pointer.SetPosition(pointerPosition.Value);
         }
@@ -280,11 +281,13 @@ namespace Four_Old_Dudes.Menus
                 case 0:
                     Console.WriteLine("Mack");
 
-                    var frame = new Dictionary<Direction, AnimationFrames>();
-                    frame.Add(Direction.Down, new AnimationFrames(0, 2));
-                    frame.Add(Direction.Left, new AnimationFrames(3, 5));
-                    frame.Add(Direction.Right, new AnimationFrames( 6, 8));
-                    frame.Add(Direction.Up,new AnimationFrames( 9, 11));
+                    var frame = new Dictionary<Direction, AnimationFrames>
+                    {
+                        { Direction.Down, new AnimationFrames(0, 2) },
+                        { Direction.Left, new AnimationFrames(3, 5) },
+                        { Direction.Right, new AnimationFrames(6, 8) },
+                        { Direction.Up, new AnimationFrames(9, 11) }
+                    };
                     GameMaster.NewGame("TestPlayer", 0, 11, frame);
                     GameMaster.IsMainMenuOpen = false;
                     break;
@@ -310,7 +313,6 @@ namespace Four_Old_Dudes.Menus
 
         private void DisplayCharacters()
         {
-            Console.WriteLine("in display");
             var screenSize = WinInstance.Size;
             _charMenuItems = new List<MenuItem>();
             var names = new[]

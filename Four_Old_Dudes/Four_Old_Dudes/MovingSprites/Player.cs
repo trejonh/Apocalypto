@@ -34,6 +34,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// <summary>
         /// Create a new player instance
         /// </summary>
+        /// <param name="name">Name of player</param>
         /// <param name="text">The texture needed for the sprite</param>
         /// <param name="frameWidth">The width of each frame</param>
         /// <param name="frameHeight">The height of each frame</param>
@@ -44,9 +45,9 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="lastFrame">The last frmae</param>
         /// <param name="isAnimated">Is it initially animated</param>
         /// <param name="isLooped">Is it looped</param>
-        public Player(Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
+        public Player(string name, Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget,
                         RenderStates rStates, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
-            : base(text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
+            : base(name, text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
             _initialPosition = Position;
             Ground = Position;
@@ -70,6 +71,24 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 LogManager.LogWarning("Window is null, cannot set movers");
             }
+        }
+
+        public void AddControls()
+        {
+            _playerWindow.KeyPressed += OnKeyPressed;
+            _playerWindow.KeyReleased += OnKeyReleased;
+            _playerWindow.JoystickButtonPressed += OnJoystickButtonPressed;
+            _playerWindow.JoystickButtonReleased += OnJoystickButtonReleased;
+            _playerWindow.JoystickMoved += OnJoystickAxisMoved;
+        }
+
+        public void RemoveControls()
+        {
+            _playerWindow.KeyPressed -= OnKeyPressed;
+            _playerWindow.KeyReleased -= OnKeyReleased;
+            _playerWindow.JoystickButtonPressed -= OnJoystickButtonPressed;
+            _playerWindow.JoystickButtonReleased -= OnJoystickButtonReleased;
+            _playerWindow.JoystickMoved -= OnJoystickAxisMoved;
         }
 
         /// <summary>
@@ -146,6 +165,8 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public new void Update()
         {
+            if (GameMaster.IsGamePaused)
+                return;
             var dx = 0f;
             if (_isJumping)
                 _timeInAir += GameMaster.Delta.AsSeconds();
@@ -213,6 +234,19 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="key"></param>
         public void OnKeyPressed(object sender, KeyEventArgs key)
         {
+            if (key.Code != Keyboard.Key.Escape) return;
+            if (GameMaster.IsGamePaused)
+            {
+                GameMaster.IsGamePaused = false;
+                AddControls();
+                Play();
+            }
+            else
+            {
+                Stop();
+                RemoveControls();
+                GameMaster.IsGamePaused = true;
+            }
         }
 
         /// <summary>

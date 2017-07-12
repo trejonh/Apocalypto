@@ -79,9 +79,11 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ValueTuple, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -101,6 +103,7 @@
     <Compile Include="Menus\MenuPointer.cs" />
     <Compile Include="Menus\PauseMenu.cs" />
     <Compile Include="Misc\HealthBar.cs" />
+    <Compile Include="Misc\InputBox.cs" />
     <Compile Include="MovingSprites\Animation.cs" />
     <Compile Include="MovingSprites\Enemy.cs" />
     <Compile Include="MovingSprites\Moveable.cs" />
@@ -110,6 +113,7 @@
     <Compile Include="MovingSprites\SpriteAnimated.cs" />
     <Compile Include="Utils\AssetManager.cs" />
     <Compile Include="Utils\GameMaster.cs" />
+    <Compile Include="Utils\GameState.cs" />
     <Compile Include="Utils\GenericCopier.cs" />
     <Compile Include="Utils\LogManager.cs" />
   </ItemGroup>
