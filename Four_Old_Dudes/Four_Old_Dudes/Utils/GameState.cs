@@ -3,12 +3,15 @@ using System.IO;
 using System.Xml;
 using Four_Old_Dudes.Maps;
 using Four_Old_Dudes.Misc;
+using System.Threading;
 
 namespace Four_Old_Dudes.Utils
 {
     public static class GameState
     {
         private static readonly string GameSaveLocation = Environment.CurrentDirectory + @"\GameState\";
+        private static bool _inputThreadRunning {get;set;}
+        private static string _desiredSaveName { get; set; }
         public static bool SaveGame(World worldToSave)
         {
             if (worldToSave == null)
@@ -16,25 +19,17 @@ namespace Four_Old_Dudes.Utils
                 LogManager.LogError("Cannot save game with a null world");
                 return false;
             }
-            var saveGame = AssetManager.GetMessage("SaveGameMess");
-
-            var items = new [] {
-                new InputBoxItem(AssetManager.GetMessage("SaveGame"), saveGame)
-            };
-
-            var input = InputBox.Show(AssetManager.GetMessage("SaveGame"), items, InputBoxButtons.SaveCancel);
-            var desiredSaveName = "";
-            if (input.Result == InputBoxResult.Cancel)
-            {
-                return false;
-            }
-            else
-            {
-                desiredSaveName = InputBox.Res;
-            }
-            if (string.IsNullOrEmpty(desiredSaveName))
-                desiredSaveName = "MyGameSave";
-            var path = GameSaveLocation + desiredSaveName;
+            _desiredSaveName = "";
+            var inputThreadStart = new ThreadStart(AskSaveLocation);
+            var inputThread = new Thread(inputThreadStart) { Priority = ThreadPriority.Normal};
+            _inputThreadRunning = true;
+            inputThread.Start();
+            while (_inputThreadRunning) { /* do nothing */}
+            Console.WriteLine("aborting");
+            inputThread.Abort();
+            if (string.IsNullOrEmpty(_desiredSaveName))
+                _desiredSaveName = "MyGameSave";
+            var path = GameSaveLocation + _desiredSaveName;
             var i = 0 ;
             if (Directory.Exists(GameSaveLocation) == false)
                 Directory.CreateDirectory(GameSaveLocation);
@@ -75,6 +70,37 @@ namespace Four_Old_Dudes.Utils
                 //end save
             }
             return true;
+        }
+
+        private static void AskSaveLocation()
+        {
+            InputBox input = null;
+            try
+            {
+                var saveGame = AssetManager.GetMessage("SaveGameMess");
+                var items = new[] {
+                new InputBoxItem(AssetManager.GetMessage("SaveGame"), saveGame)
+            };
+                input = InputBox.Show(AssetManager.GetMessage("SaveGame"), items, InputBoxButtons.SaveCancel);
+                if (input.Result == InputBoxResult.Cancel)
+                {
+                    _inputThreadRunning = false;
+                }
+                else if (input.Result == InputBoxResult.Save)
+                {
+                    //desiredSaveName = input.Items[AssetManager.GetMessage("SaveGame")];
+                    _inputThreadRunning = false;
+                }
+            }
+            catch (ThreadAbortException)
+            {
+                LogManager.LogWarning("Aborting save thread");
+            }
+            finally
+            {
+                LogManager.LogWarning("Aborting save thread");
+                input.Dispose();
+            }
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Four_Old_Dudes.Menus
             var resumeGameText = new Text() { Position = new Vector2f(resumeGame.Position.X + 50, resumeGame.Position.Y + 10), DisplayedString = AssetManager.GetMessage("ResumeGame"), Color = Color.Black, Font = font, CharacterSize = 60 };
             var saveGame = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 4) - 40) };
             var saveGameText = new Text() { Position = new Vector2f(saveGame.Position.X + 14, saveGame.Position.Y + 10), DisplayedString = AssetManager.GetMessage("SaveGame"), Color = Color.Black, Font = font, CharacterSize = 60 };
-            var exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 2) - 40) };
+            var exit = new RectangleShape(new Vector2f(ButtonX, ButtonY)) { FillColor = fillColor, Position = new Vector2f((screenSizeX / 2) - ButtonX / 2, screenSizeY - (ButtonY * 2) - 80) };
             var exitText = new Text() { Position = new Vector2f(exit.Position.X + 100, exit.Position.Y + 10), DisplayedString = AssetManager.GetMessage("Exit"), Color = Color.Black, Font = font, CharacterSize = 60 };
             var pointerSpite = AssetManager.LoadSprite("OldTimeyPointer");
             var renderWindow = WinInstance;
@@ -71,7 +71,8 @@ namespace Four_Old_Dudes.Menus
 
         private bool SaveGameFunc()
         {
-            return GameState.SaveGame(_worldInstance);
+            GameState.SaveGame(_worldInstance);
+            return true;
         }
 
         private bool ResumeGameFunc()
@@ -217,7 +218,7 @@ namespace Four_Old_Dudes.Menus
                 if ((Math.Abs(pointerPosition.Value.Y - MenuItems[i].Position.Y) <= 0.1))
                     _itemIndex = i;
             }
-            Pointer.SetPosition(pointerPosition.Value);
+            Pointer.Move(pointerPosition.Value);
         }
 
 
