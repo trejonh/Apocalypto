@@ -111,6 +111,16 @@
     <order>0</order>
   </asset>
   <asset>
+    <type>text</type>
+    <name>DefaultMap</name>
+    <text>Default Map</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>LoadError</name>
+    <text>Bad save file. Check logs for more info.</text>
+  </asset>
+  <asset>
     <type>texture</type>
     <name>MackStill</name>
     <location>\images\mackDaddy.png</location>

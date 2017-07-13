@@ -16,6 +16,7 @@ namespace Four_Old_Dudes.Menus
         private LinkedListNode<Vector2f> _currentNode;
         private const int ButtonX = 300, ButtonY = 100;
         private int _itemIndex;
+        private int timesCalled = 0;
         /// <summary>
         /// The menu title
         /// </summary>
@@ -71,7 +72,10 @@ namespace Four_Old_Dudes.Menus
 
         private bool SaveGameFunc()
         {
+            timesCalled++;
+            Console.WriteLine("Saved called {0} times.", timesCalled);
             GameState.SaveGame(_worldInstance);
+            DestroyMenu();
             return true;
         }
 
@@ -162,6 +166,7 @@ namespace Four_Old_Dudes.Menus
         /// <param name="e"></param>
         public override void OnKeyPressed(object sender, KeyEventArgs e)
         {
+            if (GameMaster.IsGamePaused == false) return;
             Vector2f? pointerPosition;
             if ((pointerPosition = Pointer.GetPosition()) == null)
             {
@@ -202,6 +207,11 @@ namespace Four_Old_Dudes.Menus
                         SelectSound.Play();
                         if (item.DoAction() == false)
                             LogManager.LogWarning("Failed to do menu item's action.");
+                        else
+                        {
+                            DestroyMenu();
+                            GameMaster.Unpause();
+                        }
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -209,16 +219,18 @@ namespace Four_Old_Dudes.Menus
                     }
                     break;
                 case Keyboard.Key.Escape:
-                    GameMaster.IsGamePaused = false;
                     DestroyMenu();
+                    GameMaster.Unpause();
                     break;
             }
             for (var i = 0; i < MenuItems.Count; i++)
             {
+                Console.WriteLine("Pointer Y {0}, Item Y {1}", pointerPosition.Value.Y ,MenuItems[i].Position.Y);
                 if ((Math.Abs(pointerPosition.Value.Y - MenuItems[i].Position.Y) <= 0.1))
                     _itemIndex = i;
             }
-            Pointer.Move(pointerPosition.Value);
+            if(GameMaster.IsGamePaused)
+                Pointer.SetPosition(pointerPosition.Value);
         }
 
 

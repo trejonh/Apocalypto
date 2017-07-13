@@ -57,6 +57,9 @@
     <Reference Include="MoreLinq, Version=2.6.20831.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.2.6.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
+    <Reference Include="MotionNET">
+      <HintPath>..\lib\MotionNET.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\extlibs\OpenTK.dll</HintPath>
     </Reference>
@@ -103,7 +106,6 @@
     <Compile Include="Menus\MenuPointer.cs" />
     <Compile Include="Menus\PauseMenu.cs" />
     <Compile Include="Misc\HealthBar.cs" />
-    <Compile Include="Misc\InputBox.cs" />
     <Compile Include="MovingSprites\Animation.cs" />
     <Compile Include="MovingSprites\Enemy.cs" />
     <Compile Include="MovingSprites\Moveable.cs" />

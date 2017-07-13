@@ -2,16 +2,59 @@
 using System.IO;
 using System.Xml;
 using Four_Old_Dudes.Maps;
-using Four_Old_Dudes.Misc;
 using System.Threading;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace Four_Old_Dudes.Utils
 {
     public static class GameState
     {
         private static readonly string GameSaveLocation = Environment.CurrentDirectory + @"\GameState\";
-        private static bool _inputThreadRunning {get;set;}
+        public static bool InputThreadRunning { get; set; } = true;
         private static string _desiredSaveName { get; set; }
+
+        public static void LoadGame()
+        {
+            Stream myStream = null;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            if (Directory.Exists(GameSaveLocation) == false)
+                Directory.CreateDirectory(GameSaveLocation);
+            openFileDialog1.InitialDirectory = GameSaveLocation;
+            openFileDialog1.Filter = "Save Files (*.xml)|*.xml|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                    {
+                        var xdoc = XDocument.Load(myStream);
+                        var gameSave = from u in xdoc.Descendants("gameSave")
+                                    select new
+                                    {
+                                        World = u.Element("world"),
+                                    };
+                        if (gameSave == null)
+                            throw new Exception("Not a proper game save file");
+                        var world = gameSave[0].World;
+                        Console.WriteLine();
+                    }
+                    else
+                        throw new Exception("Could not open file.");
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Failed to load file\n"+ex.Message);
+                    MessageBox.Show(AssetManager.GetMessage("LoadError"));
+                }
+            }
+        }
         public static bool SaveGame(World worldToSave)
         {
             if (worldToSave == null)
@@ -20,26 +63,38 @@ namespace Four_Old_Dudes.Utils
                 return false;
             }
             _desiredSaveName = "";
-            var inputThreadStart = new ThreadStart(AskSaveLocation);
-            var inputThread = new Thread(inputThreadStart) { Priority = ThreadPriority.Normal};
-            _inputThreadRunning = true;
-            inputThread.Start();
-            while (_inputThreadRunning) { /* do nothing */}
-            Console.WriteLine("aborting");
-            inputThread.Abort();
+            var saveName = _desiredSaveName;
+            var res = InputBox(AssetManager.GetMessage("SaveGame"), AssetManager.GetMessage("SaveGame"), ref saveName);
+            if (res == DialogResult.OK)
+            {
+                _desiredSaveName = saveName;
+                InputThreadRunning = false;
+            }
             if (string.IsNullOrEmpty(_desiredSaveName))
                 _desiredSaveName = "MyGameSave";
             var path = GameSaveLocation + _desiredSaveName;
             var i = 0 ;
+            var placeHlder = "";
             if (Directory.Exists(GameSaveLocation) == false)
                 Directory.CreateDirectory(GameSaveLocation);
-            while (File.Exists(path + ".xml"))
+            while (File.Exists(path + placeHlder + ".xml"))
             {
-                path += i;
                 i++;
+                placeHlder = "_" + i;
+            }
+            path += placeHlder;
+            if(path.Length >= 260)
+            {
+                LogManager.LogWarning(path + "is too long of a path name. Resetting");
+                path = GameSaveLocation + "Apocalypto";
+                while (File.Exists(path + placeHlder + ".xml"))
+                {
+                    i++;
+                    placeHlder = "_" + i;
+                }
+
             }
             var settings = new XmlWriterSettings {Indent = true, CloseOutput = true, WriteEndDocumentOnClose = true};
-
             using (var writer = XmlWriter.Create(path+".xml", settings))
             {
                 writer.WriteStartElement("gameSave");
@@ -72,35 +127,46 @@ namespace Four_Old_Dudes.Utils
             return true;
         }
 
-        private static void AskSaveLocation()
+        private static DialogResult InputBox(string title, string promptText, ref string value)
         {
-            InputBox input = null;
-            try
-            {
-                var saveGame = AssetManager.GetMessage("SaveGameMess");
-                var items = new[] {
-                new InputBoxItem(AssetManager.GetMessage("SaveGame"), saveGame)
-            };
-                input = InputBox.Show(AssetManager.GetMessage("SaveGame"), items, InputBoxButtons.SaveCancel);
-                if (input.Result == InputBoxResult.Cancel)
-                {
-                    _inputThreadRunning = false;
-                }
-                else if (input.Result == InputBoxResult.Save)
-                {
-                    //desiredSaveName = input.Items[AssetManager.GetMessage("SaveGame")];
-                    _inputThreadRunning = false;
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                LogManager.LogWarning("Aborting save thread");
-            }
-            finally
-            {
-                LogManager.LogWarning("Aborting save thread");
-                input.Dispose();
-            }
+            Form form = new Form();
+            Label label = new Label();
+            TextBox textBox = new TextBox();
+            Button buttonOk = new Button();
+            Button buttonCancel = new Button();
+
+            form.Text = title;
+            label.Text = promptText;
+            textBox.Text = value;
+
+            buttonOk.Text = "Save";
+            buttonCancel.Text = "Cancel";
+            buttonOk.DialogResult = DialogResult.OK;
+            buttonCancel.DialogResult = DialogResult.Cancel;
+
+            label.SetBounds(9, 20, 372, 13);
+            textBox.SetBounds(12, 36, 372, 20);
+            buttonOk.SetBounds(228, 72, 75, 23);
+            buttonCancel.SetBounds(309, 72, 75, 23);
+
+            label.AutoSize = true;
+            textBox.Anchor = textBox.Anchor | AnchorStyles.Right;
+            buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+
+            form.ClientSize = new Size(396, 107);
+            form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
+            form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.AcceptButton = buttonOk;
+            form.CancelButton = buttonCancel;
+
+            DialogResult dialogResult = form.ShowDialog();
+            value = textBox.Text;
+            return dialogResult;
         }
     }
 }

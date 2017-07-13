@@ -26,6 +26,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// Is there a ground tile under me
         /// </summary>
         public bool IsGroundUnderMe { get; set; }
+        public bool IsControlsRemoved { get; set; } = false;
         private bool _isFalling;
         /// <summary>
         /// Current health level
@@ -80,6 +81,7 @@ namespace Four_Old_Dudes.MovingSprites
             _playerWindow.JoystickButtonPressed += OnJoystickButtonPressed;
             _playerWindow.JoystickButtonReleased += OnJoystickButtonReleased;
             _playerWindow.JoystickMoved += OnJoystickAxisMoved;
+            IsControlsRemoved = false;
         }
 
         public void RemoveControls()
@@ -89,6 +91,7 @@ namespace Four_Old_Dudes.MovingSprites
             _playerWindow.JoystickButtonPressed -= OnJoystickButtonPressed;
             _playerWindow.JoystickButtonReleased -= OnJoystickButtonReleased;
             _playerWindow.JoystickMoved -= OnJoystickAxisMoved;
+            IsControlsRemoved = true;
         }
 
         /// <summary>
@@ -167,43 +170,46 @@ namespace Four_Old_Dudes.MovingSprites
         {
             if (GameMaster.IsGamePaused)
                 return;
-            var dx = 0f;
-            if (_isJumping)
-                _timeInAir += GameMaster.Delta.AsSeconds();
-            if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-            { 
-                SetDirection(Direction.Right);
-                dx = LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
-                Play();
-            }
-            else if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+            if (DoContinueToWait() == false)
             {
-                SetDirection(Direction.Left);
+                var dx = 0f;
+                if (_isJumping)
+                    _timeInAir += GameMaster.Delta.AsSeconds();
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                {
+                    SetDirection(Direction.Right);
+                    dx = LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
+                    Play();
+                }
+                else if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+                {
+                    SetDirection(Direction.Left);
                     dx = -1 * LinearVelocity * Friction * GameMaster.Delta.AsSeconds();
                     Play();
+                }
+                else
+                {
+                    Stop();
+                }
+                var dy = Jump() * GameMaster.Delta.AsSeconds();
+                Move(dx, dy);
+                var dyGround = (Position.Y + Height) - Ground.Y;
+                if (dyGround > 0f && IsGroundUnderMe)
+                {
+                    var tmp = Position;
+                    tmp.Y = Ground.Y - Height - 0.01f;
+                    Position = tmp;
+                    _isJumping = false;
+                    _isFalling = false;
+                    _timeInAir = 0.0f;
+                }
+                else if (Position.Y > Ground.Y && IsGroundUnderMe == false)
+                {
+                    _isFalling = true;
+                }
+                if (IsGroundUnderMe == false)
+                    _isFalling = true;
             }
-            else
-            {
-                Stop();
-            }
-            var dy = Jump() * GameMaster.Delta.AsSeconds();
-            Move(dx, dy);
-            var dyGround = (Position.Y + Height) - Ground.Y;
-            if (dyGround > 0f && IsGroundUnderMe)
-            {
-                var tmp = Position;
-                tmp.Y = Ground.Y - Height - 0.01f;
-                Position = tmp;
-                _isJumping = false;
-                _isFalling = false;
-                _timeInAir = 0.0f;
-            }
-            else if (Position.Y > Ground.Y && IsGroundUnderMe == false)
-            {
-                _isFalling = true;
-            }
-            if (IsGroundUnderMe == false)
-                _isFalling = true;
             Vector2f newCenter = _playerView.Center;
             var xMovement = Position.X - _initialPosition.X;
             var yMovement = Position.Y - _initialPosition.Y;
@@ -235,13 +241,7 @@ namespace Four_Old_Dudes.MovingSprites
         public void OnKeyPressed(object sender, KeyEventArgs key)
         {
             if (key.Code != Keyboard.Key.Escape) return;
-            if (GameMaster.IsGamePaused)
-            {
-                GameMaster.IsGamePaused = false;
-                AddControls();
-                Play();
-            }
-            else
+            if(GameMaster.IsGamePaused == false)
             {
                 Stop();
                 RemoveControls();

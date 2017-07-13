@@ -13,6 +13,7 @@ namespace Four_Old_Dudes.Menus
         protected Text ItemText { get; set; }
         protected Shape ItemShape { get; set; }
         public Vector2f Position => ItemShape.Position;
+        public string Text => ItemText.DisplayedString;
         private Func<bool> _action;
 
         /// <summary>

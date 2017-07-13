@@ -21,6 +21,7 @@ namespace Four_Old_Dudes.Maps
         public Color BgColor { get; set; }
         public Music BgMusic { get; set; }
         public string Name { get; set; }
+        public Vector2f EndOfMap { get; set; }
 
         /// <summary>
         /// Create an instance of a game map
@@ -29,7 +30,6 @@ namespace Four_Old_Dudes.Maps
         /// <param name="view">The view to render it too</param>
         public GameMap(string filename, View view) : base(filename, view)
         {
-            Name = filename;
             DevelopGround();
             FindEnemySpawns();
             try
@@ -56,6 +56,18 @@ namespace Four_Old_Dudes.Maps
             {
                 BgMusic = null;
                 LogManager.LogWarning("No background music found for " + filename);
+            }
+            try
+            {
+                var x = Properties["EOMX"];
+                var y = Properties["EOMY"];
+                EndOfMap = new Vector2f(float.Parse(x), float.Parse(y));
+
+            }
+            catch (Exception)
+            {
+                EndOfMap = new Vector2f(0.0f,0.0f);
+                LogManager.LogError("No end of map for " + filename);
             }
             try
             {

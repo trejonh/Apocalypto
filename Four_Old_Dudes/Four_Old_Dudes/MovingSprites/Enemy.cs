@@ -143,18 +143,21 @@ namespace Four_Old_Dudes.MovingSprites
         {
             if (IsAnimated == false || GameMaster.IsGamePaused)
                 return;
-            var dx = _playerOnMap.Position.X - Position.X;
-            dx = Math.Abs(dx);
-            if (dx < 100.0f && dx > Height && Math.Abs(Position.Y - _playerOnMap.Position.Y) < 0.0001f)
-                _isPlayerNear = true;
-            else
-                _isPlayerNear = false;
-            if (IsNearEdge)
-                _timeBetweenTurns = MaxTimeBetweenTurns;
-            _playerIsCloseMultiplier = _isPlayerNear ? 1.5f : 1.0f;
-            Move();
-            Play();
-            _timeBetweenTurns += GameMaster.Delta.AsSeconds();
+            if (DoContinueToWait() == false)
+            {
+                var dx = _playerOnMap.Position.X - Position.X;
+                dx = Math.Abs(dx);
+                if (dx < 100.0f && dx > Height && Math.Abs(Position.Y - _playerOnMap.Position.Y) < 0.0001f)
+                    _isPlayerNear = true;
+                else
+                    _isPlayerNear = false;
+                if (IsNearEdge)
+                    _timeBetweenTurns = MaxTimeBetweenTurns;
+                _playerIsCloseMultiplier = _isPlayerNear ? 1.5f : 1.0f;
+                Move();
+                Play();
+                _timeBetweenTurns += GameMaster.Delta.AsSeconds();
+            }
             base.Update();
         }
 

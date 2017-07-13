@@ -28,6 +28,8 @@ namespace Four_Old_Dudes.Maps
         private HealthBar _healthBar;
         public int CurrentMap;
         public Color BgColor { get; set; }
+        private bool _isInitialMapLoad { get; set; } = false;
+        private Text _initLoadText { get; set; }
 
         /// <summary>
         /// Create an empty world
@@ -93,6 +95,7 @@ namespace Four_Old_Dudes.Maps
             {
                 while (_isRunning)
                 {
+                    if (GameMaster.IsGamePaused || _isInitialMapLoad) continue;
                     var currPosition = WorldPlayer.Position;
                     /*
                      * Find the ground tiles closest to the player
@@ -253,46 +256,51 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         public override void Draw()
         {
-            if (WorldMap.BgMusic != null && WorldMap.BgMusic.Status != SFML.Audio.SoundStatus.Playing)
-                WorldMap.BgMusic.Play();
-            _worldView.Center = WorldPlayer.Position;
-            _winInstance.SetView(_worldView);
-            _healthBar.SetPosition(new Vector2f(WorldPlayer.Position.X,_worldView.Center.Y-350));
-            _winInstance.Clear(WorldMap.BgColor);
-            _winInstance.Draw(WorldMap);
-            if (WorldMap.FloorObjects != null)
+            if (_isInitialMapLoad)
+                InitialMapLoad();
+            else
             {
-                foreach (var floor in WorldMap.FloorObjects)
-                    _winInstance.Draw(floor);
-            }
-            if (EnemiesOnMap != null)
-            {
-                var center = _worldView.Center;
-                var size = new Vector2f(_worldView.Size.X / 2, _worldView.Size.Y / 2);
-                var leftX = center.X - size.X;
-                var rightX = center.X + size.X;
-                var topY = center.Y - size.Y;
-                var bottomY = center.Y + size.Y;
-                foreach (var enemy in EnemiesOnMap)
+                if (WorldMap.BgMusic != null && WorldMap.BgMusic.Status != SFML.Audio.SoundStatus.Playing)
+                    WorldMap.BgMusic.Play();
+                _worldView.Center = WorldPlayer.Position;
+                _winInstance.SetView(_worldView);
+                _healthBar.SetPosition(new Vector2f(WorldPlayer.Position.X, _worldView.Center.Y - 350));
+                _winInstance.Clear(WorldMap.BgColor);
+                _winInstance.Draw(WorldMap);
+                if (WorldMap.FloorObjects != null)
                 {
-                    var enePos = enemy.Position;
-                    if((enePos.Y < topY)
-                        || (enePos.Y > bottomY)
-                        || (enePos.X > rightX)
-                        || (enePos.X < leftX))
-                    {
-                        enemy.Stop();
-                    }
-                    else
-                    {
-                        enemy.Play();
-                    }
-                    enemy.Update();
+                    foreach (var floor in WorldMap.FloorObjects)
+                        _winInstance.Draw(floor);
                 }
+                if (EnemiesOnMap != null)
+                {
+                    var center = _worldView.Center;
+                    var size = new Vector2f(_worldView.Size.X / 2, _worldView.Size.Y / 2);
+                    var leftX = center.X - size.X;
+                    var rightX = center.X + size.X;
+                    var topY = center.Y - size.Y;
+                    var bottomY = center.Y + size.Y;
+                    foreach (var enemy in EnemiesOnMap)
+                    {
+                        var enePos = enemy.Position;
+                        if ((enePos.Y < topY)
+                            || (enePos.Y > bottomY)
+                            || (enePos.X > rightX)
+                            || (enePos.X < leftX))
+                        {
+                            enemy.Stop();
+                        }
+                        else
+                        {
+                            enemy.Play();
+                        }
+                        enemy.Update();
+                    }
+                }
+                WorldPlayer.Update();
+                _healthBar.UpdateHealth(WorldPlayer.Health);
+                _healthBar.Draw();
             }
-            WorldPlayer.Update();
-            _healthBar.UpdateHealth(WorldPlayer.Health);
-            _healthBar.Draw();
             
         }
 
@@ -372,6 +380,44 @@ namespace Four_Old_Dudes.Maps
             };
             _collisionThread.Start();
             _healthBar = new HealthBar(ref _winInstance, WorldPlayer.Position);
+            var font = AssetManager.LoadFont("OrangeJuice");
+            _initLoadText = new Text() { Position = new Vector2f(0,0), DisplayedString = AssetManager.GetMessage(WorldMap.Name), Color = Color.Black, Font = font, CharacterSize = 60 };
+            _isInitialMapLoad = true;
+            WorldPlayer.ResetWaitTime();
+            foreach (var enemy in EnemiesOnMap)
+                enemy.ResetWaitTime();
+        }
+        public void InitialMapLoad()
+        {
+            var currentCenter = _worldView.Center;
+            if(Math.Abs(WorldMap.EndOfMap.X - currentCenter.X) <= _worldView.Size.X / 2.0f)
+            {
+                _isInitialMapLoad = false;
+                return;
+            }
+            _initLoadText.Position = new Vector2f(currentCenter.X, _winInstance.Size.Y/2);
+            _worldView.Move(new Vector2f(150 * GameMaster.Delta.AsSeconds(),0.0f));
+            _winInstance.SetView(_worldView);
+            _winInstance.Clear(WorldMap.BgColor);
+            _winInstance.Draw(WorldMap);
+            if (WorldMap.FloorObjects != null)
+            {
+                foreach (var floor in WorldMap.FloorObjects)
+                    _winInstance.Draw(floor);
+            }
+            _winInstance.Draw(_initLoadText);
+        }
+        public void UnpauseWorld()
+        {
+            WorldPlayer.AddControls();
+        }
+
+        public void Pause()
+        {
+            WorldPlayer.RemoveControls();
+            WorldPlayer.ResetWaitTime();
+            foreach (var enemy in EnemiesOnMap)
+                enemy.ResetWaitTime();
         }
     }
 }

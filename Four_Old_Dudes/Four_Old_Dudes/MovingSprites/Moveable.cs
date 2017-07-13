@@ -31,6 +31,8 @@ namespace Four_Old_Dudes.MovingSprites
         public int Height => TextureRect.Height;
         public int Width => TextureRect.Width;
         public string Name { get; }
+        private const float MaxWaitTime = 1.5f;
+        private float _currentWaitTime = 0.0f;
 
         /// <summary>
         /// Create a new moveable instance
@@ -117,6 +119,21 @@ namespace Four_Old_Dudes.MovingSprites
             if (dx < Width && dy < Height)
                 return true;
             return false;
+        }
+
+        protected bool DoContinueToWait()
+        {
+            if(_currentWaitTime < MaxWaitTime)
+            {
+                _currentWaitTime += GameMaster.Delta.AsSeconds();
+                return true;
+            }
+            return false;
+        }
+
+        public void ResetWaitTime()
+        {
+            _currentWaitTime = 0.0f;
         }
     }
 }

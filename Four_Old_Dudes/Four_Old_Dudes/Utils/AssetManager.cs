@@ -275,7 +275,7 @@ namespace Four_Old_Dudes.Utils
             GameMap map = null;
             try
             {
-                map = new GameMap(MapAssets[order].Location, view);
+                map = new GameMap(MapAssets[order].Location, view) { Name = MapAssets[order].Name};
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is NullReferenceException || ex is IndexOutOfRangeException)
             {

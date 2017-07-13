@@ -44,8 +44,10 @@ namespace Four_Old_Dudes.Utils
                 else if(IsGamePaused == false)
                 {
                     GameWorld?.Draw();
-                }else if (IsGamePaused && IsPauseMenuCreated)
+                }
+                else if (IsGamePaused && IsPauseMenuCreated)
                 {
+                    Pause();
                     _pauseMenu.AddMenuSelectionAction();
                     var gameWorld = GameWorld;
                     _pauseMenu.SetWorld(ref gameWorld);
@@ -81,6 +83,18 @@ namespace Four_Old_Dudes.Utils
         {
             LogManager.CloseLog();
             _window.Close();
+        }
+
+        public static void Unpause()
+        {
+            GameWorld.UnpauseWorld();
+            IsGamePaused = false;
+        }
+
+        public static void Pause()
+        {
+            GameWorld.Pause();
+            IsGamePaused = true;
         }
     }
 }

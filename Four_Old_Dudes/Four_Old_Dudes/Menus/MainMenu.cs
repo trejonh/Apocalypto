@@ -265,7 +265,7 @@ namespace Four_Old_Dudes.Menus
         }
         private bool LoadGameFunc()
         {
-            Console.WriteLine("loading game");
+            GameState.LoadGame();
             return true;
         }
         private bool DisplayStats()
