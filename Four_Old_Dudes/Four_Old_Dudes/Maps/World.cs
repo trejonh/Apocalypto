@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using System.Xml.Linq;
 using static Four_Old_Dudes.MovingSprites.Animation;
 using static Four_Old_Dudes.MovingSprites.Moveable;
@@ -23,14 +24,32 @@ namespace Four_Old_Dudes.Maps
         public GameMap WorldMap { get; private set; }
         private bool _isRunning = true;
         private Thread _collisionThread;
-        private RenderWindow _winInstance;
+        private Thread _mapProgressionThread;
+        private Thread _loadingThread;
+        private bool _madeItToEnd;
+        private bool _loading;
+        private bool _dispControllerTime;
+        public int NumberOfPlayerLives { get; set; } = 3;
+       // private RenderWindow WinInstance;
         public List<Enemy> EnemiesOnMap { get; private set; }
         private readonly View _worldView;
         private HealthBar _healthBar;
+        private ScoreDisplay _scoreDisp;
         public int CurrentMap;
         public Color BgColor { get; set; }
         private bool IsInitialMapLoad { get; set; }
         private Text InitLoadText { get; set; }
+        private Text _loadingText { get; set; }
+        private Text _livesText { get; set; }
+        public long Score { get; private set; }
+        private bool _displayLives;
+        private float _timeToDisp;
+        private float _maxTimeToDisp = 4.5f;
+        private bool _localPause;
+        private int _countDown = 4;
+        private Text _countDownText;
+        private System.Timers.Timer _countDownTimer;
+        private bool _timerStarted;
 
         /// <summary>
         /// Create an empty world
@@ -47,18 +66,17 @@ namespace Four_Old_Dudes.Maps
         /// <param name="window">A window to draw the world's entities.</param>
         public World(ref RenderWindow window)
         {
-            _winInstance = window;
+            WinInstance = window;
             _worldView = new View(new FloatRect(new Vector2f(0.0f,0.0f), new Vector2f(window.Size.X,window.Size.Y)));
         }
 
         /// <summary>
         /// Spawn enemies based off their locations in the map
         /// </summary>
-        /// <param name="enemyName">Name of the enemy to spawn</param>
         /// <param name="firstFrame">First frame of the enemy</param>
         /// <param name="lastFrame">Last frame of the enemy</param>
         /// <returns>List of enemies</returns>
-        private List<Enemy> SpawnEnemies(string enemyName, int firstFrame, int lastFrame)
+        private List<Enemy> SpawnEnemies(int firstFrame, int lastFrame)
         {
             var enemyObjs = WorldMap.EnemySpawns;
             var enemies = new List<Enemy>();
@@ -66,7 +84,7 @@ namespace Four_Old_Dudes.Maps
                 return enemies;
             foreach (var enemy in enemyObjs)
             {
-                var en = AssetManager.LoadEnemy(enemyName, _winInstance, WorldPlayer,firstFrame, lastFrame);
+                var en = AssetManager.LoadEnemy(enemy.Name, WinInstance, WorldPlayer,firstFrame, lastFrame);
                 en.SetPosition(enemy.Position);
                 en.AddAnimation(Direction.Down, 0, 2);
                 en.AddAnimation(Direction.Left, 3, 5);
@@ -92,7 +110,7 @@ namespace Four_Old_Dudes.Maps
             {
                 while (_isRunning)
                 {
-                    if (GameMaster.IsGamePaused || IsInitialMapLoad) continue;
+                    if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
                     var currPosition = WorldPlayer.Position;
                     /*
                      * Find the ground tiles closest to the player
@@ -132,6 +150,16 @@ namespace Four_Old_Dudes.Maps
                     else
                     {
                         LogManager.LogError("No floor found on: "+WorldMap.Name);
+                    }
+                    if(WorldPlayer.IsGroundUnderMe == false && WorldPlayer.TimeFalling >= (2.5f * 0.92f))
+                    {
+                        // if player is falling for too long, reset them
+                        NumberOfPlayerLives--;
+                        Pause();
+                        WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
+                        _displayLives = true;
+                        _dispControllerTime = true;
+                        UnpauseWorld();
                     }
                     if (EnemiesOnMap.Count == 0) continue;
                     {
@@ -184,21 +212,22 @@ namespace Four_Old_Dudes.Maps
         /// <summary>
         /// Stop the collision detection thread
         /// </summary>
-        public void StopCollisionDetection()
+        public void StopWorld()
         {
             if (_isRunning == false)
             {
-                LogManager.LogWarning("Collision detection already stopped");
+                LogManager.LogWarning("All threads for detection already stopped");
                 return;
             }
             _isRunning = false;
             _collisionThread.Abort();
+            _mapProgressionThread.Abort();
         }
 
         /// <summary>
         /// Start collision detection thread
         /// </summary>
-        public void StartCollisonDetection()
+        public void StartWorld()
         {
             if (_isRunning)
             {
@@ -211,17 +240,22 @@ namespace Four_Old_Dudes.Maps
             _collisionThread.Priority = ThreadPriority.AboveNormal;
             _collisionThread.IsBackground = true;
             _collisionThread.Start();
+            var ts1 = new ThreadStart(DetectMapProgression);
+            _mapProgressionThread = new Thread(ts);
+            _mapProgressionThread.Priority = ThreadPriority.Normal;
+            _collisionThread.IsBackground = true;
+            _mapProgressionThread.Start();
         }
-        
+
         /// <summary>
         /// Set a new player for the world
         /// </summary>
         /// <param name="player">The new player to add</param>
         public void SetPlayer(Player player)
         {
-            StopCollisionDetection();
+            StopWorld();
             WorldPlayer = player;
-            StartCollisonDetection();
+            StartWorld();
         }
 
         /// <summary>
@@ -230,9 +264,9 @@ namespace Four_Old_Dudes.Maps
         /// <param name="map">The new map</param>
         public void SetMap(GameMap map)
         {
-            StopCollisionDetection();
+            StopWorld();
             WorldMap = map;
-            StartCollisonDetection();
+            StartWorld();
         }
 
         /// <summary>
@@ -242,10 +276,10 @@ namespace Four_Old_Dudes.Maps
         /// <param name="map">The new map</param>
         public void SetupNewWorld(Player player, GameMap map)
         {
-            StopCollisionDetection();
+            StopWorld();
             WorldMap = map;
             WorldPlayer = player;
-            StartCollisonDetection();
+            StartWorld();
         }
 
         /// <summary>
@@ -255,19 +289,34 @@ namespace Four_Old_Dudes.Maps
         {
             if (IsInitialMapLoad)
                 InitialMapLoad();
-            else
+            else if (_madeItToEnd && _loading == false)
             {
+                WorldMap.BgMusic.Stop();
+                PrepareNextMap();
+            }
+            else if(_madeItToEnd && _loading)
+            {
+                if (GameMaster.IsThemePlaying == false)
+                    GameMaster.PlayTheme();
+                WinInstance.Clear(GameMaster.ThemeColor);
+                WinInstance.Draw(_loadingText);
+            }
+            else if(_madeItToEnd == false && _loading == false && IsInitialMapLoad ==false)
+            {
+                if (GameMaster.IsThemePlaying)
+                    GameMaster.StopTheme();
                 if (WorldMap.BgMusic != null && WorldMap.BgMusic.Status != SFML.Audio.SoundStatus.Playing)
                     WorldMap.BgMusic.Play();
                 _worldView.Center = WorldPlayer.Position;
-                _winInstance.SetView(_worldView);
-                _healthBar.SetPosition(new Vector2f(WorldPlayer.Position.X, _worldView.Center.Y - 350));
-                _winInstance.Clear(WorldMap.BgColor);
-                _winInstance.Draw(WorldMap);
+                WinInstance.SetView(_worldView);
+                _healthBar.SetPosition(new Vector2f((_worldView.Center.X - _worldView.Size.X/2.0f) + 30, _worldView.Center.Y - 350));
+                _scoreDisp.SetPosition(new Vector2f((_worldView.Center.X + _worldView.Size.X / 2.0f), _worldView.Center.Y - 350));
+                WinInstance.Clear(WorldMap.BgColor);
+                WinInstance.Draw(WorldMap);
                 if (WorldMap.FloorObjects != null)
                 {
                     foreach (var floor in WorldMap.FloorObjects)
-                        _winInstance.Draw(floor);
+                        WinInstance.Draw(floor);
                 }
                 if (EnemiesOnMap != null)
                 {
@@ -294,9 +343,30 @@ namespace Four_Old_Dudes.Maps
                         enemy.Update();
                     }
                 }
+                if (_displayLives && IsInitialMapLoad == false)
+                {
+                    DisplayLives();
+                    _timeToDisp += GameMaster.Delta.AsSeconds();
+                    if(_timeToDisp >= _maxTimeToDisp)
+                    {
+                        _displayLives = false;
+                        _dispControllerTime = false;
+                        _timerStarted = false;
+                        _countDownTimer.Stop();
+                        _timeToDisp = 0.0f;
+                    }
+                }
+                if(_dispControllerTime && IsInitialMapLoad == false)
+                {
+                    InitDisplayCountDownTimer();
+                    if(_countDownText != null)
+                        WinInstance.Draw(_countDownText);
+                }
                 WorldPlayer.Update();
                 _healthBar.UpdateHealth(WorldPlayer.Health);
+                _scoreDisp.UpdateScore(Score);
                 _healthBar.Draw();
+                _scoreDisp.Draw();
             }
             
         }
@@ -363,10 +433,10 @@ namespace Four_Old_Dudes.Maps
         {
             CurrentMap = 0;
             WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
-            WorldPlayer = AssetManager.LoadPlayer(playerName, _winInstance, firstPlayerFrame, lastPlayerFrame);
+            WorldPlayer = AssetManager.LoadPlayer(playerName, WinInstance, firstPlayerFrame, lastPlayerFrame);
             WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
             WorldPlayer.SetAnimationFrames(frames);
-            EnemiesOnMap = SpawnEnemies(playerName,firstPlayerFrame,lastPlayerFrame);
+            EnemiesOnMap = SpawnEnemies(firstPlayerFrame,lastPlayerFrame);
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
             var ts = new ThreadStart(CollisionDetection);
@@ -376,38 +446,46 @@ namespace Four_Old_Dudes.Maps
                 IsBackground = true
             };
             _collisionThread.Start();
-            _healthBar = new HealthBar(ref _winInstance, WorldPlayer.Position);
+            var win = WinInstance;
+            _healthBar = new HealthBar(ref win, WorldPlayer.Position);
+            _scoreDisp = new ScoreDisplay(ref win, WorldPlayer.Position);
             var font = AssetManager.LoadFont("OrangeJuice");
             InitLoadText = new Text() { Position = new Vector2f(0,0), DisplayedString = AssetManager.GetMessage(WorldMap.Name), Color = Color.Black, Font = font, CharacterSize = 60 };
             IsInitialMapLoad = true;
             WorldPlayer.ResetWaitTime();
             foreach (var enemy in EnemiesOnMap)
                 enemy.ResetWaitTime();
+            _displayLives = true;
+            _dispControllerTime = true;
         }
         public void InitialMapLoad()
         {
+            if (GameMaster.IsThemePlaying == false)
+                GameMaster.PlayTheme();
             var currentCenter = _worldView.Center;
             if(Math.Abs(WorldMap.EndOfMap.X - currentCenter.X) <= _worldView.Size.X / 2.0f)
             {
                 IsInitialMapLoad = false;
+                GameMaster.StopTheme();
                 return;
             }
-            if (_winInstance == null) return;
-            InitLoadText.Position = new Vector2f(currentCenter.X, _winInstance.Size.Y/2);
+            if (WinInstance == null) return;
+            InitLoadText.Position = new Vector2f(currentCenter.X, WinInstance.Size.Y/2);
             _worldView.Move(new Vector2f(150 * GameMaster.Delta.AsSeconds(),0.0f));
-            _winInstance.SetView(_worldView);
-            _winInstance.Clear(WorldMap.BgColor);
-            _winInstance.Draw(WorldMap);
+            WinInstance.SetView(_worldView);
+            WinInstance.Clear(WorldMap.BgColor);
+            WinInstance.Draw(WorldMap);
             if (WorldMap.FloorObjects != null)
             {
                 foreach (var floor in WorldMap.FloorObjects)
-                    _winInstance.Draw(floor);
+                    WinInstance.Draw(floor);
             }
-            _winInstance.Draw(InitLoadText);
+            WinInstance.Draw(InitLoadText);
         }
         public void UnpauseWorld()
         {
             WorldPlayer.AddControls();
+            _localPause = false;
         }
 
         public void Pause()
@@ -416,11 +494,14 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer.ResetWaitTime();
             foreach (var enemy in EnemiesOnMap)
                 enemy.ResetWaitTime();
+            _localPause = true;
         }
 
-        public void LoadGame(int currentMap, XElement player, XElement[] ene)
+        public void LoadGame(int currentMap, long score, int lives, XElement player, XElement[] ene)
         {
             WorldMap = AssetManager.LoadGameMap(currentMap, _worldView);
+            Score = score;
+            NumberOfPlayerLives = lives;
             var playerAttr = player.Attributes().ToDictionary(attr => attr.Name.LocalName, attr => attr.Value);
             WorldPlayer = AssetManager.LoadPlayer(playerAttr["name"], WinInstance, 0,11);
             WorldPlayer.Health = float.Parse(playerAttr["health"]);
@@ -438,9 +519,147 @@ namespace Four_Old_Dudes.Maps
             {
                 foreach (var eneXML in ene)
                 {
-                    var pos = eneXML
+                    var enePos = eneXML.FirstAttribute.Value.Split(',');
+                    var floatPos = new[] { float.Parse(enePos[0]), float.Parse(enePos[1])};
+                    if (enemy.Position.X != floatPos[0] && enemy.Position.Y != floatPos[1])
+                        WorldMap.EnemySpawns.Remove(enemy);
                 }
             }
+            EnemiesOnMap = SpawnEnemies(0, 11);
+            _worldView.Center = WorldPlayer.Position;
+            BgColor = WorldMap.BgColor;
+            var win = WinInstance;
+            _healthBar = new HealthBar(ref win, WorldPlayer.Position);
+            _scoreDisp = new ScoreDisplay(ref win, WorldPlayer.Position);
+            var font = AssetManager.LoadFont("OrangeJuice");
+            InitLoadText = new Text() { Position = new Vector2f(0, 0), DisplayedString = AssetManager.GetMessage(WorldMap.Name), Color = Color.Black, Font = font, CharacterSize = 60 };
+            IsInitialMapLoad = true;
+            WorldPlayer.ResetWaitTime();
+            foreach (var enemy in EnemiesOnMap)
+                enemy.ResetWaitTime();
+            var ts = new ThreadStart(CollisionDetection);
+            _collisionThread = new Thread(ts)
+            {
+                Priority = ThreadPriority.AboveNormal,
+                IsBackground = true
+            };
+            _collisionThread.Start();
+            GameMaster.IsMainMenuOpen = false;
+            _displayLives = true;
+            _dispControllerTime = true;
+        }
+
+        private void DetectMapProgression()
+        {
+            try
+            {
+                while (_isRunning)
+                {
+                    if (_localPause) continue;
+                    if(WorldMap.EndOfMap.X == WorldPlayer.Position.X &&
+                        WorldMap.EndOfMap.Y == WorldPlayer.Position.Y)
+                    {
+                        _madeItToEnd = true;
+                        _isRunning = false;
+                    }
+                }
+            }
+            catch (ThreadAbortException)
+            {
+                // no action required ...
+            }
+            finally
+            {
+                LogManager.LogWarning("Stopping map progression thread.");
+            }
+        }
+
+        private void PrepareNextMap()
+        {
+            CurrentMap++;
+            _loading = true;
+            if (_loadingText == null)
+            {
+                var font = AssetManager.LoadFont("OrangeJuice");
+                _loadingText = new Text() { Position = new Vector2f(WinInstance.Size.X/2, WinInstance.Size.Y/2), DisplayedString = AssetManager.GetMessage("Loading"), CharacterSize = 60, Color = Color.Black, Font = font};
+            }
+            WinInstance.SetView(WinInstance.DefaultView);
+            var ts = new ThreadStart(LoadNewMap);
+            _loadingThread = new Thread(ts) { Priority = ThreadPriority.Highest, IsBackground = true };
+            _loadingThread.Start();
+        }
+
+        private void LoadNewMap()
+        {
+            try
+            {
+                WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
+                WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
+                EnemiesOnMap = SpawnEnemies(0, 11);
+                if (InitLoadText == null)
+                {
+                    var font = AssetManager.LoadFont("OrangeJuice");
+                    InitLoadText = new Text() { Position = new Vector2f(0, 0), DisplayedString = AssetManager.GetMessage(WorldMap.Name), Color = Color.Black, Font = font, CharacterSize = 60 };
+                }
+                else
+                    InitLoadText.DisplayedString = AssetManager.GetMessage(WorldMap.Name);
+                IsInitialMapLoad = true;
+                _loading = false;
+                _madeItToEnd = false;
+                _displayLives = true;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Failed to load new map. Error mess:\n"+ex.Message);
+            }
+            finally
+            {
+                LogManager.Log("New Map Loaded!");
+            }
+        }
+
+        private void DisplayLives()
+        {
+            if (_displayLives == false) return;
+            if(_livesText == null)
+            {
+                var font = AssetManager.LoadFont("OrangeJuice");
+                _livesText = new Text() { Color = Color.Black, Font = font, CharacterSize = 45, Position = new Vector2f(WorldPlayer.Position.X - 45, WorldPlayer.Position.Y - 80 ), DisplayedString = AssetManager.GetMessage("Lives")+NumberOfPlayerLives};
+            }
+            _livesText.Position = new Vector2f(WorldPlayer.Position.X - 45, WorldPlayer.Position.Y - 80);
+            _livesText.DisplayedString = AssetManager.GetMessage("Lives") + NumberOfPlayerLives;
+            WinInstance.Draw(_livesText);
+        }
+        private void InitDisplayCountDownTimer()
+        {
+            if (_timerStarted == true) return;
+            if (_countDownTimer == null)
+            {
+                _countDownTimer = new System.Timers.Timer(1000);
+                _countDownTimer.Elapsed += DisplayCountdown;
+                _countDownTimer.AutoReset = true;
+                _countDownTimer.Enabled = true;
+            }
+            else
+                _countDownTimer.Start();
+            _timerStarted = true;
+        }
+        private void DisplayCountdown(object source, ElapsedEventArgs e)
+        {
+            if (_dispControllerTime == false) return;
+            if (_countDown < 0)
+                _countDown = 4;
+            if (_countDownText == null)
+            {
+                _countDown = 4;
+                var font = AssetManager.LoadFont("OrangeJuice");
+                _countDownText = new Text() { Position = new Vector2f(_worldView.Center.X, _worldView.Center.Y - 200.0f), Font = font, Color = Color.Black, CharacterSize = 120, DisplayedString = ""+_countDown};
+            }
+            if (_countDown == 0)
+                _countDownText.DisplayedString = AssetManager.GetMessage("Go");
+            else
+                _countDownText.DisplayedString = "" + _countDownText;
+            _countDown--;
         }
     }
 }

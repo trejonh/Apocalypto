@@ -125,4 +125,49 @@
     <name>MackStill</name>
     <location>\images\mackDaddy.png</location>
   </asset>
+  <asset>
+    <type>text</type>
+    <name>Loading</name>
+    <text>Loading...</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Four</name>
+    <text>Four</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Old</name>
+    <text>Old</text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Dudes</name>
+    <text>Dudes</text>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>SplashLogo</name>
+    <location>\images\logo.png</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>ThemeMusic</name>
+    <location>\audio\uke.flac</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>SplashSound</name>
+    <location>\audio\splashScreenSound.wav</location>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Lives</name>
+    <text>Lives: </text>
+  </asset>
+  <asset>
+    <type>text</type>
+    <name>Go</name>
+    <text>Go!</text>
+  </asset>
 </assets>

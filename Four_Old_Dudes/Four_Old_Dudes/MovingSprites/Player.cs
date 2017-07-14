@@ -14,6 +14,7 @@ namespace Four_Old_Dudes.MovingSprites
         private readonly RenderWindow _playerWindow;
         private bool _isJumping;
         private float _timeInAir;
+        public float TimeFalling { get; set; }
         private const float InitialJumpSpeed = -1050.0f;
         private float _jumpAccel = -600.2f;
         private readonly View _playerView;
@@ -102,7 +103,7 @@ namespace Four_Old_Dudes.MovingSprites
         {
             _initialPosition = position;
             Position = _initialPosition;
-            Ground = position;
+            Ground = new Vector2f(position.X, position.Y + Height);
         }
 
         /// <summary>
@@ -136,6 +137,7 @@ namespace Four_Old_Dudes.MovingSprites
             var velocity = 0.0f;
             if(Keyboard.IsKeyPressed(Keyboard.Key.Up) && !_isJumping && IsGroundUnderMe)
             {
+                TimeFalling = 0.0f;
                 _isJumping = true;
                 _isFalling = true;
             }
@@ -151,6 +153,7 @@ namespace Four_Old_Dudes.MovingSprites
             else
             {
                 velocity = Gravity * GameMaster.Delta.AsSeconds()*10;
+                TimeFalling += GameMaster.Delta.AsSeconds();
             }
             return velocity;
         }

@@ -88,7 +88,7 @@ namespace Four_Old_Dudes.Menus
         /// </summary>
         public override void Draw()
         {
-            WinInstance.Clear();
+            WinInstance.Clear(GameMaster.ThemeColor);
             WinInstance.SetView(WinInstance.DefaultView);
             base.Draw();
             Pointer.Draw();

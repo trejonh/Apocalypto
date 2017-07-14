@@ -34,11 +34,13 @@
   <object id="19" name="enemySpawn" gid="52" x="160" y="640" width="32" height="32" visible="0">
    <properties>
     <property name="enemySpawn" type="bool" value="true"/>
+     <property name="enemyName" value="TestPlayer"/>
    </properties>
   </object>
   <object id="21" name="enemySpawn" gid="52" x="286" y="640" width="32" height="32" visible="0">
    <properties>
-    <property name="enemySpawn" type="bool" value="true"/>
+     <property name="enemySpawn" type="bool" value="true"/>
+     <property name="enemyName" value="TestPlayer"/>
    </properties>
   </object>
  </objectgroup>

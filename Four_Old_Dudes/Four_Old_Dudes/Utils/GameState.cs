@@ -25,10 +25,12 @@ namespace Four_Old_Dudes.Utils
             openFileDialog1.Filter = "Save Files (*.xml)|*.xml|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.Multiselect = false;
 
             if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
             try
             {
+                File.Decrypt(openFileDialog1.FileName);
                 var myStream = openFileDialog1.OpenFile();
                 var xdoc = XDocument.Load(myStream);
                 var gameSave = from u in xdoc.Descendants("gameSave")
@@ -68,20 +70,17 @@ namespace Four_Old_Dudes.Utils
             if (string.IsNullOrEmpty(DesiredSaveName))
                 DesiredSaveName = "MyGameSave";
             var path = GameSaveLocation + DesiredSaveName;
-            var i = 0 ;
-            var placeHlder = "";
+            path += ".xml";
             if (Directory.Exists(GameSaveLocation) == false)
                 Directory.CreateDirectory(GameSaveLocation);
-            while (File.Exists(path + placeHlder + ".xml"))
-            {
-                i++;
-                placeHlder = "_" + i;
-            }
-            path += placeHlder;
+            if (File.Exists(path))
+                File.Delete(path);
             if(path.Length >= 260)
             {
                 LogManager.LogWarning(path + "is too long of a path name. Resetting");
                 path = GameSaveLocation + "Apocalypto";
+                var placeHlder = "";
+                var i = 0;
                 while (File.Exists(path + placeHlder + ".xml"))
                 {
                     i++;
@@ -90,12 +89,14 @@ namespace Four_Old_Dudes.Utils
 
             }
             var settings = new XmlWriterSettings {Indent = true, CloseOutput = true, WriteEndDocumentOnClose = true};
-            using (var writer = XmlWriter.Create(path+".xml", settings))
+            using (var writer = XmlWriter.Create(path, settings))
             {
                 writer.WriteStartElement("gameSave");
                 //begin world
                 writer.WriteStartElement("world");
-                writer.WriteAttributeString("currentMap",""+worldToSave.CurrentMap);
+                writer.WriteAttributeString("currentMap", "" + worldToSave.CurrentMap);
+                writer.WriteAttributeString("score", "" + worldToSave.Score);
+                writer.WriteAttributeString("lives", "" + worldToSave.NumberOfPlayerLives);
                 //player and their attr
                 writer.WriteStartElement("player");
                 writer.WriteAttributeString("name", worldToSave.WorldPlayer.Name);
@@ -119,6 +120,8 @@ namespace Four_Old_Dudes.Utils
                 writer.WriteEndElement();
                 //end save
             }
+            File.Encrypt(path);
+            File.SetAttributes(path, FileAttributes.Encrypted);
             return true;
         }
 

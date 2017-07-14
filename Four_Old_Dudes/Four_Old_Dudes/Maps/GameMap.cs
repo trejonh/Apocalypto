@@ -15,9 +15,20 @@ namespace Four_Old_Dudes.Maps
     /// </summary>
     public class GameMap : Map
     {
+        public struct EnemySpawn
+        {
+            public string Name { get; }
+            public Vector2f Position { get; }
+            public EnemySpawn(string name, Vector2f position)
+            {
+                Name = name;
+                Position = position;
+            }
+        }
+
         public Vector2f PlayerInitialPosition { get; }
         public List<Tiled.SFML.Object> FloorObjects { get; private set; }
-        public List<Tiled.SFML.Object> EnemySpawns { get; private set; }
+        public List<EnemySpawn> EnemySpawns { get; private set; }
         public Color BgColor { get; set; }
         public Music BgMusic { get; set; }
         public string Name { get; set; }
@@ -89,8 +100,13 @@ namespace Four_Old_Dudes.Maps
         {
             try
             {
-                EnemySpawns = Objects.Where(obj => obj.Name.Equals("enemySpawn")).ToList();
-                if (EnemySpawns == null || EnemySpawns.Count == 0)
+                var eneObjs = Objects.Where(obj => obj.Name.Equals("enemySpawn"));
+                EnemySpawns = new List<EnemySpawn>();
+                foreach(var obj in eneObjs)
+                {
+                    EnemySpawns.Add(new EnemySpawn(obj.Properties["enemyName"], obj.Position));
+                }
+                if (eneObjs == null)
                     throw new Exception("No enemy spawns objects found.");
             }
             catch (Exception ex)
@@ -115,7 +131,6 @@ namespace Four_Old_Dudes.Maps
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
-
 
     }
 }

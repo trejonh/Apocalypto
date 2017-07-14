@@ -31,7 +31,7 @@ namespace Four_Old_Dudes.MovingSprites
         public int Height => TextureRect.Height;
         public int Width => TextureRect.Width;
         public string Name { get; }
-        private const float MaxWaitTime = 1.5f;
+        private const float MaxWaitTime = 4.5f;
         private float _currentWaitTime = 0.0f;
 
         /// <summary>

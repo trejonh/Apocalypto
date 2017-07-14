@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
 using System.Linq;
+using SFML.Audio;
+using Four_Old_Dudes.Misc;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -23,12 +25,17 @@ namespace Four_Old_Dudes.Utils
         private bool IsPauseMenuCreated { get; }
         private bool HasMainBeenDestroyed { get; }
         private PauseMenu _pauseMenu;
+        public static Color ThemeColor { get; private set; } = new Color(148,0,211);
+        public Music ThemeMusic { get; private set; }
+        public static bool IsThemePlaying { get; private set; }
+        private bool _showSplash;
+        private float _splashDisplayTime;
 
         public GameMaster()
         {
-            //_filePath = Directory.GetParent(_filePath).FullName;
             LogManager.InitLogFile();
             AssetManager.LoadAssets();
+            ThemeMusic = AssetManager.LoadMusic("ThemeMusic");
             IsMainMenuOpen = true;
             _window = new RenderWindow(new VideoMode(Screenx, Screeny), AssetManager.GetMessage("GameTitle"));
             _window.SetActive(true);
@@ -38,33 +45,69 @@ namespace Four_Old_Dudes.Utils
             IsGamePaused = false;
             HasMainBeenDestroyed = false;
             var gameClock = new Clock();
+            _showSplash = true;
+            var splash = new SplashScreen(ref _window);
+            _splashDisplayTime = 0.0f;
             while (_window.IsOpen)
             {
                 _window.DispatchEvents();
                 Delta = gameClock.Restart();
-                if (IsMainMenuOpen)
-                    mainMenu.Draw();
-                else if(IsGamePaused == false)
+                if (_showSplash)
                 {
-                    GameWorld?.Draw();
+                    splash.Draw();
+                    _splashDisplayTime += Delta.AsSeconds();
+                    if (_splashDisplayTime >= SplashScreen.MaxDisplayTime)
+                    {
+                        _showSplash = false;
+                        splash.Stop();
+                        ThemeMusic.Play();
+                        IsThemePlaying = true;
+                    }
                 }
-                else if (IsGamePaused && IsPauseMenuCreated)
+                else
                 {
-                    Pause();
-                    _pauseMenu.AddMenuSelectionAction();
-                    var gameWorld = GameWorld;
-                    _pauseMenu.SetWorld(ref gameWorld);
-                    _pauseMenu.Draw();
-                }
-                else if (IsGamePaused && IsPauseMenuCreated == false)
-                {
-                    CreatePauseMenu();
-                    IsPauseMenuCreated = true;
-                }
-                if (IsMainMenuOpen == false && HasMainBeenDestroyed == false)
-                {
-                    mainMenu.DestroyMenu();
-                    HasMainBeenDestroyed = true;
+                    if (IsMainMenuOpen)
+                    {
+                        if (ThemeMusic != null && ThemeMusic.Status != SoundStatus.Playing)
+                        {
+                            ThemeMusic.Play();
+                            IsThemePlaying = true;
+                        }
+                            mainMenu.Draw();
+                    }
+                    if (IsThemePlaying)
+                    {
+                        if (ThemeMusic != null && ThemeMusic.Status != SoundStatus.Playing)
+                            ThemeMusic.Play();
+                    }
+                    else
+                    {
+                        if (ThemeMusic != null && ThemeMusic.Status == SoundStatus.Playing)
+                            ThemeMusic.Stop();
+                    }
+
+                    if (IsGamePaused == false)
+                    {
+                        GameWorld?.Draw();
+                    }
+                    else if (IsGamePaused && IsPauseMenuCreated)
+                    {
+                        Pause();
+                        _pauseMenu.AddMenuSelectionAction();
+                        var gameWorld = GameWorld;
+                        _pauseMenu.SetWorld(ref gameWorld);
+                        _pauseMenu.Draw();
+                    }
+                    else if (IsGamePaused && IsPauseMenuCreated == false)
+                    {
+                        CreatePauseMenu();
+                        IsPauseMenuCreated = true;
+                    }
+                    if (IsMainMenuOpen == false && HasMainBeenDestroyed == false)
+                    {
+                        mainMenu.DestroyMenu();
+                        HasMainBeenDestroyed = true;
+                    }
                 }
                 _window.Display();
             }
@@ -102,11 +145,25 @@ namespace Four_Old_Dudes.Utils
 
         public static void LoadGame(XElement world,XElement player, XElement enemies)
         {
-            var currentMap = int.Parse(world.FirstAttribute.Value);
+            var worldAttr = world.Attributes().ToDictionary(attr => attr.Name, attr => attr.Value);
+            var currentMap = int.Parse(worldAttr["currentMap"]);
+            var score = long.Parse(worldAttr["score"]);
+            var lives = int.Parse(worldAttr["lives"]);
             var ene = enemies.Descendants("enemy").ToArray();
             if(GameWorld == null)
                 GameWorld = new World(ref _window);
-            GameWorld.LoadGame(currentMap, player, ene);
+            GameWorld.LoadGame(currentMap, score, lives, player, ene);
+        }
+
+        public static void PlayTheme()
+        {
+            if (IsThemePlaying == false)
+                IsThemePlaying = true;
+        }
+        public static void StopTheme()
+        {
+            if (IsThemePlaying == true)
+                IsThemePlaying = false;
         }
     }
 }

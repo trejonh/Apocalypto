@@ -105,7 +105,7 @@ namespace Four_Old_Dudes.Menus
                 MenuItems = _charMenuItems;
             else if (_originalMenuItems != null && _originalMenuItems.Count != 0)
                 MenuItems = _originalMenuItems;
-            WinInstance.Clear(Color.Magenta);
+            WinInstance.Clear(GameMaster.ThemeColor);
             base.Draw();
             if (_displayChars && _characterStills != null)
             {

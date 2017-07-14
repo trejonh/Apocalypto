@@ -12,11 +12,9 @@ namespace Four_Old_Dudes.Misc
         private readonly RoundedRectangle _mainRect;
         private readonly List<Shape> _innerRects;
         private readonly Text _healthText;
-        private readonly RenderWindow _winInstance;
         private int _numToDraw;
-        public HealthBar(ref RenderWindow win, Vector2f position)
+        public HealthBar(ref RenderWindow win, Vector2f position) : base(ref win)
         {
-            _winInstance = win;
             var fillColor = new Color(138, 7, 7, 125);
             _mainRect = new RoundedRectangle(new Vector2f(200.0f, 75.0f), 5, 4)
                 { FillColor = Color.Transparent, Position = position, OutlineThickness = 3 };
@@ -54,13 +52,13 @@ namespace Four_Old_Dudes.Misc
 
         public override void Draw()
         {
-            _winInstance.Draw(_mainRect);
+            WinInstance.Draw(_mainRect);
             for (var i = 0; i < _numToDraw; i++)
             {
-                _winInstance.Draw(_innerRects[i]);
+                WinInstance.Draw(_innerRects[i]);
                 Console.WriteLine("Rect position X: {0}, Y: {1}",_innerRects[i].Position.X,_innerRects[i].Position.Y);
             }
-            _winInstance.Draw(_healthText);
+            WinInstance.Draw(_healthText);
         }
     }
 }
