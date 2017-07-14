@@ -16,7 +16,6 @@ namespace Four_Old_Dudes.Menus
         private LinkedListNode<Vector2f> _currentNode;
         private const int ButtonX = 300, ButtonY = 100;
         private int _itemIndex;
-        private int timesCalled = 0;
         /// <summary>
         /// The menu title
         /// </summary>
@@ -72,8 +71,6 @@ namespace Four_Old_Dudes.Menus
 
         private bool SaveGameFunc()
         {
-            timesCalled++;
-            Console.WriteLine("Saved called {0} times.", timesCalled);
             GameState.SaveGame(_worldInstance);
             DestroyMenu();
             return true;

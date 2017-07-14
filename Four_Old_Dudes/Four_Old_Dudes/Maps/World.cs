@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 using static Four_Old_Dudes.MovingSprites.Animation;
 using static Four_Old_Dudes.MovingSprites.Moveable;
 
@@ -28,8 +29,8 @@ namespace Four_Old_Dudes.Maps
         private HealthBar _healthBar;
         public int CurrentMap;
         public Color BgColor { get; set; }
-        private bool _isInitialMapLoad { get; set; } = false;
-        private Text _initLoadText { get; set; }
+        private bool IsInitialMapLoad { get; set; }
+        private Text InitLoadText { get; set; }
 
         /// <summary>
         /// Create an empty world
@@ -44,10 +45,6 @@ namespace Four_Old_Dudes.Maps
         /// Create a full world
         /// </summary>
         /// <param name="window">A window to draw the world's entities.</param>
-        /// <param name="mapName">Name of the map to load</param>
-        /// <param name="playerName">NAme of the player to load</param>
-        /// <param name="firstPlayerFrame">The first frame of the player</param>
-        /// <param name="lastPlayerFrame">The last frame of the player</param>
         public World(ref RenderWindow window)
         {
             _winInstance = window;
@@ -95,7 +92,7 @@ namespace Four_Old_Dudes.Maps
             {
                 while (_isRunning)
                 {
-                    if (GameMaster.IsGamePaused || _isInitialMapLoad) continue;
+                    if (GameMaster.IsGamePaused || IsInitialMapLoad) continue;
                     var currPosition = WorldPlayer.Position;
                     /*
                      * Find the ground tiles closest to the player
@@ -256,7 +253,7 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         public override void Draw()
         {
-            if (_isInitialMapLoad)
+            if (IsInitialMapLoad)
                 InitialMapLoad();
             else
             {
@@ -381,8 +378,8 @@ namespace Four_Old_Dudes.Maps
             _collisionThread.Start();
             _healthBar = new HealthBar(ref _winInstance, WorldPlayer.Position);
             var font = AssetManager.LoadFont("OrangeJuice");
-            _initLoadText = new Text() { Position = new Vector2f(0,0), DisplayedString = AssetManager.GetMessage(WorldMap.Name), Color = Color.Black, Font = font, CharacterSize = 60 };
-            _isInitialMapLoad = true;
+            InitLoadText = new Text() { Position = new Vector2f(0,0), DisplayedString = AssetManager.GetMessage(WorldMap.Name), Color = Color.Black, Font = font, CharacterSize = 60 };
+            IsInitialMapLoad = true;
             WorldPlayer.ResetWaitTime();
             foreach (var enemy in EnemiesOnMap)
                 enemy.ResetWaitTime();
@@ -392,10 +389,11 @@ namespace Four_Old_Dudes.Maps
             var currentCenter = _worldView.Center;
             if(Math.Abs(WorldMap.EndOfMap.X - currentCenter.X) <= _worldView.Size.X / 2.0f)
             {
-                _isInitialMapLoad = false;
+                IsInitialMapLoad = false;
                 return;
             }
-            _initLoadText.Position = new Vector2f(currentCenter.X, _winInstance.Size.Y/2);
+            if (_winInstance == null) return;
+            InitLoadText.Position = new Vector2f(currentCenter.X, _winInstance.Size.Y/2);
             _worldView.Move(new Vector2f(150 * GameMaster.Delta.AsSeconds(),0.0f));
             _winInstance.SetView(_worldView);
             _winInstance.Clear(WorldMap.BgColor);
@@ -405,7 +403,7 @@ namespace Four_Old_Dudes.Maps
                 foreach (var floor in WorldMap.FloorObjects)
                     _winInstance.Draw(floor);
             }
-            _winInstance.Draw(_initLoadText);
+            _winInstance.Draw(InitLoadText);
         }
         public void UnpauseWorld()
         {
@@ -418,6 +416,31 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer.ResetWaitTime();
             foreach (var enemy in EnemiesOnMap)
                 enemy.ResetWaitTime();
+        }
+
+        public void LoadGame(int currentMap, XElement player, XElement[] ene)
+        {
+            WorldMap = AssetManager.LoadGameMap(currentMap, _worldView);
+            var playerAttr = player.Attributes().ToDictionary(attr => attr.Name.LocalName, attr => attr.Value);
+            WorldPlayer = AssetManager.LoadPlayer(playerAttr["name"], WinInstance, 0,11);
+            WorldPlayer.Health = float.Parse(playerAttr["health"]);
+            WorldPlayer.SetAnimationFrames(new Dictionary<Direction, AnimationFrames>
+            {
+                { Direction.Down, new AnimationFrames(0, 2) },
+                { Direction.Left, new AnimationFrames(3, 5) },
+                { Direction.Right, new AnimationFrames(6, 8) },
+                { Direction.Up, new AnimationFrames(9, 11) }
+            });
+            WorldPlayer.SetDirection(Direction.Right);
+            var pos = playerAttr["position"].Split(',');
+            WorldPlayer.SetPosition(new Vector2f(float.Parse(pos[0]),float.Parse(pos[1])));
+            foreach (var enemy in WorldMap.EnemySpawns)
+            {
+                foreach (var eneXML in ene)
+                {
+                    var pos = eneXML
+                }
+            }
         }
     }
 }

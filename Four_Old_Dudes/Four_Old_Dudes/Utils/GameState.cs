@@ -2,7 +2,6 @@
 using System.IO;
 using System.Xml;
 using Four_Old_Dudes.Maps;
-using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Xml.Linq;
@@ -14,12 +13,11 @@ namespace Four_Old_Dudes.Utils
     {
         private static readonly string GameSaveLocation = Environment.CurrentDirectory + @"\GameState\";
         public static bool InputThreadRunning { get; set; } = true;
-        private static string _desiredSaveName { get; set; }
+        private static string DesiredSaveName { get; set; }
 
         public static void LoadGame()
         {
-            Stream myStream = null;
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            var openFileDialog1 = new OpenFileDialog();
 
             if (Directory.Exists(GameSaveLocation) == false)
                 Directory.CreateDirectory(GameSaveLocation);
@@ -28,31 +26,28 @@ namespace Four_Old_Dudes.Utils
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
+            try
             {
-                try
-                {
-                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                var myStream = openFileDialog1.OpenFile();
+                var xdoc = XDocument.Load(myStream);
+                var gameSave = from u in xdoc.Descendants("gameSave")
+                    select new
                     {
-                        var xdoc = XDocument.Load(myStream);
-                        var gameSave = from u in xdoc.Descendants("gameSave")
-                                    select new
-                                    {
-                                        World = u.Element("world"),
-                                    };
-                        if (gameSave == null)
-                            throw new Exception("Not a proper game save file");
-                        var world = gameSave[0].World;
-                        Console.WriteLine();
-                    }
-                    else
-                        throw new Exception("Could not open file.");
-                }
-                catch (Exception ex)
-                {
-                    LogManager.LogError("Failed to load file\n"+ex.Message);
-                    MessageBox.Show(AssetManager.GetMessage("LoadError"));
-                }
+                        World = u.Element("world"),
+                    };
+                var gameSaves = gameSave.ToArray();
+                if (gameSaves.Length == 0)
+                    throw new Exception("Not a proper game save file");
+                var world = gameSaves[0].World;
+                var player = world.Descendants("player").First();
+                var enemies = world.Descendants("enemiesOnMap").First();
+                GameMaster.LoadGame(world,player,enemies);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Failed to load file\n"+ex.Message);
+                MessageBox.Show(AssetManager.GetMessage("LoadError"));
             }
         }
         public static bool SaveGame(World worldToSave)
@@ -62,17 +57,17 @@ namespace Four_Old_Dudes.Utils
                 LogManager.LogError("Cannot save game with a null world");
                 return false;
             }
-            _desiredSaveName = "";
-            var saveName = _desiredSaveName;
+            DesiredSaveName = "";
+            var saveName = DesiredSaveName;
             var res = InputBox(AssetManager.GetMessage("SaveGame"), AssetManager.GetMessage("SaveGame"), ref saveName);
             if (res == DialogResult.OK)
             {
-                _desiredSaveName = saveName;
+                DesiredSaveName = saveName;
                 InputThreadRunning = false;
             }
-            if (string.IsNullOrEmpty(_desiredSaveName))
-                _desiredSaveName = "MyGameSave";
-            var path = GameSaveLocation + _desiredSaveName;
+            if (string.IsNullOrEmpty(DesiredSaveName))
+                DesiredSaveName = "MyGameSave";
+            var path = GameSaveLocation + DesiredSaveName;
             var i = 0 ;
             var placeHlder = "";
             if (Directory.Exists(GameSaveLocation) == false)
@@ -129,11 +124,11 @@ namespace Four_Old_Dudes.Utils
 
         private static DialogResult InputBox(string title, string promptText, ref string value)
         {
-            Form form = new Form();
-            Label label = new Label();
-            TextBox textBox = new TextBox();
-            Button buttonOk = new Button();
-            Button buttonCancel = new Button();
+            var form = new Form();
+            var label = new Label();
+            var textBox = new TextBox();
+            var buttonOk = new Button();
+            var buttonCancel = new Button();
 
             form.Text = title;
             label.Text = promptText;
@@ -164,7 +159,7 @@ namespace Four_Old_Dudes.Utils
             form.AcceptButton = buttonOk;
             form.CancelButton = buttonCancel;
 
-            DialogResult dialogResult = form.ShowDialog();
+            var dialogResult = form.ShowDialog();
             value = textBox.Text;
             return dialogResult;
         }

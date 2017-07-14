@@ -6,6 +6,9 @@ using SFML.Window;
 using static Four_Old_Dudes.MovingSprites.Moveable;
 using static Four_Old_Dudes.MovingSprites.Animation;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using System;
+using System.Linq;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -95,6 +98,15 @@ namespace Four_Old_Dudes.Utils
         {
             GameWorld.Pause();
             IsGamePaused = true;
+        }
+
+        public static void LoadGame(XElement world,XElement player, XElement enemies)
+        {
+            var currentMap = int.Parse(world.FirstAttribute.Value);
+            var ene = enemies.Descendants("enemy").ToArray();
+            if(GameWorld == null)
+                GameWorld = new World(ref _window);
+            GameWorld.LoadGame(currentMap, player, ene);
         }
     }
 }
