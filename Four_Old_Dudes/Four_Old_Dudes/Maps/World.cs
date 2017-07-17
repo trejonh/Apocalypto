@@ -26,6 +26,7 @@ namespace Four_Old_Dudes.Maps
         private Thread _collisionThread;
         private Thread _mapProgressionThread;
         private Thread _loadingThread;
+        private Thread _gameFlowThread;
         private bool _madeItToEnd;
         private bool _loading;
         private bool _dispControllerTime;
@@ -72,10 +73,8 @@ namespace Four_Old_Dudes.Maps
         /// <summary>
         /// Spawn enemies based off their locations in the map
         /// </summary>
-        /// <param name="firstFrame">First frame of the enemy</param>
-        /// <param name="lastFrame">Last frame of the enemy</param>
         /// <returns>List of enemies</returns>
-        private List<Enemy> SpawnEnemies(int firstFrame, int lastFrame)
+        private List<Enemy> SpawnEnemies()
         {
             var enemyObjs = WorldMap.EnemySpawns;
             var enemies = new List<Enemy>();
@@ -83,9 +82,9 @@ namespace Four_Old_Dudes.Maps
                 return enemies;
             foreach (var enemy in enemyObjs)
             {
-
                 var en = AssetManager.LoadEnemy(enemy.Name, WinInstance, WorldPlayer);
                 en.SetPosition(enemy.Position);
+                enemies.Add(en);
             }
             return enemies;
         }
@@ -122,7 +121,7 @@ namespace Four_Old_Dudes.Maps
                         {
                             var list = SortByDistance(currPosition, floor);
                             var closestTile = closeTiles.First(tile => tile.Position.Equals(list[0]));
-                            var bottomPosition = currPosition.Y - WorldPlayer.Height;
+                            var bottomPosition = currPosition.Y + WorldPlayer.Height;
                             if (closestTile != null)
                             {
                                 WorldPlayer.Ground = closestTile.Position;
@@ -149,11 +148,9 @@ namespace Four_Old_Dudes.Maps
                     if(WorldPlayer.IsGroundUnderMe == false && WorldPlayer.TimeFalling >= (2.5f * 0.92f))
                     {
                         // if player is falling for too long, reset them
-                        NumberOfPlayerLives--;
+
                         Pause();
-                        WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
-                        _displayLives = true;
-                        _dispControllerTime = true;
+                        Reset(NumberOfPlayerLives--, false);
                         UnpauseWorld();
                     }
                     if (EnemiesOnMap.Count == 0) continue;
@@ -204,6 +201,48 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        private void GeneralGameFlowThread()
+        {
+            try
+            {
+                while (_isRunning)
+                {
+                    if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
+                    if(WorldPlayer.Health <= 0)
+                    {
+                        Pause();
+                        Reset(NumberOfPlayerLives--,false);
+                        UnpauseWorld();
+                    }
+                    if(NumberOfPlayerLives <= 0)
+                    {
+                        Pause();
+                        WorldMap = AssetManager.LoadGameMap(0,_worldView);
+                        Reset(3,true);
+                        UnpauseWorld();
+                    }
+                }
+            }
+            catch (ThreadAbortException)
+            {
+
+            }
+            finally
+            {
+                LogManager.LogWarning("Aborting general game flow thread.");
+            }
+        }
+
+        private void Reset(int numOfLives,bool spawnEnemies)
+        {
+            NumberOfPlayerLives = numOfLives;
+            WorldPlayer.Health = 100;
+            WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
+            if (spawnEnemies)
+                EnemiesOnMap = SpawnEnemies();
+            _displayLives = true;
+            _dispControllerTime = true;
+        }
         /// <summary>
         /// Stop the collision detection thread
         /// </summary>
@@ -216,6 +255,7 @@ namespace Four_Old_Dudes.Maps
             }
             _isRunning = false;
             _collisionThread.Abort();
+            _gameFlowThread.Abort();
             _mapProgressionThread.Abort();
         }
 
@@ -236,14 +276,17 @@ namespace Four_Old_Dudes.Maps
                 Priority = ThreadPriority.AboveNormal,
                 IsBackground = true
             };
-            _collisionThread.Start();
             var ts1 = new ThreadStart(DetectMapProgression);
             _mapProgressionThread = new Thread(ts)
             {
                 Priority = ThreadPriority.Normal,
                 IsBackground = true
             };
+            var ts2 = new ThreadStart(GeneralGameFlowThread);
+            _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
+            _gameFlowThread.Start();
             _mapProgressionThread.Start();
+            _collisionThread.Start();
         }
 
         /// <summary>
@@ -435,7 +478,7 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer = AssetManager.LoadPlayer(playerName, WinInstance);
             WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
             WorldPlayer.SetAnimationFrames(frames);
-            EnemiesOnMap = SpawnEnemies(firstPlayerFrame,lastPlayerFrame);
+            EnemiesOnMap = SpawnEnemies();
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
             var ts = new ThreadStart(CollisionDetection);
@@ -445,6 +488,16 @@ namespace Four_Old_Dudes.Maps
                 IsBackground = true
             };
             _collisionThread.Start();
+            var ts1 = new ThreadStart(DetectMapProgression);
+            _mapProgressionThread = new Thread(ts)
+            {
+                Priority = ThreadPriority.Normal,
+                IsBackground = true
+            };
+            var ts2 = new ThreadStart(GeneralGameFlowThread);
+            _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
+            _gameFlowThread.Start();
+            _mapProgressionThread.Start();
             var win = WinInstance;
             _healthBar = new HealthBar(ref win, WorldPlayer.Position);
             _scoreDisp = new ScoreDisplay(ref win, WorldPlayer.Position);
@@ -517,7 +570,7 @@ namespace Four_Old_Dudes.Maps
                         WorldMap.EnemySpawns.Remove(enemy);
                 }
             }
-            EnemiesOnMap = SpawnEnemies(0, 11);
+            EnemiesOnMap = SpawnEnemies();
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
             var win = WinInstance;
@@ -535,6 +588,16 @@ namespace Four_Old_Dudes.Maps
                 Priority = ThreadPriority.AboveNormal,
                 IsBackground = true
             };
+            var ts1 = new ThreadStart(DetectMapProgression);
+            _mapProgressionThread = new Thread(ts)
+            {
+                Priority = ThreadPriority.Normal,
+                IsBackground = true
+            };
+            var ts2 = new ThreadStart(GeneralGameFlowThread);
+            _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
+            _gameFlowThread.Start();
+            _mapProgressionThread.Start();
             _collisionThread.Start();
             GameMaster.IsMainMenuOpen = false;
             _displayLives = true;
@@ -585,7 +648,7 @@ namespace Four_Old_Dudes.Maps
             {
                 WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
                 WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
-                EnemiesOnMap = SpawnEnemies(0, 11);
+                EnemiesOnMap = SpawnEnemies();
                 if (InitLoadText == null)
                 {
                     var font = AssetManager.LoadFont("OrangeJuice");

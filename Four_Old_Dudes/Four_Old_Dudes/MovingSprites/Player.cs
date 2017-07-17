@@ -71,7 +71,7 @@ namespace Four_Old_Dudes.MovingSprites
             }
             else
             {
-                LogManager.LogWarning("Window is null, cannot set movers");
+                LogManager.LogError("Window is null, cannot set movers");
             }
         }
 

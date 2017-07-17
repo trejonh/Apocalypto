@@ -166,9 +166,15 @@ namespace Four_Old_Dudes.Utils
             try
             {
                 var ene = MovingSpriteAssests[name];
-                if(EnemyTextures.ContainsKey(name) == false)
-                    EnemyTextures.Add(name, new Texture(ene.Location) { Smooth = true });
-                enemy = new Enemy(name, EnemyTextures[name], 32, 32, 60, window, RenderStates.Default, player, ene.FirstFrame, ene.LastFrame);
+                Texture text;
+                if (EnemyTextures.ContainsKey(name) == false)
+                {
+                    text = new Texture(ene.Location) { Smooth = true };
+                    EnemyTextures.Add(name, text);
+                }
+                else
+                    text = EnemyTextures[name];
+                enemy = new Enemy(name, text, 32, 32, 60, window, RenderStates.Default, player, ene.FirstFrame, ene.LastFrame);
                 enemy.SetAnimationFrames(ene.Frames); 
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)

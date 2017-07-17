@@ -16,17 +16,6 @@ namespace Four_Old_Dudes.Maps
     /// </summary>
     public class GameMap : Map
     {
-        public struct EnemySpawn
-        {
-            public string Name { get; }
-            public Vector2f Position { get; }
-            public EnemySpawn(string name, Vector2f position)
-            {
-                Name = name;
-                Position = position;
-            }
-        }
-
         public Vector2f PlayerInitialPosition { get; }
         public List<Object> FloorObjects { get; private set; }
         public List<EnemySpawn> EnemySpawns { get; private set; }
@@ -34,6 +23,7 @@ namespace Four_Old_Dudes.Maps
         public Music BgMusic { get; set; }
         public string Name { get; set; }
         public Vector2f EndOfMap { get; set; }
+        public List<MapItem> ItemsOnMap { get; set; }
 
         /// <summary>
         /// Create an instance of a game map
@@ -44,6 +34,7 @@ namespace Four_Old_Dudes.Maps
         {
             DevelopGround();
             FindEnemySpawns();
+            FindItems();
             try
             {
                 var hexColor = Properties["BGC"];
@@ -72,13 +63,13 @@ namespace Four_Old_Dudes.Maps
             try
             {
                 var eom = Objects.Single(obj => obj.Name.Equals("EndOfMap"));
-                if(eom != null)
+                if (eom != null)
                     EndOfMap = eom.Position;
 
             }
             catch (Exception)
             {
-                EndOfMap = new Vector2f(0.0f,0.0f);
+                EndOfMap = new Vector2f(0.0f, 0.0f);
                 LogManager.LogError("No end of map for " + filename);
             }
             try
@@ -89,8 +80,8 @@ namespace Four_Old_Dudes.Maps
             }
             catch (InvalidOperationException)
             {
-                LogManager.LogError("No initial player location was found for map: "+filename);
-                PlayerInitialPosition = new Vector2f(0f,0f);
+                LogManager.LogError("No initial player location was found for map: " + filename);
+                PlayerInitialPosition = new Vector2f(0f, 0f);
             }
         }
 
@@ -103,7 +94,7 @@ namespace Four_Old_Dudes.Maps
             {
                 var eneObjs = Objects.Where(obj => obj.Name.Equals("enemySpawn"));
                 EnemySpawns = new List<EnemySpawn>();
-                foreach(var obj in eneObjs)
+                foreach (var obj in eneObjs)
                 {
                     EnemySpawns.Add(new EnemySpawn(obj.Properties["enemyName"], obj.Position));
                 }
@@ -130,6 +121,40 @@ namespace Four_Old_Dudes.Maps
             catch (Exception ex)
             {
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+        }
+
+        private void FindItems()
+        {
+            ItemsOnMap = new List<MapItem>();
+            foreach(var obj in Objects)
+            {
+                if (obj.Properties.ContainsKey("type") == false && obj.Properties["type"].Equals("item") == false) continue;
+                ItemsOnMap.Add(new MapItem(obj.Name, obj.Position, int.Parse(obj.Properties["points"])));
+            }
+        }
+
+        public struct EnemySpawn
+        {
+            public string Name { get; }
+            public Vector2f Position { get; }
+            public EnemySpawn(string name, Vector2f position)
+            {
+                Name = name;
+                Position = position;
+            }
+        }
+
+        public struct MapItem
+        {
+            public string Name { get; }
+            public Vector2f Position { get; }
+            public int Points { get; }
+            public MapItem(string name, Vector2f pos, int points)
+            {
+                Name = name;
+                Points = points;
+                Position = pos;
             }
         }
     }

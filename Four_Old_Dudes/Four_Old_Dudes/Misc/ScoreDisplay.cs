@@ -12,7 +12,7 @@ namespace Four_Old_Dudes.Misc
         private long _score;
         public ScoreDisplay(ref RenderWindow win, Vector2f position) : base(ref win)
         {
-            _disString = "000000000000";
+            _disString = "000000000";
             var font = AssetManager.LoadFont("OrangeJuice");
             _scoreText = new Text() { Color = Color.Black, Font = font, DisplayedString = _disString, CharacterSize = 60, Position = position};
         }
@@ -23,7 +23,10 @@ namespace Four_Old_Dudes.Misc
             var numDigits = (int)Math.Floor(Math.Log10(_score) + 1);
             if (numDigits < 0)
                 numDigits = 0;
-            _disString = _disString.Substring(0, _disString.Length - numDigits) + _score;
+            if (numDigits < _disString.Length)
+                _disString = _disString.Substring(0, _disString.Length - numDigits) + _score;
+            else
+                _disString = "" + _score;
             _scoreText.DisplayedString = _disString;
         }
 
