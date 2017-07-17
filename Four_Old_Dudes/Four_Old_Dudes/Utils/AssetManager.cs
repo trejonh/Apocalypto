@@ -24,13 +24,15 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly List<MapAsset> MapAssets = new List<MapAsset>();
 
+        private static readonly Dictionary<string,MovingSpriteAsset> MovingSpriteAssests = new Dictionary<string, MovingSpriteAsset>();
+
         private static readonly Dictionary<string, string> FontAssets = new Dictionary<string, string>();
 
         private static readonly Dictionary<string, string> ImageAssets = new Dictionary<string, string>();
+        private static readonly Dictionary<string,Texture> EnemyTextures = new Dictionary<string, Texture>();
 
         private static readonly string BaseFileLocation = Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
-        private static Texture _enemyText;
 
         /// <summary>
         /// Load in file locations of all assest found in assets.xml to be used for the game
@@ -47,7 +49,10 @@ namespace Four_Old_Dudes.Utils
                             Name = (string)u.Element("name"),
                             Location = BaseFileLocation + (string)u.Element("location"),
                             Text = (string)u.Element("text"),
-                            Order = (string)u.Element("order")
+                            Order = (string)u.Element("order"),
+                            FirstFrame = (string)u.Element("firstFrame"),
+                            LastFrame = (string)u.Element("lastFrame"),
+                            Frames = u.Element("frames")
                         };
 
             foreach (var asset in assets)
@@ -71,6 +76,30 @@ namespace Four_Old_Dudes.Utils
                         break;
                     case "image":
                         ImageAssets.Add(asset.Name, asset.Text);
+                        break;
+                    case "movingSprite":
+                        var frames = new Dictionary<Moveable.Direction, Animation.AnimationFrames>();
+                        foreach (var directon in asset.Frames.Descendants())
+                        {
+                            var dirPos = directon.Value.Split(',');
+                            switch (directon.Name.LocalName)
+                            {
+                                case "down":
+                                    frames.Add(Moveable.Direction.Down, new Animation.AnimationFrames(int.Parse(dirPos[0]), int.Parse(dirPos[1])));
+                                    break;
+                                case "up":
+                                    frames.Add(Moveable.Direction.Up, new Animation.AnimationFrames(int.Parse(dirPos[0]), int.Parse(dirPos[1])));
+                                    break;
+                                case "left":
+                                    frames.Add(Moveable.Direction.Left, new Animation.AnimationFrames(int.Parse(dirPos[0]), int.Parse(dirPos[1])));
+                                    break;
+                                case "right":
+                                    frames.Add(Moveable.Direction.Right, new Animation.AnimationFrames(int.Parse(dirPos[0]), int.Parse(dirPos[1])));
+                                    break;
+                            }
+                        }
+                        MovingSpriteAssests.Add(asset.Name,new MovingSpriteAsset(){Name = asset.Name, Location = asset.Location,
+                            FirstFrame =  int.Parse(asset.FirstFrame), LastFrame = int.Parse(asset.LastFrame), Frames = frames});
                         break;
                     default:
                         LogManager.LogWarning("Following asset could not be mapped"+asset);
@@ -106,16 +135,16 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         /// <param name="name">The name of the texture to load</param>
         /// <param name="window">The rendertarget to draw the player to</param>
-        /// <param name="firstFrame">The first frame</param>
-        /// <param name="lastFrame">The last frame</param>
         /// <returns>The loaded player</returns>
-        public static Player LoadPlayer(string name, RenderTarget window, int firstFrame, int lastFrame)
+        public static Player LoadPlayer(string name, RenderTarget window)
         {
             Player player = null;
             try
             {
-                var text = new Texture(TextureAssests[name]) { Smooth = true };
-                player = new Player(name,text, 32, 32, 60, window, RenderStates.Default, firstFrame, lastFrame);
+                var pl = MovingSpriteAssests[name];
+                var text = new Texture(pl.Location) { Smooth = true };
+                player = new Player(name,text, 32, 32, 60, window, RenderStates.Default, pl.FirstFrame, pl.LastFrame);
+                player.SetAnimationFrames(pl.Frames);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -130,17 +159,17 @@ namespace Four_Old_Dudes.Utils
         /// <param name="name">The name of the texture to load</param>
         /// <param name="window">The rendertarget to draw the player to</param>
         /// <param name="player">The player on the map</param>
-        /// <param name="firstFrame">The first frame</param>
-        /// <param name="lastFrame">The last frame</param>
         /// <returns>The loaded player</returns>
-        public static Enemy LoadEnemy(string name, RenderTarget window,Player player, int firstFrame, int lastFrame)
+        public static Enemy LoadEnemy(string name, RenderTarget window,Player player)
         {
             Enemy enemy = null;
             try
             {
-                if(_enemyText == null)
-                    _enemyText = new Texture(TextureAssests[name]) { Smooth = true };
-                enemy = new Enemy(name, _enemyText, 32, 32, 60, window, RenderStates.Default, player, firstFrame, lastFrame);
+                var ene = MovingSpriteAssests[name];
+                if(EnemyTextures.ContainsKey(name) == false)
+                    EnemyTextures.Add(name, new Texture(ene.Location) { Smooth = true });
+                enemy = new Enemy(name, EnemyTextures[name], 32, 32, 60, window, RenderStates.Default, player, ene.FirstFrame, ene.LastFrame);
+                enemy.SetAnimationFrames(ene.Frames); 
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -296,6 +325,15 @@ namespace Four_Old_Dudes.Utils
                 Location = location;
                 Order = order;
             }
+        }
+
+        private class MovingSpriteAsset
+        {
+            public string Name;
+            public int FirstFrame;
+            public int LastFrame;
+            public Dictionary<Moveable.Direction, Animation.AnimationFrames> Frames;
+            public string Location;
         }
     }
 }

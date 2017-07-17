@@ -7,6 +7,7 @@ using SFML.System;
 using Tiled.SFML;
 using SFML.Audio;
 using static System.Windows.Media.ColorConverter;
+using Object = Tiled.SFML.Object;
 
 namespace Four_Old_Dudes.Maps
 {
@@ -27,7 +28,7 @@ namespace Four_Old_Dudes.Maps
         }
 
         public Vector2f PlayerInitialPosition { get; }
-        public List<Tiled.SFML.Object> FloorObjects { get; private set; }
+        public List<Object> FloorObjects { get; private set; }
         public List<EnemySpawn> EnemySpawns { get; private set; }
         public Color BgColor { get; set; }
         public Music BgMusic { get; set; }
@@ -70,9 +71,9 @@ namespace Four_Old_Dudes.Maps
             }
             try
             {
-                var x = Properties["EOMX"];
-                var y = Properties["EOMY"];
-                EndOfMap = new Vector2f(float.Parse(x), float.Parse(y));
+                var eom = Objects.Single(obj => obj.Name.Equals("EndOfMap"));
+                if(eom != null)
+                    EndOfMap = eom.Position;
 
             }
             catch (Exception)
@@ -106,7 +107,7 @@ namespace Four_Old_Dudes.Maps
                 {
                     EnemySpawns.Add(new EnemySpawn(obj.Properties["enemyName"], obj.Position));
                 }
-                if (eneObjs == null)
+                if (EnemySpawns.Count == 0)
                     throw new Exception("No enemy spawns objects found.");
             }
             catch (Exception ex)
@@ -122,7 +123,7 @@ namespace Four_Old_Dudes.Maps
         {
             try
             {
-                FloorObjects = Objects.Where(obj => obj.Name.Equals("groundFloor")).ToList();
+                FloorObjects = Objects.Where(obj => obj.Properties.ContainsKey("type") && obj.Properties["type"].Equals("floor")).ToList();
                 if (FloorObjects == null || FloorObjects.Count == 0)
                     throw new Exception("No floor objects found.");
             }
@@ -131,6 +132,5 @@ namespace Four_Old_Dudes.Maps
                 LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
-
     }
 }

@@ -25,11 +25,9 @@ namespace Four_Old_Dudes.Utils
         private bool IsPauseMenuCreated { get; }
         private bool HasMainBeenDestroyed { get; }
         private PauseMenu _pauseMenu;
-        public static Color ThemeColor { get; private set; } = new Color(148,0,211);
-        public Music ThemeMusic { get; private set; }
+        public static Color ThemeColor { get; } = new Color(148,0,211);
+        public Music ThemeMusic { get; }
         public static bool IsThemePlaying { get; private set; }
-        private bool _showSplash;
-        private float _splashDisplayTime;
 
         public GameMaster()
         {
@@ -45,20 +43,20 @@ namespace Four_Old_Dudes.Utils
             IsGamePaused = false;
             HasMainBeenDestroyed = false;
             var gameClock = new Clock();
-            _showSplash = true;
+            var showSplash = true;
             var splash = new SplashScreen(ref _window);
-            _splashDisplayTime = 0.0f;
+            var splashDisplayTime = 0.0f;
             while (_window.IsOpen)
             {
                 _window.DispatchEvents();
                 Delta = gameClock.Restart();
-                if (_showSplash)
+                if (showSplash)
                 {
                     splash.Draw();
-                    _splashDisplayTime += Delta.AsSeconds();
-                    if (_splashDisplayTime >= SplashScreen.MaxDisplayTime)
+                    splashDisplayTime += Delta.AsSeconds();
+                    if (splashDisplayTime >= SplashScreen.MaxDisplayTime)
                     {
-                        _showSplash = false;
+                        showSplash = false;
                         splash.Stop();
                         ThemeMusic.Play();
                         IsThemePlaying = true;

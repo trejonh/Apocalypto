@@ -100,9 +100,17 @@
     <location>\audio\funky.wav</location>
   </asset>
   <asset>
-    <type>texture</type>
+    <type>movingSprite</type>
     <name>TestPlayer</name>
     <location>\sprites\player.png</location>
+    <firstFrame>0</firstFrame>
+    <lastFrame>11</lastFrame>
+    <frames>
+      <down>0,2</down>
+      <up>9,11</up>
+      <left>3,5</left>
+      <right>6,8</right>
+    </frames>
   </asset>
   <asset>
     <type>map</type>

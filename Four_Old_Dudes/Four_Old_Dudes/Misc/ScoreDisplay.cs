@@ -7,7 +7,7 @@ namespace Four_Old_Dudes.Misc
 {
     public class ScoreDisplay : Core.Drawable
     {
-        private Text _scoreText;
+        private readonly Text _scoreText;
         private string _disString;
         private long _score;
         public ScoreDisplay(ref RenderWindow win, Vector2f position) : base(ref win)

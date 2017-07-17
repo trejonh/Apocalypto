@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" backgroundcolor="#87cefa" nextobjectid="35">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" backgroundcolor="#87cefa" nextobjectid="224">
  <properties>
   <property name="BGC" type="color" value="#ff87cefa"/>
-   <property name="BGMusic" value="Funkadelic"/>
-   <property name="EOMX" value="2048"/>
-   <property name="EOMY" value="0.0"/>
+  <property name="BGMusic" value="Funkadelic"/>
+  <property name="EOMX" value="2048"/>
+  <property name="EOMY" value="0.0"/>
  </properties>
  <tileset firstgid="1" name="Platform" tilewidth="32" tileheight="32" tilecount="64" columns="8">
   <image source="Tiles_32x32.png" trans="000000" width="256" height="256"/>
@@ -33,30 +33,627 @@
   <object id="1" name="playerStartLocation" gid="51" x="98" y="640" width="32" height="32" visible="0"/>
   <object id="19" name="enemySpawn" gid="52" x="160" y="640" width="32" height="32" visible="0">
    <properties>
+    <property name="enemyName" value="TestPlayer"/>
     <property name="enemySpawn" type="bool" value="true"/>
-     <property name="enemyName" value="TestPlayer"/>
    </properties>
   </object>
   <object id="21" name="enemySpawn" gid="52" x="286" y="640" width="32" height="32" visible="0">
    <properties>
-     <property name="enemySpawn" type="bool" value="true"/>
-     <property name="enemyName" value="TestPlayer"/>
+    <property name="enemyName" value="TestPlayer"/>
+    <property name="enemySpawn" type="bool" value="true"/>
    </properties>
   </object>
+  <object id="222" name="EndOfMap" gid="52" x="3167.5" y="576" width="32" height="32" visible="0"/>
  </objectgroup>
  <objectgroup name="GroundLayer">
-  <object id="23" name="groundFloor" gid="1" x="0" y="672" width="32" height="32"/>
-  <object id="24" name="groundFloor" gid="1" x="32" y="672" width="32" height="32"/>
-  <object id="25" name="groundFloor" gid="1" x="96" y="672" width="32" height="32"/>
-  <object id="26" name="groundFloor" gid="1" x="128" y="672" width="32" height="32"/>
-  <object id="27" name="groundFloor" gid="1" x="160" y="672" width="32" height="32"/>
-  <object id="28" name="groundFloor" gid="1" x="192" y="672" width="32" height="32"/>
-  <object id="29" name="groundFloor" gid="1" x="350" y="672" width="32" height="32"/>
-  <object id="30" name="groundFloor" gid="1" x="318" y="672" width="32" height="32"/>
-  <object id="31" name="groundFloor" gid="1" x="286" y="672" width="32" height="32"/>
-  <object id="32" name="groundFloor" gid="1" x="64" y="672" width="32" height="32"/>
-  <object id="33" name="groundFloor" gid="1" x="224" y="672" width="32" height="32"/>
-  <object id="34" name="groundFloor" gid="1" x="254" y="672" width="32" height="32"/>
-  <object id="34" name="groundFloor" gid="1" x="412" y="672" width="32" height="32"/>
+  <object id="23" name="ground" gid="1" x="0" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="124" name="ground" gid="1" x="32" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="125" name="ground" gid="1" x="64" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="126" name="ground" gid="1" x="96" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="127" name="ground" gid="1" x="160" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="128" name="ground" gid="1" x="192" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="129" name="ground" gid="1" x="224" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="130" name="ground" gid="1" x="128" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="131" name="ground" gid="1" x="287" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="132" name="ground" gid="1" x="319" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="133" name="ground" gid="1" x="351" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="134" name="ground" gid="1" x="255" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="147" name="ground" gid="1" x="733.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="148" name="ground" gid="1" x="414.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="149" name="ground" gid="1" x="669.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="150" name="ground" gid="1" x="637.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="151" name="ground" gid="1" x="574.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="152" name="ground" gid="1" x="446.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="153" name="ground" gid="1" x="701.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="154" name="ground" gid="1" x="478.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="155" name="ground" gid="1" x="382.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="156" name="ground" gid="1" x="510.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="157" name="ground" gid="1" x="606.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="158" name="ground" gid="1" x="542.5" y="672" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="159" name="ground" gid="1" x="1211.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="160" name="ground" gid="1" x="1179.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="161" name="ground" gid="1" x="1466.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="false"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="162" name="ground" gid="1" x="797.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="163" name="ground" gid="1" x="1115.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="164" name="ground" gid="1" x="988.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="165" name="ground" gid="1" x="1370.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="166" name="ground" gid="1" x="893.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="167" name="ground" gid="1" x="1084.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="168" name="ground" gid="1" x="829.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="169" name="ground" gid="1" x="1147.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="170" name="ground" gid="1" x="1402.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="171" name="ground" gid="1" x="1434.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="172" name="ground" gid="1" x="1339.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="173" name="ground" gid="1" x="1243.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="174" name="ground" gid="1" x="765.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="175" name="ground" gid="1" x="1052.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="176" name="ground" gid="1" x="861.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="177" name="ground" gid="1" x="925.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="178" name="ground" gid="1" x="957.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="179" name="ground" gid="1" x="1020.25" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="180" name="ground" gid="1" x="1275.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="181" name="ground" gid="1" x="1307.75" y="673" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="182" name="ground" gid="1" x="1855.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="false"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="183" name="ground" gid="1" x="1696.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="184" name="ground" gid="1" x="1728.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="185" name="ground" gid="1" x="1759.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="186" name="ground" gid="1" x="1823.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="187" name="ground" gid="1" x="1600.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="188" name="ground" gid="1" x="1568.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="189" name="ground" gid="1" x="1664.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="190" name="ground" gid="1" x="1791.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="191" name="ground" gid="1" x="1632.5" y="544" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="192" name="ground" gid="1" x="2144.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="193" name="ground" gid="1" x="2176.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="194" name="ground" gid="1" x="2112.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="195" name="ground" gid="1" x="2335.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="196" name="ground" gid="1" x="2303.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="197" name="ground" gid="1" x="2208.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="198" name="ground" gid="1" x="2367.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="199" name="ground" gid="1" x="2272.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="200" name="ground" gid="1" x="2240.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="201" name="ground" gid="1" x="2399.5" y="545" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="false"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="202" name="ground" gid="1" x="2593.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="203" name="ground" gid="1" x="2625.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="204" name="ground" gid="1" x="2561.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="205" name="ground" gid="1" x="2784.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="206" name="ground" gid="1" x="2752.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="207" name="ground" gid="1" x="2657.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="208" name="ground" gid="1" x="2816.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="209" name="ground" gid="1" x="2721.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="210" name="ground" gid="1" x="2689.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="211" name="ground" gid="1" x="2848.5" y="609" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="false"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="212" name="ground" gid="1" x="2912.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="213" name="ground" gid="1" x="2944.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="214" name="ground" gid="1" x="2880.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="215" name="ground" gid="1" x="3103.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="216" name="ground" gid="1" x="3071.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="217" name="ground" gid="1" x="2976.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="218" name="ground" gid="1" x="3135.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="219" name="ground" gid="1" x="3040.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="220" name="ground" gid="1" x="3008.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="221" name="ground" gid="1" x="3167.5" y="608" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="false"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

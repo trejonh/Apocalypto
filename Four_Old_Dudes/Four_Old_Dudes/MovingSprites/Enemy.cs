@@ -45,6 +45,7 @@ namespace Four_Old_Dudes.MovingSprites
             _isPlayerNear = false;
             IsNearEdge = false;
             _playerIsCloseMultiplier = 1.0f;
+            MaxWaitTime = 5.5f;
         }
 
         /// <summary>
