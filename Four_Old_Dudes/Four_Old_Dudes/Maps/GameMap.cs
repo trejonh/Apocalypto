@@ -129,8 +129,10 @@ namespace Four_Old_Dudes.Maps
             ItemsOnMap = new List<MapItem>();
             foreach(var obj in Objects)
             {
-                if (obj.Properties.ContainsKey("type") == false && obj.Properties["type"].Equals("item") == false) continue;
-                ItemsOnMap.Add(new MapItem(obj.Name, obj.Position, int.Parse(obj.Properties["points"])));
+                if (obj.Properties.ContainsKey("type") && obj.Properties["type"].Equals("item"))
+                {
+                    ItemsOnMap.Add(new MapItem(obj.Name, obj.Position, int.Parse(obj.Properties["points"]), obj));
+                }
             }
         }
 
@@ -142,19 +144,6 @@ namespace Four_Old_Dudes.Maps
             {
                 Name = name;
                 Position = position;
-            }
-        }
-
-        public struct MapItem
-        {
-            public string Name { get; }
-            public Vector2f Position { get; }
-            public int Points { get; }
-            public MapItem(string name, Vector2f pos, int points)
-            {
-                Name = name;
-                Points = points;
-                Position = pos;
             }
         }
     }

@@ -5,8 +5,6 @@ using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using static Four_Old_Dudes.MovingSprites.Moveable;
-using static Four_Old_Dudes.MovingSprites.Animation;
 
 namespace Four_Old_Dudes.Menus
 {
@@ -263,12 +261,12 @@ namespace Four_Old_Dudes.Menus
             DisplayCharacters();
             return true;
         }
-        private bool LoadGameFunc()
+        private static bool LoadGameFunc()
         {
             GameState.LoadGame();
             return true;
         }
-        private bool DisplayStats()
+        private static bool DisplayStats()
         {
             Console.WriteLine("displaying stats");
             return true;
@@ -279,26 +277,19 @@ namespace Four_Old_Dudes.Menus
             switch (_itemIndex)
             {
                 case 0:
-                    Console.WriteLine("Mack");
-
-                    var frame = new Dictionary<Direction, AnimationFrames>
-                    {
-                        { Direction.Down, new AnimationFrames(0, 2) },
-                        { Direction.Left, new AnimationFrames(3, 5) },
-                        { Direction.Right, new AnimationFrames(6, 8) },
-                        { Direction.Up, new AnimationFrames(9, 11) }
-                    };
-                    GameMaster.NewGame("TestPlayer", 0, 11, frame);
+                    GameMaster.NewGame("Mack");
                     GameMaster.IsMainMenuOpen = false;
                     break;
                 case 1:
-                    Console.WriteLine("Rob");
+                    GameMaster.NewGame("Sergi");
+                    GameMaster.IsMainMenuOpen = false;
                     break;
                 case 2:
-                    Console.WriteLine("Doug");
+                    GameMaster.NewGame("Trent");
+                    GameMaster.IsMainMenuOpen = false;
                     break;
                 case 3:
-                    Console.WriteLine("Lou");
+                    Console.WriteLine("Doug");
                     break;
                 case 4:
                     _displayChars = false;
@@ -317,8 +308,8 @@ namespace Four_Old_Dudes.Menus
             _charMenuItems = new List<MenuItem>();
             var names = new[]
             {
-                AssetManager.GetMessage("Mack"), AssetManager.GetMessage("Rob"),
-                AssetManager.GetMessage("Doug"),AssetManager.GetMessage("Lou")
+                AssetManager.GetMessage("Mack"), AssetManager.GetMessage("Sergei"),
+                AssetManager.GetMessage("Trent"),AssetManager.GetMessage("Doug")
             };
             var font = AssetManager.LoadFont("OrangeJuice");
             for (var i = 0; i < 5; i++)
@@ -378,17 +369,17 @@ namespace Four_Old_Dudes.Menus
                 var mack = AssetManager.LoadSprite("MackStill");
                 mack.Scale = scale;
                 mack.Position = new Vector2f(_charMenuItems[0].Position.X + 24, _charMenuItems[0].Position.Y + 24);
-                var doug = AssetManager.LoadSprite("MackStill");
-                doug.Scale = scale;
-                doug.Position = new Vector2f(_charMenuItems[1].Position.X + 24, _charMenuItems[1].Position.Y + 24);
-                var lou = AssetManager.LoadSprite("MackStill");
+                var sergei = AssetManager.LoadSprite("SergeiStill");
+                sergei.Scale = scale;
+                sergei.Position = new Vector2f(_charMenuItems[1].Position.X + 24, _charMenuItems[1].Position.Y + 24);
+                var lou = AssetManager.LoadSprite("TrentStill");
                 lou.Scale = scale;
                 lou.Position = new Vector2f(_charMenuItems[2].Position.X + 24, _charMenuItems[2].Position.Y + 24);
                 var rob = AssetManager.LoadSprite("MackStill");
                 rob.Scale = scale;
                 rob.Position = new Vector2f(_charMenuItems[3].Position.X + 24, _charMenuItems[3].Position.Y + 24);
                 _characterStills = new List<Sprite>(new[] {
-                mack,doug,lou,rob
+                mack,sergei,lou,rob
                 });
             }
             catch (NullReferenceException)

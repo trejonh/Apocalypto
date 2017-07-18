@@ -44,7 +44,8 @@ namespace Four_Old_Dudes.Utils
                 var world = gameSaves[0].World;
                 var player = world.Descendants("player").First();
                 var enemies = world.Descendants("enemiesOnMap").First();
-                GameMaster.LoadGame(world,player,enemies);
+                var items = world.Descendants("itemsOnMap").First();
+                GameMaster.LoadGame(world,player,enemies,items);
             }
             catch (Exception ex)
             {
@@ -109,12 +110,23 @@ namespace Four_Old_Dudes.Utils
                 foreach (var enemy in worldToSave.EnemiesOnMap)
                 {
                     writer.WriteStartElement("enemy");
-                    writer.WriteAttributeString("position",""+enemy.Position.X+","+""+enemy.Position.Y);
-                    writer.WriteAttributeString("name",enemy.Name);
+                    writer.WriteAttributeString("position", "" + enemy.Position.X + "," + "" + enemy.Position.Y);
+                    writer.WriteAttributeString("name", enemy.Name);
                     writer.WriteEndElement();
                 }
                 writer.WriteEndElement();
                 //end enemeies
+                //items
+                writer.WriteStartElement("itemsOnMap");
+                foreach (var item in worldToSave.WorldMap.ItemsOnMap)
+                {
+                    writer.WriteStartElement("item");
+                    writer.WriteAttributeString("position", "" + item.Position.X + "," + "" + item.Position.Y);
+                    writer.WriteAttributeString("name", item.Name);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                //end items
                 writer.WriteEndElement();
                 //end world
                 writer.WriteEndElement();

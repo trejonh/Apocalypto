@@ -116,14 +116,14 @@ namespace Four_Old_Dudes.Utils
             _pauseMenu = new PauseMenu(ref _window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
         }
 
-        public static void NewGame(string playerName, int firstFrame, int lastFrame, Dictionary<Direction, AnimationFrames> frames)
+        public static void NewGame(string playerName)
         {
             if (GameWorld == null)
                 GameWorld = new World(ref _window);
-            GameWorld.NewGame(playerName, firstFrame, lastFrame, frames);
+            GameWorld.NewGame(playerName);
         }
 
-        private void Window_Closed(object sender, System.EventArgs e)
+        private static void Window_Closed(object sender, System.EventArgs e)
         {
             LogManager.CloseLog();
             _window.Close();
@@ -141,16 +141,17 @@ namespace Four_Old_Dudes.Utils
             IsGamePaused = true;
         }
 
-        public static void LoadGame(XElement world,XElement player, XElement enemies)
+        public static void LoadGame(XElement world,XElement player, XElement enemies, XElement items)
         {
             var worldAttr = world.Attributes().ToDictionary(attr => attr.Name, attr => attr.Value);
             var currentMap = int.Parse(worldAttr["currentMap"]);
             var score = long.Parse(worldAttr["score"]);
             var lives = int.Parse(worldAttr["lives"]);
             var ene = enemies.Descendants("enemy").ToArray();
+            var item = items.Descendants("item").ToArray();
             if(GameWorld == null)
                 GameWorld = new World(ref _window);
-            GameWorld.LoadGame(currentMap, score, lives, player, ene);
+            GameWorld.LoadGame(currentMap, score, lives, player, ene,item);
         }
 
         public static void PlayTheme()

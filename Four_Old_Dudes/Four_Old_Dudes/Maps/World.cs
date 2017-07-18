@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Xml.Linq;
-using static Four_Old_Dudes.MovingSprites.Animation;
 using static Four_Old_Dudes.MovingSprites.Moveable;
 
 namespace Four_Old_Dudes.Maps
@@ -221,6 +220,15 @@ namespace Four_Old_Dudes.Maps
                         Reset(3,true);
                         UnpauseWorld();
                     }
+                    var tmp = new List<MapItem>(WorldMap.ItemsOnMap);
+                    var tmpArry = tmp.ToArray();
+                    foreach (var item in tmpArry)
+                    {
+                        if (WorldPlayer.IsIntersecting(item.Position) == false) continue;
+                        Score += item.Points;
+                        tmp.Remove(item);
+                    }
+                    WorldMap.ItemsOnMap = tmp;
                 }
             }
             catch (ThreadAbortException)
@@ -352,7 +360,7 @@ namespace Four_Old_Dudes.Maps
                 _worldView.Center = WorldPlayer.Position;
                 WinInstance.SetView(_worldView);
                 _healthBar.SetPosition(new Vector2f((_worldView.Center.X - _worldView.Size.X/2.0f) + 30, _worldView.Center.Y - 350));
-                _scoreDisp.SetPosition(new Vector2f((_worldView.Center.X + (_worldView.Size.X / 10.0f)), _worldView.Center.Y - 350));
+                _scoreDisp.SetPosition(new Vector2f((_worldView.Center.X + (_worldView.Size.X/4.0f)), _worldView.Center.Y - 350));
                 WinInstance.Clear(WorldMap.BgColor);
                 WinInstance.Draw(WorldMap);
                 if (WorldMap.FloorObjects != null)
@@ -403,6 +411,10 @@ namespace Four_Old_Dudes.Maps
                     InitDisplayCountDownTimer();
                     if(_countDownText != null)
                         WinInstance.Draw(_countDownText);
+                }
+                foreach (var item in WorldMap.ItemsOnMap)
+                {
+                    WinInstance.Draw(item.Item);
                 }
                 WorldPlayer.Update();
                 _healthBar.UpdateHealth(WorldPlayer.Health);
@@ -471,13 +483,12 @@ namespace Four_Old_Dudes.Maps
             }
             return smallestDistance.Value;
         }
-        public void NewGame(string playerName, int firstPlayerFrame, int lastPlayerFrame, Dictionary<Direction, AnimationFrames> frames)
+        public void NewGame(string playerName)
         {
             CurrentMap = 0;
             WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
             WorldPlayer = AssetManager.LoadPlayer(playerName, WinInstance);
             WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
-            WorldPlayer.SetAnimationFrames(frames);
             EnemiesOnMap = SpawnEnemies();
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
@@ -549,7 +560,7 @@ namespace Four_Old_Dudes.Maps
             _localPause = true;
         }
 
-        public void LoadGame(int currentMap, long score, int lives, XElement player, XElement[] ene)
+        public void LoadGame(int currentMap, long score, int lives, XElement player, XElement[] ene, XElement[] items)
         {
             WorldMap = AssetManager.LoadGameMap(currentMap, _worldView);
             Score = score;
@@ -565,9 +576,19 @@ namespace Four_Old_Dudes.Maps
                 foreach (var eneXml in ene)
                 {
                     var enePos = eneXml.FirstAttribute.Value.Split(',');
-                    var floatPos = new[] { float.Parse(enePos[0]), float.Parse(enePos[1])};
+                    var floatPos = new[] { float.Parse(enePos[0]), float.Parse(enePos[1]) };
                     if (Math.Abs(enemy.Position.X - floatPos[0]) > 0.0001f && Math.Abs(enemy.Position.Y - floatPos[1]) > 0.0001f)
                         WorldMap.EnemySpawns.Remove(enemy);
+                }
+            }
+            foreach (var item in WorldMap.ItemsOnMap)
+            {
+                foreach (var itemXml in items)
+                {
+                    var itemPos = itemXml.FirstAttribute.Value.Split(',');
+                    var floatPos = new[] { float.Parse(itemPos[0]), float.Parse(itemPos[1]) };
+                    if (Math.Abs(item.Position.X - floatPos[0]) > 0.0001f && Math.Abs(item.Position.Y - floatPos[1]) > 0.0001f && item.Name.Equals(itemXml.LastAttribute.Value))
+                        WorldMap.ItemsOnMap.Remove(item);
                 }
             }
             EnemiesOnMap = SpawnEnemies();

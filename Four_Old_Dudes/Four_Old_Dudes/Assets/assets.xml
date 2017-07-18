@@ -21,13 +21,13 @@
   </asset>
   <asset>
     <type>text</type>
-    <name>Lou</name>
-    <text>Lou</text>
+    <name>Trent</name>
+    <text>Trent</text>
   </asset>
   <asset>
     <type>text</type>
-    <name>Rob</name>
-    <text>Rob</text>
+    <name>Sergei</name>
+    <text>Sergei</text>
   </asset>
   <asset>
     <type>text</type>
@@ -113,6 +113,39 @@
     </frames>
   </asset>
   <asset>
+    <type>movingSprite</type>
+    <name>Sergi</name>
+    <location>\sprites\sergi.png</location>
+    <firstFrame>0</firstFrame>
+    <lastFrame>5</lastFrame>
+    <frames>
+      <left>3,5</left>
+      <right>0,2</right>
+    </frames>
+  </asset>
+  <asset>
+    <type>movingSprite</type>
+    <name>Mack</name>
+    <location>\sprites\mack.png</location>
+    <firstFrame>0</firstFrame>
+    <lastFrame>5</lastFrame>
+    <frames>
+      <left>3,5</left>
+      <right>0,2</right>
+    </frames>
+  </asset>
+  <asset>
+    <type>movingSprite</type>
+    <name>Trent</name>
+    <location>\sprites\trent.png</location>
+    <firstFrame>0</firstFrame>
+    <lastFrame>5</lastFrame>
+    <frames>
+      <left>3,5</left>
+      <right>0,2</right>
+    </frames>
+  </asset>
+  <asset>
     <type>map</type>
     <name>DefaultMap</name>
     <location>\maps\map.tmx</location>
@@ -132,6 +165,16 @@
     <type>texture</type>
     <name>MackStill</name>
     <location>\images\mackDaddy.png</location>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>SergeiStill</name>
+    <location>\images\sergiTheCommie.png</location>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>TrentStill</name>
+    <location>\images\trentTheAsian.png</location>
   </asset>
   <asset>
     <type>text</type>
@@ -177,5 +220,10 @@
     <type>text</type>
     <name>Go</name>
     <text>Go!</text>
+  </asset>
+  <asset>
+    <type>texture</type>
+    <name>HouseLogo</name>
+    <location>\images\houseLogo.png</location>
   </asset>
 </assets>

@@ -12,14 +12,15 @@ namespace Four_Old_Dudes.Misc
         private long _score;
         public ScoreDisplay(ref RenderWindow win, Vector2f position) : base(ref win)
         {
-            _disString = "000000000";
+            _disString = "0000000000";
             var font = AssetManager.LoadFont("OrangeJuice");
-            _scoreText = new Text() { Color = Color.Black, Font = font, DisplayedString = _disString, CharacterSize = 60, Position = position};
+            _scoreText = new Text() { Color = Color.Black, Font = font, DisplayedString = _disString, CharacterSize = 45, Position = position};
         }
 
         public void UpdateScore(long score)
         {
-            _score += score;
+            _score = score;
+            if (_score == 0) return;
             var numDigits = (int)Math.Floor(Math.Log10(_score) + 1);
             if (numDigits < 0)
                 numDigits = 0;

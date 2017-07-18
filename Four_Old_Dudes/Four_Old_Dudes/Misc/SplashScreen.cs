@@ -7,9 +7,10 @@ namespace Four_Old_Dudes.Misc
 {
     public sealed class SplashScreen : Core.Drawable
     {
-        private Text[] _splashText;
-        private Sprite _logo;
-        private Sound _splashSound;
+        private readonly Text[] _splashText;
+        private readonly Sprite _logo;
+        private Sprite _houseLogo;
+        private readonly Sound _splashSound;
         public static readonly float MaxDisplayTime = 5.0f;
         public SplashScreen(ref RenderWindow window) : base (ref window)
         {
@@ -23,7 +24,9 @@ namespace Four_Old_Dudes.Misc
                 new Text() {  DisplayedString = AssetManager.GetMessage("Dudes"), Color = Color.Black, CharacterSize = 120, Font = font, Position = new Vector2f(winSizeX/2, (winSizeY/3)+125)}
             };
             _logo = AssetManager.LoadSprite("SplashLogo");
-            _logo.Position = new Vector2f(winSizeX / 10, winSizeY - _logo.Texture.Size.Y * 1.5f);
+            _logo.Position = new Vector2f(winSizeX / 10f, winSizeY - _logo.Texture.Size.Y * 1.5f);
+            _houseLogo = AssetManager.LoadSprite("HouseLogo");
+            _houseLogo.Position = new Vector2f(winSizeX -(_houseLogo.Texture.Size.X *2f), _houseLogo.Texture.Size.Y);
             _splashSound = AssetManager.LoadSound("SplashSound");
         }
         public override void Draw()
@@ -34,6 +37,7 @@ namespace Four_Old_Dudes.Misc
             foreach (var text in _splashText)
                 WinInstance.Draw(text);
             WinInstance.Draw(_logo);
+            WinInstance.Draw(_houseLogo);
         }
 
         public void Stop()
