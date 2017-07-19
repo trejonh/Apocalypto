@@ -21,6 +21,7 @@ namespace Four_Old_Dudes.MovingSprites
         private const float AttackSpeed = 80.0f;
         private float _timeSinceLastAttack = 80.0f;
         public float AttackPower = 5.0f;
+        public readonly int TakeDownScore;
 
         /// <summary>
         /// Create a new player instance
@@ -33,12 +34,13 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="rTarget">The render target to draw to</param>
         /// <param name="rStates">The render states</param>
         /// <param name="player">The player on the map</param>
+        /// <param name="tdscore">The score added when killed</param>
         /// <param name="firstFrame">The first frame</param>
         /// <param name="lastFrame">The last frmae</param>
         /// <param name="isAnimated">Is it initially animated</param>
         /// <param name="isLooped">Is it looped</param>
         public Enemy(string name, Texture text, int frameWidth, int frameHeight, int framesPerSecond, RenderTarget rTarget, RenderStates rStates,  Player player,
-            int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
+            int tdscore, int firstFrame = 0, int lastFrame = 0, bool isAnimated = false, bool isLooped = true) 
             : base(name,text, frameWidth, frameHeight, framesPerSecond, rTarget, rStates, firstFrame, lastFrame, isAnimated, isLooped)
         {
             _playerOnMap = player;
@@ -46,6 +48,7 @@ namespace Four_Old_Dudes.MovingSprites
             IsNearEdge = false;
             _playerIsCloseMultiplier = 1.0f;
             MaxWaitTime = 5.5f;
+            TakeDownScore = tdscore;
         }
 
         /// <summary>

@@ -31,8 +31,8 @@
   </asset>
   <asset>
     <type>text</type>
-    <name>Doug</name>
-    <text>Doug</text>
+    <name>Jaun</name>
+    <text>Jaun</text>
   </asset>
   <asset>
     <type>text</type>
@@ -177,6 +177,11 @@
     <location>\images\trentTheAsian.png</location>
   </asset>
   <asset>
+    <type>texture</type>
+    <name>JaunStill</name>
+    <location>\images\juanito.png</location>
+  </asset>
+  <asset>
     <type>text</type>
     <name>Loading</name>
     <text>Loading...</text>
@@ -225,5 +230,20 @@
     <type>texture</type>
     <name>HouseLogo</name>
     <location>\images\houseLogo.png</location>
+  </asset>
+  <asset>
+    <type>shot</type>
+    <name>SergiShot</name>
+    <location>\sprites\sergei_attack_mini.png</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>SergiShot</name>
+    <location>\audio\sergeiShot.wav</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>PlayerDeath</name>
+    <location>\audio\playerDeath.ogg</location>
   </asset>
 </assets>

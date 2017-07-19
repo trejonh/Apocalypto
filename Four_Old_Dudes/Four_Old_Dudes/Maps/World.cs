@@ -49,6 +49,7 @@ namespace Four_Old_Dudes.Maps
         private Text _countDownText;
         private System.Timers.Timer _countDownTimer;
         private bool _timerStarted;
+        private const float MaxTimeForBulletDraw = 2.5f;
 
         /// <summary>
         /// Create an empty world
@@ -147,11 +148,32 @@ namespace Four_Old_Dudes.Maps
                     if(WorldPlayer.IsGroundUnderMe == false && WorldPlayer.TimeFalling >= (2.5f * 0.92f))
                     {
                         // if player is falling for too long, reset them
-
+                        WorldPlayer.DeathSound.Play();
                         Pause();
                         Reset(NumberOfPlayerLives--, false);
                         UnpauseWorld();
                     }
+                    var tmp = new List<PlayerShot>(WorldPlayer.ShotsFired);
+                    var tmpArry = tmp.ToArray();
+                    foreach (var shot in tmpArry)
+                    {
+                        if (shot.TotalTimeDrawn >= MaxTimeForBulletDraw)
+                        {
+                            tmp.Remove(shot);
+                            continue;
+                        }
+                        var eneTmp = new List<Enemy>(EnemiesOnMap);
+                        var eneTmpArr = eneTmp.ToArray();
+                        foreach (var enemy in eneTmpArr)
+                        {
+                            if (!shot.IsIntersecting(enemy.Position)) continue;
+                            tmp.Remove(shot);
+                            eneTmp.Remove(enemy);
+                            Score += enemy.TakeDownScore;
+                        }
+                        EnemiesOnMap = eneTmp;
+                    }
+                    WorldPlayer.ShotsFired = tmp;
                     if (EnemiesOnMap.Count == 0) continue;
                     {
                         /*
@@ -209,12 +231,14 @@ namespace Four_Old_Dudes.Maps
                     if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
                     if(WorldPlayer.Health <= 0)
                     {
+                        WorldPlayer.DeathSound.Play();
                         Pause();
                         Reset(NumberOfPlayerLives--,false);
                         UnpauseWorld();
                     }
                     if(NumberOfPlayerLives <= 0)
                     {
+                        WorldPlayer.DeathSound.Play();
                         Pause();
                         WorldMap = AssetManager.LoadGameMap(0,_worldView);
                         Reset(3,true);
@@ -421,6 +445,8 @@ namespace Four_Old_Dudes.Maps
                 _scoreDisp.UpdateScore(Score);
                 _healthBar.Draw();
                 _scoreDisp.Draw();
+                foreach(var shot in WorldPlayer.ShotsFired)
+                    shot.Draw();
             }
             
         }

@@ -289,7 +289,7 @@ namespace Four_Old_Dudes.Menus
                     GameMaster.IsMainMenuOpen = false;
                     break;
                 case 3:
-                    Console.WriteLine("Doug");
+                    Console.WriteLine("Jaun");
                     break;
                 case 4:
                     _displayChars = false;
@@ -309,7 +309,7 @@ namespace Four_Old_Dudes.Menus
             var names = new[]
             {
                 AssetManager.GetMessage("Mack"), AssetManager.GetMessage("Sergei"),
-                AssetManager.GetMessage("Trent"),AssetManager.GetMessage("Doug")
+                AssetManager.GetMessage("Trent"),AssetManager.GetMessage("Jaun")
             };
             var font = AssetManager.LoadFont("OrangeJuice");
             for (var i = 0; i < 5; i++)
@@ -375,7 +375,7 @@ namespace Four_Old_Dudes.Menus
                 var lou = AssetManager.LoadSprite("TrentStill");
                 lou.Scale = scale;
                 lou.Position = new Vector2f(_charMenuItems[2].Position.X + 24, _charMenuItems[2].Position.Y + 24);
-                var rob = AssetManager.LoadSprite("MackStill");
+                var rob = AssetManager.LoadSprite("JaunStill");
                 rob.Scale = scale;
                 rob.Position = new Vector2f(_charMenuItems[3].Position.X + 24, _charMenuItems[3].Position.Y + 24);
                 _characterStills = new List<Sprite>(new[] {

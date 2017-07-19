@@ -107,6 +107,7 @@
     <Compile Include="Menus\MenuPointer.cs" />
     <Compile Include="Menus\PauseMenu.cs" />
     <Compile Include="Misc\HealthBar.cs" />
+    <Compile Include="Misc\PlayerShot.cs" />
     <Compile Include="Misc\ScoreDisplay.cs" />
     <Compile Include="Misc\SplashScreen.cs" />
     <Compile Include="MovingSprites\Animation.cs" />
@@ -124,6 +125,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Assets\audio\playerDeath.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Assets\fonts\orange_juice.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -143,6 +147,9 @@
     <Content Include="Assets\audio\menuClick.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\audio\sergeiShot.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\audio\splashScreenSound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -153,6 +160,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\images\houseLogo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\images\juanito.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\images\logo.png">
@@ -178,6 +188,9 @@
     </Content>
     <Content Include="Assets\sprites\player.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\sprites\sergei_attack_mini.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\sprites\sergi.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

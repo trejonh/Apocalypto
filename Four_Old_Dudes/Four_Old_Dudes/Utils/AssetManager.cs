@@ -29,7 +29,9 @@ namespace Four_Old_Dudes.Utils
         private static readonly Dictionary<string, string> FontAssets = new Dictionary<string, string>();
 
         private static readonly Dictionary<string, string> ImageAssets = new Dictionary<string, string>();
-        private static readonly Dictionary<string,Texture> EnemyTextures = new Dictionary<string, Texture>();
+        private static readonly Dictionary<string, Texture> EnemyTextures = new Dictionary<string, Texture>();
+        private static readonly Dictionary<string, Texture> ShotTextures = new Dictionary<string, Texture>();
+        private static readonly Dictionary<string, string> PlayerShots = new Dictionary<string, string>();
 
         private static readonly string BaseFileLocation = Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
@@ -101,6 +103,9 @@ namespace Four_Old_Dudes.Utils
                         MovingSpriteAssests.Add(asset.Name,new MovingSpriteAsset(){Name = asset.Name, Location = asset.Location,
                             FirstFrame =  int.Parse(asset.FirstFrame), LastFrame = int.Parse(asset.LastFrame), Frames = frames});
                         break;
+                    case "shot":
+                        PlayerShots.Add(asset.Name,asset.Location);
+                        break;
                     default:
                         LogManager.LogWarning("Following asset could not be mapped"+asset);
                         break;
@@ -122,6 +127,29 @@ namespace Four_Old_Dudes.Utils
             {
                 var text = new Texture(TextureAssests[name]) { Smooth = true };
                 sprite = new Sprite(text);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return sprite;
+        }
+        
+        /// <summary>
+        /// Load a shot
+        /// </summary>
+        /// <param name="name">The name of the texture for the sprite</param>
+        /// <returns>The loaded shot</returns>
+        public static Sprite LoadShot(string name)
+        {
+            Sprite sprite = null;
+            try
+            {
+                if (ShotTextures.ContainsKey(name) == false)
+                {
+                    ShotTextures.Add(name, new Texture(PlayerShots[name]){Smooth = true});
+                }
+                sprite = new Sprite(ShotTextures[name]);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -174,7 +202,8 @@ namespace Four_Old_Dudes.Utils
                 }
                 else
                     text = EnemyTextures[name];
-                enemy = new Enemy(name, text, 32, 32, 60, window, RenderStates.Default, player, ene.FirstFrame, ene.LastFrame);
+                var rand = new Random(22);
+                enemy = new Enemy(name, text, 32, 32, 60, window, RenderStates.Default, player,rand.Next(0,101), ene.FirstFrame, ene.LastFrame);
                 enemy.SetAnimationFrames(ene.Frames); 
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
@@ -319,7 +348,7 @@ namespace Four_Old_Dudes.Utils
             return map;
         }
 
-        private class MapAsset
+        private struct MapAsset
         {
             public string Location { get; }
             public int Order { get; }
@@ -333,7 +362,7 @@ namespace Four_Old_Dudes.Utils
             }
         }
 
-        private class MovingSpriteAsset
+        private struct MovingSpriteAsset
         {
             public string Name;
             public int FirstFrame;

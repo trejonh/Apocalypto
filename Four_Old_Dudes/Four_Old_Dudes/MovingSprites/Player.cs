@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using Four_Old_Dudes.Misc;
 using SFML.Graphics;
 using SFML.Window;
 using Four_Old_Dudes.Utils;
+using SFML.Audio;
 using SFML.System;
 
 namespace Four_Old_Dudes.MovingSprites
@@ -19,6 +22,9 @@ namespace Four_Old_Dudes.MovingSprites
         private float _jumpAccel = -600.2f;
         private readonly View _playerView;
         private Vector2f _initialPosition;
+        public List<PlayerShot> ShotsFired;
+        private readonly Sound _shotSound;
+        public readonly Sound DeathSound;
         /// <summary>
         /// The position of the ground
         /// </summary>
@@ -27,7 +33,9 @@ namespace Four_Old_Dudes.MovingSprites
         /// Is there a ground tile under me
         /// </summary>
         public bool IsGroundUnderMe { get; set; }
-        public bool IsControlsRemoved { get; set; } = false;
+        public bool IsControlsRemoved { get; set; }
+        private const float MaxShootIntervals = 1.5f;
+        private float _shootWaitTime = 1.5f;
         private bool _isFalling;
         /// <summary>
         /// Current health level
@@ -73,6 +81,9 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 LogManager.LogError("Window is null, cannot set movers");
             }
+            ShotsFired = new List<PlayerShot>();
+            _shotSound = AssetManager.LoadSound(name + "Shot");
+            DeathSound = AssetManager.LoadSound("PlayerDeath");
         }
 
         public void AddControls()
@@ -212,6 +223,9 @@ namespace Four_Old_Dudes.MovingSprites
                 }
                 if (IsGroundUnderMe == false)
                     _isFalling = true;
+                if(Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                    Attack();
+                _shootWaitTime += GameMaster.Delta.AsSeconds();
             }
             Vector2f newCenter = _playerView.Center;
             var xMovement = Position.X - _initialPosition.X;
@@ -244,12 +258,10 @@ namespace Four_Old_Dudes.MovingSprites
         public void OnKeyPressed(object sender, KeyEventArgs key)
         {
             if (key.Code != Keyboard.Key.Escape) return;
-            if(GameMaster.IsGamePaused == false)
-            {
-                Stop();
-                RemoveControls();
-                GameMaster.IsGamePaused = true;
-            }
+            if (GameMaster.IsGamePaused != false) return;
+            Stop();
+            RemoveControls();
+            GameMaster.IsGamePaused = true;
         }
 
         /// <summary>
@@ -324,7 +336,12 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Attack()
         {
-            throw new NotImplementedException();
+            if (!(_shootWaitTime >= MaxShootIntervals)) return;
+            var playerWindow = _playerWindow;
+            ShotsFired.Add(new PlayerShot(ref playerWindow, Name + "Shot",
+                new Vector2f(Position.X + 30.0f, Position.Y)){Direction = CurrentDirection});
+            _shotSound.Play();
+            _shootWaitTime = 0;
         }
     }
 }
