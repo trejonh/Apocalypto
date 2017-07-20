@@ -27,7 +27,7 @@ namespace Four_Old_Dudes.MovingSprites
         protected const float Gravity = 988.8f;
         protected float Friction = 0.6f;
         protected const float LinearVelocity = 1.38f * 150;
-        protected const float MaxAirTime = 0.92f;
+        protected const float MaxAirTime = 0.46f;
         public int Height => TextureRect.Height;
         public int Width => TextureRect.Width;
         public string Name { get; }

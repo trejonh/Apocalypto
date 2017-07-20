@@ -19,6 +19,8 @@ namespace Four_Old_Dudes.Misc
         {
             _shot = AssetManager.LoadShot(name);
             _shot.Position = initalPosition;
+            if (Direction == Moveable.Direction.Left)
+                _shot.Origin = new Vector2f(_shot.Position.X/2,_shot.Position.Y/2);
         }
 
         public bool IsIntersecting(Vector2f position)
@@ -34,7 +36,6 @@ namespace Four_Old_Dudes.Misc
                 tmp.X += IntialVelocity * GameMaster.Delta.AsSeconds();
             else if (Direction == Moveable.Direction.Left)
                 tmp.X += -1 *IntialVelocity * GameMaster.Delta.AsSeconds();
-            _shot.Rotation += _shot.Rotation * GameMaster.Delta.AsSeconds() * 10;
             _shot.Position = tmp;
             WinInstance.Draw(_shot);
             TotalTimeDrawn += GameMaster.Delta.AsSeconds();

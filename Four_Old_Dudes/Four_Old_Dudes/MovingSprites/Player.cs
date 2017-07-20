@@ -34,8 +34,8 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public bool IsGroundUnderMe { get; set; }
         public bool IsControlsRemoved { get; set; }
-        private const float MaxShootIntervals = 1.5f;
-        private float _shootWaitTime = 1.5f;
+        private const float MaxShootIntervals = 1f;
+        private float _shootWaitTime = 1f;
         private bool _isFalling;
         /// <summary>
         /// Current health level
@@ -336,10 +336,11 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Attack()
         {
-            if (!(_shootWaitTime >= MaxShootIntervals)) return;
+            if (_shootWaitTime < MaxShootIntervals) return;
             var playerWindow = _playerWindow;
-            ShotsFired.Add(new PlayerShot(ref playerWindow, Name + "Shot",
-                new Vector2f(Position.X + 30.0f, Position.Y)){Direction = CurrentDirection});
+            var x = CurrentDirection == Direction.Right ? 30f : -30f;
+            var pos = new Vector2f(Position.X + x, Position.Y);
+            ShotsFired.Add(new PlayerShot(ref playerWindow, Name + "Shot", pos){Direction = CurrentDirection});
             _shotSound.Play();
             _shootWaitTime = 0;
         }

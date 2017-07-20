@@ -45,9 +45,12 @@ namespace Four_Old_Dudes.Utils
         /// <param name="error">The error message</param>
         public static void LogError(string error)
         {
-            const string eleO = "<error class=\'text-danger\'>";
-            const string eleC = "</error>";
-            _log.WriteLine(eleO + error + eleC);
+            lock (_log)
+            {
+                const string eleO = "<error class=\'text-danger\'>";
+                const string eleC = "</error>";
+                _log.WriteLine(eleO + error + eleC);
+            }
         }
 
         /// <summary>
@@ -56,9 +59,12 @@ namespace Four_Old_Dudes.Utils
         /// <param name="warning">The warning message</param>
         public static void LogWarning(string warning)
         {
-            const string eleO = "<warning class=\'text-warning\'>";
-            const string eleC = "</warning>";
-            _log.WriteLine(eleO + warning + eleC);
+            lock (_log)
+            {
+                const string eleO = "<warning class=\'text-warning\'>";
+                const string eleC = "</warning>";
+                _log.WriteLine(eleO + warning + eleC);
+            }
         }
 
         /// <summary>
@@ -67,9 +73,12 @@ namespace Four_Old_Dudes.Utils
         /// <param name="log">The message to log</param>
         public static void Log(string log)
         {
-            const string eleO = "<info class=\'text-info\'>";
-            const string eleC = "</info>";
-            _log.WriteLine(eleO+log+eleC);
+            lock (_log)
+            {
+                const string eleO = "<info class=\'text-info\'>";
+                const string eleC = "</info>";
+                _log.WriteLine(eleO + log + eleC);
+            }
         }
 
         /// <summary>
@@ -77,8 +86,11 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         public static void CloseLog()
         {
-            _log.Write(_close);
-            _log.Close();
+            lock (_log)
+            {
+                _log.Write(_close);
+                _log.Close();
+            }
         }
     }
 }

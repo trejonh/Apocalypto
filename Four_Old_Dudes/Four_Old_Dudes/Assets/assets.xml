@@ -237,9 +237,29 @@
     <location>\sprites\sergei_attack_mini.png</location>
   </asset>
   <asset>
+    <type>shot</type>
+    <name>MackShot</name>
+    <location>\sprites\mackshot.png</location>
+  </asset>
+  <asset>
+    <type>shot</type>
+    <name>TrentShot</name>
+    <location>\sprites\trentShot.png</location>
+  </asset>
+  <asset>
     <type>audio</type>
     <name>SergiShot</name>
     <location>\audio\sergeiShot.wav</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>TrentShot</name>
+    <location>\audio\trentShot.flac</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>MackShot</name>
+    <location>\audio\mackShot.wav</location>
   </asset>
   <asset>
     <type>audio</type>

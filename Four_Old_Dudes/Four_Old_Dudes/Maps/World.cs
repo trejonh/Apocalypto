@@ -150,13 +150,20 @@ namespace Four_Old_Dudes.Maps
                         // if player is falling for too long, reset them
                         WorldPlayer.DeathSound.Play();
                         Pause();
-                        Reset(NumberOfPlayerLives--, false);
+                        NumberOfPlayerLives--;
+                        Reset(NumberOfPlayerLives, false);
                         UnpauseWorld();
                     }
                     var tmp = new List<PlayerShot>(WorldPlayer.ShotsFired);
                     var tmpArry = tmp.ToArray();
                     foreach (var shot in tmpArry)
                     {
+                        var endOfScreen = _worldView.Center.X + _worldView.Size.X / 2.0f;
+                        if(shot.Position.X >= endOfScreen)
+                        {
+                            tmp.Remove(shot);
+                            continue;
+                        }
                         if (shot.TotalTimeDrawn >= MaxTimeForBulletDraw)
                         {
                             tmp.Remove(shot);
@@ -233,7 +240,8 @@ namespace Four_Old_Dudes.Maps
                     {
                         WorldPlayer.DeathSound.Play();
                         Pause();
-                        Reset(NumberOfPlayerLives--,false);
+                        NumberOfPlayerLives--;
+                        Reset(NumberOfPlayerLives, false);
                         UnpauseWorld();
                     }
                     if(NumberOfPlayerLives <= 0)
