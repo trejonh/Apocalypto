@@ -5,6 +5,9 @@ using SFML.System;
 
 namespace Four_Old_Dudes.Misc
 {
+    /// <summary>
+    /// The game splash screen
+    /// </summary>
     public sealed class SplashScreen : Core.Drawable
     {
         private readonly Text[] _splashText;
@@ -12,6 +15,11 @@ namespace Four_Old_Dudes.Misc
         private Sprite _houseLogo;
         private readonly Sound _splashSound;
         public static readonly float MaxDisplayTime = 5.0f;
+
+        /// <summary>
+        /// Creates the game's splash scrren
+        /// </summary>
+        /// <param name="window">The window to draw to</param>
         public SplashScreen(ref RenderWindow window) : base (ref window)
         {
             var font = AssetManager.LoadFont("OrangeJuice");
@@ -29,6 +37,10 @@ namespace Four_Old_Dudes.Misc
             _houseLogo.Position = new Vector2f(winSizeX -(_houseLogo.Texture.Size.X *2f), _houseLogo.Texture.Size.Y);
             _splashSound = AssetManager.LoadSound("SplashSound");
         }
+
+        /// <summary>
+        /// Draw the splash screen
+        /// </summary>
         public override void Draw()
         {
             if (_splashSound != null && _splashSound.Status != SoundStatus.Playing)
@@ -40,6 +52,9 @@ namespace Four_Old_Dudes.Misc
             WinInstance.Draw(_houseLogo);
         }
 
+        /// <summary>
+        /// Stop the splash screen sound
+        /// </summary>
         public void Stop()
         {
             if (_splashSound != null && _splashSound.Status == SoundStatus.Playing)

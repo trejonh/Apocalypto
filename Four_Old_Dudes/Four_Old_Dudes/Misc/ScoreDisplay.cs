@@ -5,11 +5,20 @@ using System;
 
 namespace Four_Old_Dudes.Misc
 {
+    /// <summary>
+    /// Score display for player's points
+    /// </summary>
     public class ScoreDisplay : Core.Drawable
     {
         private readonly Text _scoreText;
         private string _disString;
         private long _score;
+
+        /// <summary>
+        /// Score display for the player's points
+        /// </summary>
+        /// <param name="win">The window to draw the score to</param>
+        /// <param name="position">The initial position of the display</param>
         public ScoreDisplay(ref RenderWindow win, Vector2f position) : base(ref win)
         {
             _disString = "0000000000";
@@ -17,6 +26,10 @@ namespace Four_Old_Dudes.Misc
             _scoreText = new Text() { Color = Color.Black, Font = font, DisplayedString = _disString, CharacterSize = 45, Position = position};
         }
 
+        /// <summary>
+        /// Update the score display
+        /// </summary>
+        /// <param name="score">The new score</param>
         public void UpdateScore(long score)
         {
             _score = score;
@@ -31,11 +44,18 @@ namespace Four_Old_Dudes.Misc
             _scoreText.DisplayedString = _disString;
         }
 
+        /// <summary>
+        /// Set the posititon of the score display
+        /// </summary>
+        /// <param name="position">The new position</param>
         public void SetPosition(Vector2f position)
         {
             _scoreText.Position = position;
         }
 
+        /// <summary>
+        /// Draw the score display
+        /// </summary>
         public override void Draw()
         {
             WinInstance.Draw(_scoreText);

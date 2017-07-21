@@ -119,6 +119,10 @@ namespace Four_Old_Dudes.MovingSprites
             return dx < Width && dy < Height;
         }
 
+        /// <summary>
+        /// Determine if the moveable should keep waiting
+        /// </summary>
+        /// <returns></returns>
         protected bool DoContinueToWait()
         {
             if (!(_currentWaitTime < MaxWaitTime)) return false;
@@ -126,6 +130,9 @@ namespace Four_Old_Dudes.MovingSprites
             return true;
         }
 
+        /// <summary>
+        /// Reset the wait time
+        /// </summary>
         public void ResetWaitTime()
         {
             _currentWaitTime = 0.0f;

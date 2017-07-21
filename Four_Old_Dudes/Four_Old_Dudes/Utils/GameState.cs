@@ -15,6 +15,9 @@ namespace Four_Old_Dudes.Utils
         public static bool InputThreadRunning { get; set; } = true;
         private static string DesiredSaveName { get; set; }
 
+        /// <summary>
+        /// Load the game from a save file
+        /// </summary>
         public static void LoadGame()
         {
             var openFileDialog1 = new OpenFileDialog();
@@ -53,6 +56,12 @@ namespace Four_Old_Dudes.Utils
                 MessageBox.Show(AssetManager.GetMessage("LoadError"));
             }
         }
+
+        /// <summary>
+        /// Save the game to file
+        /// </summary>
+        /// <param name="worldToSave">Instance of the world to pull save data from</param>
+        /// <returns>True if the save is successful</returns>
         public static bool SaveGame(World worldToSave)
         {
             if (worldToSave == null)
@@ -137,6 +146,13 @@ namespace Four_Old_Dudes.Utils
             return true;
         }
 
+        /// <summary>
+        /// A input box for saving the game
+        /// </summary>
+        /// <param name="title">Title of the dialog window</param>
+        /// <param name="promptText">The text prompt for the dialog box</param>
+        /// <param name="value">The inputted text</param>
+        /// <returns>Button Value</returns>
         private static DialogResult InputBox(string title, string promptText, ref string value)
         {
             var form = new Form();

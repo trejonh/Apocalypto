@@ -248,7 +248,10 @@ namespace Four_Old_Dudes.Menus
             Pointer.SetPosition(pointerPosition.Value);
         }
 
-
+        /// <summary>
+        /// Exits the game
+        /// </summary>
+        /// <returns>true</returns>
         private bool ExitGameFunc()
         {
             LogManager.CloseLog();
@@ -256,22 +259,40 @@ namespace Four_Old_Dudes.Menus
             return true;
         }
 
+        /// <summary>
+        /// Start new game procedure
+        /// </summary>
+        /// <returns></returns>
         private bool NewGameFunc()
         {
             DisplayCharacters();
             return true;
         }
+
+        /// <summary>
+        /// Load a game from a save file
+        /// </summary>
+        /// <returns></returns>
         private static bool LoadGameFunc()
         {
             GameState.LoadGame();
             return true;
         }
+
+        /// <summary>
+        /// Display stats
+        /// </summary>
+        /// <returns></returns>
         private static bool DisplayStats()
         {
             Console.WriteLine("displaying stats");
             return true;
         }
 
+        /// <summary>
+        /// Start a new game with selected character
+        /// </summary>
+        /// <returns>true</returns>
         private bool DisplayCharMenuItemFunc()
         {
             switch (_itemIndex)
@@ -296,12 +317,15 @@ namespace Four_Old_Dudes.Menus
                     _itemIndex = 0;
                     _pointerPositions = _originalPointerPos;
                     _currentNode = _pointerPositions.First;
-                    Pointer.Move(_originalPointerPos.First.Value);
+                    Pointer.Move(_originalPointerPos.Last.Value);
                     break;
             }
             return true;
         }
 
+        /// <summary>
+        /// Display the possible characters to choose from
+        /// </summary>
         private void DisplayCharacters()
         {
             var screenSize = WinInstance.Size;

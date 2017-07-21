@@ -348,12 +348,21 @@ namespace Four_Old_Dudes.Utils
             return map;
         }
 
+        /// <summary>
+        /// A map asset to better organize and progress through the game
+        /// </summary>
         private struct MapAsset
         {
             public string Location { get; }
             public int Order { get; }
             public string Name { get; }
 
+            /// <summary>
+            /// A map asset for the game
+            /// </summary>
+            /// <param name="name">Name of the map</param>
+            /// <param name="location">Location of the map</param>
+            /// <param name="order">What is the order of the map</param>
             public MapAsset(string name, string location, int order)
             {
                 Name = name;
@@ -362,6 +371,9 @@ namespace Four_Old_Dudes.Utils
             }
         }
 
+        /// <summary>
+        /// A structure used to easily load in sprites from the asset file
+        /// </summary>
         private struct MovingSpriteAsset
         {
             public string Name;

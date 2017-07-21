@@ -29,6 +29,9 @@ namespace Four_Old_Dudes.Utils
         public Music ThemeMusic { get; }
         public static bool IsThemePlaying { get; private set; }
 
+        /// <summary>
+        /// Initialize the game
+        /// </summary>
         public GameMaster()
         {
             LogManager.InitLogFile();
@@ -111,11 +114,18 @@ namespace Four_Old_Dudes.Utils
             }
         }
 
+        /// <summary>
+        /// Create the pause menu
+        /// </summary>
         private void CreatePauseMenu()
         {
             _pauseMenu = new PauseMenu(ref _window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
         }
 
+        /// <summary>
+        /// Create a new game enviroment
+        /// </summary>
+        /// <param name="playerName"></param>
         public static void NewGame(string playerName)
         {
             if (GameWorld == null)
@@ -123,24 +133,42 @@ namespace Four_Old_Dudes.Utils
             GameWorld.NewGame(playerName);
         }
 
+        /// <summary>
+        /// Close the window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Window_Closed(object sender, System.EventArgs e)
         {
             LogManager.CloseLog();
             _window.Close();
         }
 
+        /// <summary>
+        /// Unpause the game
+        /// </summary>
         public static void Unpause()
         {
             GameWorld.UnpauseWorld();
             IsGamePaused = false;
         }
 
+        /// <summary>
+        /// Pause the game
+        /// </summary>
         public static void Pause()
         {
             GameWorld.Pause();
             IsGamePaused = true;
         }
 
+        /// <summary>
+        /// Load a game from a save file
+        /// </summary>
+        /// <param name="world">The world element</param>
+        /// <param name="player">The player element</param>
+        /// <param name="enemies">The enemies last on the map</param>
+        /// <param name="items">The items last on the map</param>
         public static void LoadGame(XElement world,XElement player, XElement enemies, XElement items)
         {
             var worldAttr = world.Attributes().ToDictionary(attr => attr.Name, attr => attr.Value);
@@ -154,11 +182,18 @@ namespace Four_Old_Dudes.Utils
             GameWorld.LoadGame(currentMap, score, lives, player, ene,item);
         }
 
+        /// <summary>
+        /// Play the theme music
+        /// </summary>
         public static void PlayTheme()
         {
             if (IsThemePlaying == false)
                 IsThemePlaying = true;
         }
+
+        /// <summary>
+        /// Stop the theme music
+        /// </summary>
         public static void StopTheme()
         {
             if (IsThemePlaying == true)

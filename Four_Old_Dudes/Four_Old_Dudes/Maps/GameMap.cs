@@ -124,6 +124,9 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Find all item objects on the map
+        /// </summary>
         private void FindItems()
         {
             ItemsOnMap = new List<MapItem>();
@@ -136,10 +139,18 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// A structure holding the name and position of the enemy
+        /// </summary>
         public struct EnemySpawn
         {
             public string Name { get; }
             public Vector2f Position { get; }
+            /// <summary>
+            /// A structure holding the name and position of the enemy
+            /// </summary>
+            /// <param name="name">The name of the enemy to load</param>
+            /// <param name="position">The spawn position of the enemy</param>
             public EnemySpawn(string name, Vector2f position)
             {
                 Name = name;

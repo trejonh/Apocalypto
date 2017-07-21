@@ -6,6 +6,9 @@ using SFML.System;
 
 namespace Four_Old_Dudes.Misc
 {
+    /// <summary>
+    /// Represent the player's attack
+    /// </summary>
     public class PlayerShot : Core.Drawable
     {
         private readonly Sprite _shot;
@@ -15,6 +18,13 @@ namespace Four_Old_Dudes.Misc
         private const float IntialVelocity = 450.0f;
         public float TotalTimeDrawn { get; private set; }
         public Moveable.Direction Direction = Moveable.Direction.Right;
+
+        /// <summary>
+        /// Represent a player's attack
+        /// </summary>
+        /// <param name="window">The window to draw the attack on</param>
+        /// <param name="name">Name of the player's attack</param>
+        /// <param name="initalPosition">Initial position</param>
         public PlayerShot(ref RenderWindow window, string name, Vector2f initalPosition) : base(ref window)
         {
             _shot = AssetManager.LoadShot(name);
@@ -23,12 +33,21 @@ namespace Four_Old_Dudes.Misc
                 _shot.Origin = new Vector2f(_shot.Position.X/2,_shot.Position.Y/2);
         }
 
+        /// <summary>
+        /// Determine if the attack is hitting an object
+        /// </summary>
+        /// <param name="position">The position of the target</param>
+        /// <returns></returns>
         public bool IsIntersecting(Vector2f position)
         {
             var dx = Math.Abs(Position.X - position.X);
             var dy = Math.Abs(Position.Y - position.Y);
             return dx < Width && dy < Height;
         }
+
+        /// <summary>
+        /// Draw the attack
+        /// </summary>
         public override void Draw()
         {
             var tmp = Position;

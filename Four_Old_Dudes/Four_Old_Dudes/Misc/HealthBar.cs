@@ -7,12 +7,20 @@ using System.Collections.Generic;
 
 namespace Four_Old_Dudes.Misc
 {
+    /// <summary>
+    /// A health bar displaying the player's health
+    /// </summary>
     public class HealthBar : Core.Drawable
     {
         private readonly RoundedRectangle _mainRect;
         private readonly List<Shape> _innerRects;
         private readonly Text _healthText;
         private int _numToDraw;
+        /// <summary>
+        /// A health bar to display the player's health
+        /// </summary>
+        /// <param name="win">The window to draw to</param>
+        /// <param name="position">The initial position of the health bar</param>
         public HealthBar(ref RenderWindow win, Vector2f position) : base(ref win)
         {
             var fillColor = new Color(138, 7, 7, 125);
@@ -38,8 +46,16 @@ namespace Four_Old_Dudes.Misc
             }
         }
 
+        /// <summary>
+        /// Update the health bar display
+        /// </summary>
+        /// <param name="currHealth">Current health level</param>
         public void UpdateHealth(float currHealth) => _numToDraw = (int)(currHealth/10);
 
+        /// <summary>
+        /// Set the new position of the health bar
+        /// </summary>
+        /// <param name="position">The new position</param>
         public void SetPosition(Vector2f position)
         {
             _mainRect.Position = position;
@@ -50,6 +66,9 @@ namespace Four_Old_Dudes.Misc
             }
         }
 
+        /// <summary>
+        /// Draw the health bar
+        /// </summary>
         public override void Draw()
         {
             WinInstance.Draw(_mainRect);

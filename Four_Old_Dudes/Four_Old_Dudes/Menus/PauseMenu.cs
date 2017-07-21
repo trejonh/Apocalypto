@@ -69,6 +69,10 @@ namespace Four_Old_Dudes.Menus
                 });
         }
 
+        /// <summary>
+        /// Save the game
+        /// </summary>
+        /// <returns></returns>
         private bool SaveGameFunc()
         {
             GameState.SaveGame(_worldInstance);
@@ -76,6 +80,10 @@ namespace Four_Old_Dudes.Menus
             return true;
         }
 
+        /// <summary>
+        /// Resume Game
+        /// </summary>
+        /// <returns></returns>
         private bool ResumeGameFunc()
         {
             GameMaster.IsGamePaused = false;
@@ -230,7 +238,10 @@ namespace Four_Old_Dudes.Menus
                 Pointer.SetPosition(pointerPosition.Value);
         }
 
-
+        /// <summary>
+        /// Exit the game
+        /// </summary>
+        /// <returns></returns>
         private bool ExitGameFunc()
         {
             LogManager.CloseLog();
@@ -238,6 +249,10 @@ namespace Four_Old_Dudes.Menus
             return true;
         }
 
+        /// <summary>
+        /// Set the world
+        /// </summary>
+        /// <param name="world">The new world to set</param>
         public void SetWorld(ref World world) => _worldInstance = world;
     }
 }

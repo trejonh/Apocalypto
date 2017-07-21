@@ -85,7 +85,10 @@ namespace Four_Old_Dudes.MovingSprites
             _shotSound = AssetManager.LoadSound(name + "Shot");
             DeathSound = AssetManager.LoadSound("PlayerDeath");
         }
-
+        
+        /// <summary>
+        /// Add controls back to the player
+        /// </summary>
         public void AddControls()
         {
             _playerWindow.KeyPressed += OnKeyPressed;
@@ -96,6 +99,9 @@ namespace Four_Old_Dudes.MovingSprites
             IsControlsRemoved = false;
         }
 
+        /// <summary>
+        /// Remove the controls from the player
+        /// </summary>
         public void RemoveControls()
         {
             _playerWindow.KeyPressed -= OnKeyPressed;

@@ -229,6 +229,9 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Track game world operations that are not high priority to react in realtime
+        /// </summary>
         private void GeneralGameFlowThread()
         {
             try
@@ -275,6 +278,11 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Reset the game world scene
+        /// </summary>
+        /// <param name="numOfLives">The number of lives remaining</param>
+        /// <param name="spawnEnemies">Do the enemies need to be respawned</param>
         private void Reset(int numOfLives,bool spawnEnemies)
         {
             NumberOfPlayerLives = numOfLives;
@@ -285,6 +293,7 @@ namespace Four_Old_Dudes.Maps
             _displayLives = true;
             _dispControllerTime = true;
         }
+
         /// <summary>
         /// Stop the collision detection thread
         /// </summary>
@@ -519,6 +528,11 @@ namespace Four_Old_Dudes.Maps
             }
             return smallestDistance.Value;
         }
+
+        /// <summary>
+        /// Setup a new game enviroment
+        /// </summary>
+        /// <param name="playerName">The player to load</param>
         public void NewGame(string playerName)
         {
             CurrentMap = 0;
@@ -557,6 +571,10 @@ namespace Four_Old_Dudes.Maps
             _displayLives = true;
             _dispControllerTime = true;
         }
+
+        /// <summary>
+        /// Draw the inital map load decal
+        /// </summary>
         public void InitialMapLoad()
         {
             if (GameMaster.IsThemePlaying == false)
@@ -581,12 +599,19 @@ namespace Four_Old_Dudes.Maps
             }
             WinInstance.Draw(InitLoadText);
         }
+
+        /// <summary>
+        /// Resume normal world actions
+        /// </summary>
         public void UnpauseWorld()
         {
             WorldPlayer.AddControls();
             _localPause = false;
         }
 
+        /// <summary>
+        /// Pause worldly actions
+        /// </summary>
         public void Pause()
         {
             WorldPlayer.RemoveControls();
@@ -596,6 +621,15 @@ namespace Four_Old_Dudes.Maps
             _localPause = true;
         }
 
+        /// <summary>
+        /// Load the game from a save file
+        /// </summary>
+        /// <param name="currentMap">The map to load</param>
+        /// <param name="score">The saved score</param>
+        /// <param name="lives">The remaining number of player lives</param>
+        /// <param name="player">The player last drawn on the map</param>
+        /// <param name="ene">The remaining enemies on the map</param>
+        /// <param name="items">The remaining items on the map</param>
         public void LoadGame(int currentMap, long score, int lives, XElement player, XElement[] ene, XElement[] items)
         {
             WorldMap = AssetManager.LoadGameMap(currentMap, _worldView);
@@ -661,17 +695,19 @@ namespace Four_Old_Dudes.Maps
             _dispControllerTime = true;
         }
 
+        /// <summary>
+        /// Detect if the player has reached the end of the map
+        /// </summary>
         private void DetectMapProgression()
         {
             try
             {
                 while (_isRunning)
                 {
-                    if (_localPause) continue;
-                    if (!(Math.Abs(WorldMap.EndOfMap.X - WorldPlayer.Position.X) < 0.0001f) ||
-                        !(Math.Abs(WorldMap.EndOfMap.Y - WorldPlayer.Position.Y) < 0.0001f)) continue;
+                    if (_localPause || _madeItToEnd) continue;
+                    if (WorldPlayer.IsIntersecting(WorldMap.EndOfMap) == false) continue;
                     _madeItToEnd = true;
-                    _isRunning = false;
+                    _localPause = true;
                 }
             }
             catch (ThreadAbortException)
@@ -684,9 +720,13 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Prepare the next mapl for loading to the world
+        /// </summary>
         private void PrepareNextMap()
         {
             CurrentMap++;
+            WorldPlayer.RemoveControls();
             _loading = true;
             if (LoadingText == null)
             {
@@ -699,6 +739,9 @@ namespace Four_Old_Dudes.Maps
             _loadingThread.Start();
         }
 
+        /// <summary>
+        /// Load the new map and map assets
+        /// </summary>
         private void LoadNewMap()
         {
             try
@@ -714,9 +757,11 @@ namespace Four_Old_Dudes.Maps
                 else
                     InitLoadText.DisplayedString = AssetManager.GetMessage(WorldMap.Name);
                 IsInitialMapLoad = true;
+                _localPause = false;
                 _loading = false;
                 _madeItToEnd = false;
                 _displayLives = true;
+                WorldPlayer.AddControls();
             }
             catch (Exception ex)
             {
@@ -728,6 +773,9 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Display the number of lives to the screen
+        /// </summary>
         private void DisplayLives()
         {
             if (_displayLives == false) return;
@@ -740,6 +788,10 @@ namespace Four_Old_Dudes.Maps
             LivesText.DisplayedString = AssetManager.GetMessage("Lives") + NumberOfPlayerLives;
             WinInstance.Draw(LivesText);
         }
+
+        /// <summary>
+        /// Start the countdown timer
+        /// </summary>
         private void InitDisplayCountDownTimer()
         {
             if (_timerStarted) return;
@@ -757,6 +809,12 @@ namespace Four_Old_Dudes.Maps
             }
             _timerStarted = true;
         }
+
+        /// <summary>
+        /// Change the countdown text
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         private void DisplayCountdown(object source, ElapsedEventArgs e)
         {
             if (_dispControllerTime == false) return;
