@@ -131,7 +131,7 @@ namespace Four_Old_Dudes.Maps
             {
                 if (obj.Properties.ContainsKey("type") && obj.Properties["type"].Equals("item"))
                 {
-                    ItemsOnMap.Add(new MapItem(obj.Name, obj.Position, int.Parse(obj.Properties["points"]), obj));
+                    ItemsOnMap.Add(new MapItem(obj.Name, obj.Position, int.Parse(obj.Properties["points"]),obj.Properties.ContainsKey("isHealth"), obj));
                 }
             }
         }

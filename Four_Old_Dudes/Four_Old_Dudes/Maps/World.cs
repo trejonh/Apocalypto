@@ -257,6 +257,8 @@ namespace Four_Old_Dudes.Maps
                     foreach (var item in tmpArry)
                     {
                         if (WorldPlayer.IsIntersecting(item.Position) == false) continue;
+                        if (item.IsHealth && WorldPlayer.Health < 100)
+                            WorldPlayer.Health += 5;
                         Score += item.Points;
                         tmp.Remove(item);
                     }
