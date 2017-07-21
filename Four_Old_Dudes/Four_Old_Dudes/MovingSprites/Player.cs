@@ -25,6 +25,7 @@ namespace Four_Old_Dudes.MovingSprites
         public List<PlayerShot> ShotsFired;
         private readonly Sound _shotSound;
         public readonly Sound DeathSound;
+        public bool ChangePlayer { get; set; }
         /// <summary>
         /// The position of the ground
         /// </summary>
@@ -263,11 +264,17 @@ namespace Four_Old_Dudes.MovingSprites
         /// <param name="key"></param>
         public void OnKeyPressed(object sender, KeyEventArgs key)
         {
-            if (key.Code != Keyboard.Key.Escape) return;
+            //if (key.Code != Keyboard.Key.Escape) return;
             if (GameMaster.IsGamePaused != false) return;
-            Stop();
-            RemoveControls();
-            GameMaster.IsGamePaused = true;
+            if (key.Code == Keyboard.Key.Escape)
+            {
+                Stop();
+                RemoveControls();
+                GameMaster.IsGamePaused = true;
+            }else if(key.Code == Keyboard.Key.RShift)
+            {
+                ChangePlayer = true;
+            }
         }
 
         /// <summary>

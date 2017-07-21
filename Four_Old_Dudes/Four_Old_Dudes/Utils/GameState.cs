@@ -99,51 +99,60 @@ namespace Four_Old_Dudes.Utils
 
             }
             var settings = new XmlWriterSettings {Indent = true, CloseOutput = true, WriteEndDocumentOnClose = true};
-            using (var writer = XmlWriter.Create(path, settings))
+            var isFileSaved = false;
+            try
             {
-                writer.WriteStartElement("gameSave");
-                //begin world
-                writer.WriteStartElement("world");
-                writer.WriteAttributeString("currentMap", "" + worldToSave.CurrentMap);
-                writer.WriteAttributeString("score", "" + worldToSave.Score);
-                writer.WriteAttributeString("lives", "" + worldToSave.NumberOfPlayerLives);
-                //player and their attr
-                writer.WriteStartElement("player");
-                writer.WriteAttributeString("name", worldToSave.WorldPlayer.Name);
-                writer.WriteAttributeString("health", "" + worldToSave.WorldPlayer.Health);
-                writer.WriteAttributeString("position", "" + worldToSave.WorldPlayer.Position.X+","+worldToSave.WorldPlayer.Position.Y);
-                writer.WriteEndElement();
-                //end player
-                //enemies
-                writer.WriteStartElement("enemiesOnMap");
-                foreach (var enemy in worldToSave.EnemiesOnMap)
+                using (var writer = XmlWriter.Create(path, settings))
                 {
-                    writer.WriteStartElement("enemy");
-                    writer.WriteAttributeString("position", "" + enemy.Position.X + "," + "" + enemy.Position.Y);
-                    writer.WriteAttributeString("name", enemy.Name);
+                    writer.WriteStartElement("gameSave");
+                    //begin world
+                    writer.WriteStartElement("world");
+                    writer.WriteAttributeString("currentMap", "" + worldToSave.CurrentMap);
+                    writer.WriteAttributeString("score", "" + worldToSave.Score);
+                    writer.WriteAttributeString("lives", "" + worldToSave.NumberOfPlayerLives);
+                    //player and their attr
+                    writer.WriteStartElement("player");
+                    writer.WriteAttributeString("name", worldToSave.WorldPlayer.Name);
+                    writer.WriteAttributeString("health", "" + worldToSave.WorldPlayer.Health);
+                    writer.WriteAttributeString("position", "" + worldToSave.WorldPlayer.Position.X + "," + worldToSave.WorldPlayer.Position.Y);
                     writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
-                //end enemeies
-                //items
-                writer.WriteStartElement("itemsOnMap");
-                foreach (var item in worldToSave.WorldMap.ItemsOnMap)
-                {
-                    writer.WriteStartElement("item");
-                    writer.WriteAttributeString("position", "" + item.Position.X + "," + "" + item.Position.Y);
-                    writer.WriteAttributeString("name", item.Name);
+                    //end player
+                    //enemies
+                    writer.WriteStartElement("enemiesOnMap");
+                    foreach (var enemy in worldToSave.EnemiesOnMap)
+                    {
+                        writer.WriteStartElement("enemy");
+                        writer.WriteAttributeString("position", "" + enemy.Position.X + "," + "" + enemy.Position.Y);
+                        writer.WriteAttributeString("name", enemy.Name);
+                        writer.WriteEndElement();
+                    }
                     writer.WriteEndElement();
+                    //end enemeies
+                    //items
+                    writer.WriteStartElement("itemsOnMap");
+                    foreach (var item in worldToSave.WorldMap.ItemsOnMap)
+                    {
+                        writer.WriteStartElement("item");
+                        writer.WriteAttributeString("position", "" + item.Position.X + "," + "" + item.Position.Y);
+                        writer.WriteAttributeString("name", item.Name);
+                        writer.WriteEndElement();
+                    }
+                    writer.WriteEndElement();
+                    //end items
+                    writer.WriteEndElement();
+                    //end world
+                    writer.WriteEndElement();
+                    //end save
                 }
-                writer.WriteEndElement();
-                //end items
-                writer.WriteEndElement();
-                //end world
-                writer.WriteEndElement();
-                //end save
+                isFileSaved = true;
+                File.Encrypt(path);
+                File.SetAttributes(path, FileAttributes.Encrypted);
+            }catch(Exception ex)
+            {
+                LogManager.Log("File was save:" + isFileSaved);
+                LogManager.LogWarning(ex.Message);
             }
-            File.Encrypt(path);
-            File.SetAttributes(path, FileAttributes.Encrypted);
-            return true;
+            return isFileSaved;
         }
 
         /// <summary>

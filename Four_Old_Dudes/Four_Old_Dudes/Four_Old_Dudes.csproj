@@ -120,7 +120,6 @@
     <Compile Include="Utils\AssetManager.cs" />
     <Compile Include="Utils\GameMaster.cs" />
     <Compile Include="Utils\GameState.cs" />
-    <Compile Include="Utils\GenericCopier.cs" />
     <Compile Include="Utils\LogManager.cs" />
   </ItemGroup>
   <ItemGroup>

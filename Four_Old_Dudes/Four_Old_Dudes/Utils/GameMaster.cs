@@ -126,7 +126,7 @@ namespace Four_Old_Dudes.Utils
         /// Create a new game enviroment
         /// </summary>
         /// <param name="playerName"></param>
-        public static void NewGame(string playerName)
+        public static void NewGame(string[] playerName)
         {
             if (GameWorld == null)
                 GameWorld = new World(ref _window);

@@ -137,5 +137,7 @@ namespace Four_Old_Dudes.MovingSprites
         {
             _currentWaitTime = 0.0f;
         }
+
+        public void SetWaitToMax() => _currentWaitTime = MaxWaitTime;
     }
 }
