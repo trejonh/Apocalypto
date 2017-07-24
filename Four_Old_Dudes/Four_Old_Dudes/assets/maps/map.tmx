@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" backgroundcolor="#87cefa" nextobjectid="236">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" backgroundcolor="#87cefa" nextobjectid="260">
  <properties>
   <property name="BGC" type="color" value="#ff87cefa"/>
   <property name="BGMusic" value="Funkadelic"/>
@@ -21,7 +21,7 @@
  </tileset>
  <layer name="Tile Layer 1" width="100" height="24">
   <data encoding="base64" compression="zlib">
-   eJzt1dsJgDAMQNEMU7Q+9p/PZAbFKJwD9z+0tIkAAKDLkZ3Z7B6ER+3ZFu4WypKt3UPAR9R7sBfuq3OsHVu71v8CffxpAAC8YUjST7oAuAEs4g==
+   eJztlzsOgDAMQ3MYxP/+56Md2ACJJmAH/CSPEDekblnMbC0ajYvFsL7Q9b3MRZPxrQHtC11fYOiLBrSJA9C+0PXvEpHLqGxnOlPqd2fwsbPnssdXRLa31I86U5jm4+u82euW+YjIZVS2I+vW/rLd77xZ651VtqxvmY+INaD6cFb3jX+RbPe7P8K2P1F4Z7U+X/fSdPEepl5/MdNEHJl7nNl7NtRrkQXNqhBCiCfoJEmSkmgDE1o83A==
   </data>
  </layer>
  <layer name="Tile Layer 2" width="100" height="24">
@@ -54,24 +54,152 @@
     <property name="type" value="item"/>
    </properties>
   </object>
+  <object id="236" name="ground" gid="1" x="2004" y="594" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="237" name="ground" gid="1" x="1940" y="594" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="238" name="ground" gid="1" x="2036" y="594" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="239" name="ground" gid="1" x="1972" y="594" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="240" name="ground" gid="1" x="2068" y="594" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="241" name="ground" gid="1" x="1908" y="594" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="242" name="ground" gid="1" x="2455" y="656" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="243" name="ground" gid="1" x="2391" y="656" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="244" name="ground" gid="1" x="2487" y="656" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="245" name="ground" gid="1" x="2423" y="656" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="246" name="ground" gid="1" x="2519" y="656" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="true"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
+  <object id="247" name="ground" gid="1" x="2359" y="656" width="32" height="32">
+   <properties>
+    <property name="leftNeighbor" type="bool" value="false"/>
+    <property name="rightNeighbor" type="bool" value="true"/>
+    <property name="type" value="floor"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="Spawns">
   <object id="1" name="playerStartLocation" gid="51" x="98" y="640" width="32" height="32" visible="0"/>
-  <object id="19" name="enemySpawn" gid="52" x="160" y="640" width="32" height="32" visible="0">
+  <object id="19" name="enemySpawn" gid="52" x="160" y="640" width="32" height="32">
    <properties>
-    <property name="enemyName" value="TestPlayer"/>
+    <property name="enemyName" value="Nurse"/>
     <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Nurse"/>
    </properties>
   </object>
-  <object id="21" name="enemySpawn" gid="52" x="286" y="640" width="32" height="32" visible="0">
+  <object id="21" name="enemySpawn" gid="52" x="286" y="640" width="32" height="32">
    <properties>
-    <property name="enemyName" value="TestPlayer"/>
+    <property name="enemyName" value="Nurse"/>
     <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Nurse"/>
    </properties>
   </object>
   <object id="222" name="EndOfMap" gid="52" x="3167.5" y="576" width="32" height="32" visible="0"/>
+  <object id="254" name="enemySpawn" gid="52" x="2005" y="561.5" width="32" height="32">
+   <properties>
+    <property name="enemyName" value="Nurse"/>
+    <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Nurse"/>
+   </properties>
+  </object>
+  <object id="255" name="enemySpawn" gid="52" x="1760" y="511.5" width="32" height="32">
+   <properties>
+    <property name="enemyName" value="Nurse"/>
+    <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Nurse"/>
+   </properties>
+  </object>
+  <object id="256" name="enemySpawn" gid="52" x="1376" y="638.5" width="32" height="32">
+   <properties>
+    <property name="enemyName" value="Nurse"/>
+    <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Nurse"/>
+   </properties>
+  </object>
+  <object id="257" name="enemySpawn" gid="52" x="864" y="639.5" width="32" height="32">
+   <properties>
+    <property name="enemyName" value="Nurse"/>
+    <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Nurse"/>
+   </properties>
+  </object>
+  <object id="258" name="enemySpawn" gid="52" x="671" y="637.5" width="32" height="32">
+   <properties>
+    <property name="enemyName" value="Nurse"/>
+    <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Name"/>
+   </properties>
+  </object>
+  <object id="259" name="enemySpawn" gid="52" x="-76" y="511.5" width="32" height="32">
+   <properties>
+    <property name="enemyName" value="Nurse"/>
+    <property name="enemySpawn" type="bool" value="true"/>
+    <property name="type" value="Name"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup name="GroundLayer" visible="0">
+ <objectgroup name="GroundLayer">
   <object id="23" name="ground" gid="1" x="0" y="672" width="32" height="32">
    <properties>
     <property name="leftNeighbor" type="bool" value="false"/>

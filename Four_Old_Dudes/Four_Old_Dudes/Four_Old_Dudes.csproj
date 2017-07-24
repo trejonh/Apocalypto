@@ -107,7 +107,7 @@
     <Compile Include="Menus\MenuPointer.cs" />
     <Compile Include="Menus\PauseMenu.cs" />
     <Compile Include="Misc\HealthBar.cs" />
-    <Compile Include="Misc\PlayerShot.cs" />
+    <Compile Include="Misc\Shot.cs" />
     <Compile Include="Misc\ScoreDisplay.cs" />
     <Compile Include="Misc\SplashScreen.cs" />
     <Compile Include="MovingSprites\Animation.cs" />
@@ -188,10 +188,19 @@
     <Content Include="Assets\maps\Tiles_32x32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\sprites\jaun.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\sprites\mack.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\sprites\mackshot.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\sprites\needle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\sprites\nurse.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\sprites\player.png">

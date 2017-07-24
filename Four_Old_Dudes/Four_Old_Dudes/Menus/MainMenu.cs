@@ -298,19 +298,20 @@ namespace Four_Old_Dudes.Menus
             switch (_itemIndex)
             {
                 case 0:
-                    GameMaster.NewGame(new[] { "Mack", "Sergi", "Trent", "Mack" });
+                    GameMaster.NewGame(new[] { "Mack", "Sergi", "Trent", "Jaun" });
                     GameMaster.IsMainMenuOpen = false;
                     break;
                 case 1:
-                    GameMaster.NewGame(new[] {"Sergi", "Trent", "Mack", "Mack" });
+                    GameMaster.NewGame(new[] {"Sergi", "Trent", "Jaun", "Mack" });
                     GameMaster.IsMainMenuOpen = false;
                     break;
                 case 2:
-                    GameMaster.NewGame(new[] {"Trent", "Mack", "Mack", "Sergi",});
+                    GameMaster.NewGame(new[] {"Trent", "Jaun", "Mack", "Sergi"});
                     GameMaster.IsMainMenuOpen = false;
                     break;
                 case 3:
-                    Console.WriteLine("Jaun");
+                    GameMaster.NewGame(new[] { "Jaun", "Mack", "Sergi", "Trent"});
+                    GameMaster.IsMainMenuOpen = false;
                     break;
                 case 4:
                     _displayChars = false;

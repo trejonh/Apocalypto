@@ -5,7 +5,7 @@ namespace Four_Old_Dudes.MovingSprites
 {
     public class SpriteAnimated : Sprite
     {
-        readonly RenderTarget _renderTarget;
+        public readonly RenderTarget _renderTarget;
         readonly RenderStates _renderStates;
         private int _fps;
         private readonly int _frameWidth;

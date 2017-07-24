@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Four_Old_Dudes.Misc;
 using SFML.Graphics;
 using Four_Old_Dudes.Utils;
 using SFML.System;
@@ -20,9 +22,21 @@ namespace Four_Old_Dudes.MovingSprites
         private float _playerIsCloseMultiplier;
         private const float AttackSpeed = 80.0f;
         private float _timeSinceLastAttack = 80.0f;
-        public float AttackPower = 5.0f;
+        private const float ShotSpeed = 120.0f;
+        private float _timeSinceLastShot = 120.0f;
+        public float AttackPower { get; set; } = 5.0f;
         public readonly int TakeDownScore;
+        private bool _isFalling = true;
+        public EnemyType Type { get; private set; }
 
+
+        public enum EnemyType
+        {
+            Nurse,
+            Teenager,
+            GrimReeper,
+            FuneralHomeDirector
+        }
         /// <summary>
         /// Create a new player instance
         /// </summary>
@@ -49,6 +63,8 @@ namespace Four_Old_Dudes.MovingSprites
             _playerIsCloseMultiplier = 1.0f;
             MaxWaitTime = 5.5f;
             TakeDownScore = tdscore;
+            Ground = new Vector2f(0.0f,0.0f);
+            ShotsFired = new List<Shot>();
         }
 
         /// <summary>
@@ -60,13 +76,38 @@ namespace Four_Old_Dudes.MovingSprites
             Position = position;
         }
 
+        public void SetType(EnemyType type)
+        {
+            Type = type;
+            switch (Type)
+            {
+                case EnemyType.Nurse:
+                    AttackPower = 6.0f;
+                    break;
+                case EnemyType.Teenager:
+                    AttackPower = 4.5f;
+                    break;
+                case EnemyType.GrimReeper:
+                    AttackPower = 15.0f;
+                    break;
+                case EnemyType.FuneralHomeDirector:
+                    AttackPower = 7.0f;
+                    break;
+            }
+        }
+
         /// <summary>
         /// Allow enemy to jump
         /// </summary>
         /// <returns>Vertical velocity</returns>
         public override float Jump()
         {
-            throw new NotImplementedException();
+            var velocity = 0.0f;
+            if (IsGroundUnderMe == false || _isFalling)
+            { 
+                velocity = Gravity * GameMaster.Delta.AsSeconds() * 10;
+            }
+            return velocity;
         }
 
         /// <summary>
@@ -80,7 +121,7 @@ namespace Four_Old_Dudes.MovingSprites
                 return;
             }
             float dx;
-            const float dy = 0.0f;
+            var dy = Jump();
           if(_timeBetweenTurns >= MaxTimeBetweenTurns || IsNearEdge)
             {
                 if (_isPlayerNear == false && IsNearEdge == false)
@@ -129,6 +170,14 @@ namespace Four_Old_Dudes.MovingSprites
             var tmp = Position;
             tmp.X += x;
             tmp.Y += y;
+            if ((tmp.Y + Height) > Ground.Y)
+            {
+                if (IsGroundUnderMe)
+                {
+                    tmp.Y = Ground.Y - Height;
+                    _isFalling = false;
+                }
+            }
             Position = tmp;
         }
 
@@ -161,10 +210,46 @@ namespace Four_Old_Dudes.MovingSprites
                 Move();
                 Play();
                 _timeBetweenTurns += GameMaster.Delta.AsSeconds();
+                Attack();
             }
             base.Update();
         }
 
+        /// <summary>
+        /// Attack the player
+        /// </summary>
+        public void Attack()
+        {
+            if (_timeSinceLastShot >= ShotSpeed)
+            {
+                var window =(RenderWindow) _renderTarget;
+                var x = CurrentDirection == Direction.Right ? 30f : -30f;
+                var pos = new Vector2f(Position.X + x, Position.Y);
+                var shotName = "";
+                switch (Type)
+                {
+                    case EnemyType.Nurse:
+                        shotName = "Needle";
+                        break;
+                    case EnemyType.Teenager:
+                        shotName = "Skateboard";
+                        break;
+                    case EnemyType.GrimReeper:
+                        shotName = "Sycth";
+                        break;
+                    case EnemyType.FuneralHomeDirector:
+                        shotName = "Tombstone";
+                        break;
+                }
+                ShotsFired.Add(new Shot(ref window, shotName, pos) { Direction = CurrentDirection });
+                //_shotSound.Play();
+                _timeSinceLastShot = 0;
+            }
+            else
+                _timeSinceLastShot += GameMaster.Delta.AsSeconds();
+
+        }
+        
         /// <summary>
         /// Attack the player
         /// </summary>

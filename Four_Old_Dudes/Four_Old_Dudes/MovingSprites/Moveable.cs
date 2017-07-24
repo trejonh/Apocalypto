@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using Four_Old_Dudes.Misc;
 using static Four_Old_Dudes.MovingSprites.Animation;
 
 namespace Four_Old_Dudes.MovingSprites
@@ -33,6 +34,9 @@ namespace Four_Old_Dudes.MovingSprites
         public string Name { get; }
         protected float MaxWaitTime = 4.5f;
         private float _currentWaitTime;
+        public bool IsGroundUnderMe { get; set; }
+        public Vector2f Ground { get; set; }
+        public List<Shot> ShotsFired { get; set; }
 
         /// <summary>
         /// Create a new moveable instance

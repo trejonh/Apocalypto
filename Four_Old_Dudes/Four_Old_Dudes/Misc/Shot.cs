@@ -9,7 +9,7 @@ namespace Four_Old_Dudes.Misc
     /// <summary>
     /// Represent the player's attack
     /// </summary>
-    public class PlayerShot : Core.Drawable
+    public class Shot : Core.Drawable
     {
         private readonly Sprite _shot;
         public Vector2f Position => _shot.Position;
@@ -25,9 +25,14 @@ namespace Four_Old_Dudes.Misc
         /// <param name="window">The window to draw the attack on</param>
         /// <param name="name">Name of the player's attack</param>
         /// <param name="initalPosition">Initial position</param>
-        public PlayerShot(ref RenderWindow window, string name, Vector2f initalPosition) : base(ref window)
+        public Shot(ref RenderWindow window, string name, Vector2f initalPosition) : base(ref window)
         {
             _shot = AssetManager.LoadShot(name);
+            if (_shot == null)
+            {
+                LogManager.LogError("Shot: "+name+" does not exisit in assets");
+                return;
+            }
             _shot.Position = initalPosition;
             if (Direction == Moveable.Direction.Left)
                 _shot.Origin = new Vector2f(_shot.Position.X/2,_shot.Position.Y/2);

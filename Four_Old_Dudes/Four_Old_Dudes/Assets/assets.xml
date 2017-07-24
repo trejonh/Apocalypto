@@ -105,6 +105,8 @@
     <location>\sprites\player.png</location>
     <firstFrame>0</firstFrame>
     <lastFrame>11</lastFrame>
+    <width>32</width>
+    <height>32</height>
     <frames>
       <down>0,2</down>
       <up>9,11</up>
@@ -114,10 +116,27 @@
   </asset>
   <asset>
     <type>movingSprite</type>
+    <name>Nurse</name>
+    <location>\sprites\nurse.png</location>
+    <firstFrame>0</firstFrame>
+    <lastFrame>15</lastFrame>
+    <width>32</width>
+    <height>33</height>
+    <frames>
+      <down>0,3</down>
+      <up>12,15</up>
+      <left>4,7</left>
+      <right>8,11</right>
+    </frames>
+  </asset>
+  <asset>
+    <type>movingSprite</type>
     <name>Sergi</name>
     <location>\sprites\sergi.png</location>
     <firstFrame>0</firstFrame>
     <lastFrame>5</lastFrame>
+    <width>32</width>
+    <height>32</height>
     <frames>
       <left>3,5</left>
       <right>0,2</right>
@@ -129,6 +148,8 @@
     <location>\sprites\mack.png</location>
     <firstFrame>0</firstFrame>
     <lastFrame>5</lastFrame>
+    <width>32</width>
+    <height>32</height>
     <frames>
       <left>3,5</left>
       <right>0,2</right>
@@ -138,6 +159,21 @@
     <type>movingSprite</type>
     <name>Trent</name>
     <location>\sprites\trent.png</location>
+    <width>32</width>
+    <height>32</height>
+    <firstFrame>0</firstFrame>
+    <lastFrame>5</lastFrame>
+    <frames>
+      <left>3,5</left>
+      <right>0,2</right>
+    </frames>
+  </asset>
+  <asset>
+    <type>movingSprite</type>
+    <name>Jaun</name>
+    <location>\sprites\jaun.png</location>
+    <width>32</width>
+    <height>32</height>
     <firstFrame>0</firstFrame>
     <lastFrame>5</lastFrame>
     <frames>
@@ -245,6 +281,11 @@
     <type>shot</type>
     <name>TrentShot</name>
     <location>\sprites\trentShot.png</location>
+  </asset>
+  <asset>
+    <type>shot</type>
+    <name>Needle</name>
+    <location>\sprites\needle.png</location>
   </asset>
   <asset>
     <type>audio</type>

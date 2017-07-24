@@ -31,7 +31,7 @@ namespace Four_Old_Dudes.Utils
         private static readonly Dictionary<string, string> ImageAssets = new Dictionary<string, string>();
         private static readonly Dictionary<string, Texture> EnemyTextures = new Dictionary<string, Texture>();
         private static readonly Dictionary<string, Texture> ShotTextures = new Dictionary<string, Texture>();
-        private static readonly Dictionary<string, string> PlayerShots = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> Shots = new Dictionary<string, string>();
 
         private static readonly string BaseFileLocation = Environment.CurrentDirectory + @"\Assets";
         private static readonly string AssetXmlFile = BaseFileLocation + @".\assets.xml";
@@ -54,7 +54,9 @@ namespace Four_Old_Dudes.Utils
                             Order = (string)u.Element("order"),
                             FirstFrame = (string)u.Element("firstFrame"),
                             LastFrame = (string)u.Element("lastFrame"),
-                            Frames = u.Element("frames")
+                            Frames = u.Element("frames"),
+                            Width = (string)u.Element("width"),
+                            Height = (string)u.Element("height")
                         };
 
             foreach (var asset in assets)
@@ -101,10 +103,11 @@ namespace Four_Old_Dudes.Utils
                             }
                         }
                         MovingSpriteAssests.Add(asset.Name,new MovingSpriteAsset(){Name = asset.Name, Location = asset.Location,
-                            FirstFrame =  int.Parse(asset.FirstFrame), LastFrame = int.Parse(asset.LastFrame), Frames = frames});
+                            FirstFrame =  int.Parse(asset.FirstFrame), LastFrame = int.Parse(asset.LastFrame), Frames = frames,
+                            Width = int.Parse(asset.Width), Height = int.Parse(asset.Height)});
                         break;
                     case "shot":
-                        PlayerShots.Add(asset.Name,asset.Location);
+                        Shots.Add(asset.Name,asset.Location);
                         break;
                     default:
                         LogManager.LogWarning("Following asset could not be mapped"+asset);
@@ -147,7 +150,7 @@ namespace Four_Old_Dudes.Utils
             {
                 if (ShotTextures.ContainsKey(name) == false)
                 {
-                    ShotTextures.Add(name, new Texture(PlayerShots[name]){Smooth = true});
+                    ShotTextures.Add(name, new Texture(Shots[name]){Smooth = true});
                 }
                 sprite = new Sprite(ShotTextures[name]);
             }
@@ -171,7 +174,7 @@ namespace Four_Old_Dudes.Utils
             {
                 var pl = MovingSpriteAssests[name];
                 var text = new Texture(pl.Location) { Smooth = true };
-                player = new Player(name,text, 32, 32, 60, window, RenderStates.Default, pl.FirstFrame, pl.LastFrame);
+                player = new Player(name,text, pl.Width, pl.Height, 60, window, RenderStates.Default, pl.FirstFrame, pl.LastFrame);
                 player.SetAnimationFrames(pl.Frames);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
@@ -203,7 +206,7 @@ namespace Four_Old_Dudes.Utils
                 else
                     text = EnemyTextures[name];
                 var rand = new Random(22);
-                enemy = new Enemy(name, text, 32, 32, 60, window, RenderStates.Default, player,rand.Next(0,101), ene.FirstFrame, ene.LastFrame);
+                enemy = new Enemy(name, text, ene.Width, ene.Height, 60, window, RenderStates.Default, player,rand.Next(0,101), ene.FirstFrame, ene.LastFrame);
                 enemy.SetAnimationFrames(ene.Frames); 
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
@@ -379,6 +382,8 @@ namespace Four_Old_Dudes.Utils
             public string Name;
             public int FirstFrame;
             public int LastFrame;
+            public int Width;
+            public int Height;
             public Dictionary<Moveable.Direction, Animation.AnimationFrames> Frames;
             public string Location;
         }

@@ -22,18 +22,17 @@ namespace Four_Old_Dudes.MovingSprites
         private float _jumpAccel = -600.2f;
         private readonly View _playerView;
         private Vector2f _initialPosition;
-        public List<PlayerShot> ShotsFired;
         private readonly Sound _shotSound;
         public readonly Sound DeathSound;
         public bool ChangePlayer { get; set; }
         /// <summary>
         /// The position of the ground
         /// </summary>
-        public Vector2f Ground {get;set;}
+        //public Vector2f Ground {get;set;}
         /// <summary>
         /// Is there a ground tile under me
         /// </summary>
-        public bool IsGroundUnderMe { get; set; }
+       // public bool IsGroundUnderMe { get; set; }
         public bool IsControlsRemoved { get; set; }
         private const float MaxShootIntervals = 1f;
         private float _shootWaitTime = 1f;
@@ -82,7 +81,7 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 LogManager.LogError("Window is null, cannot set movers");
             }
-            ShotsFired = new List<PlayerShot>();
+            ShotsFired = new List<Shot>();
             _shotSound = AssetManager.LoadSound(name + "Shot");
             DeathSound = AssetManager.LoadSound("PlayerDeath");
         }
@@ -353,7 +352,7 @@ namespace Four_Old_Dudes.MovingSprites
             var playerWindow = _playerWindow;
             var x = CurrentDirection == Direction.Right ? 30f : -30f;
             var pos = new Vector2f(Position.X + x, Position.Y);
-            ShotsFired.Add(new PlayerShot(ref playerWindow, Name + "Shot", pos){Direction = CurrentDirection});
+            ShotsFired.Add(new Shot(ref playerWindow, Name + "Shot", pos){Direction = CurrentDirection});
             _shotSound.Play();
             _shootWaitTime = 0;
         }

@@ -3,11 +3,7 @@ using Four_Old_Dudes.Menus;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using static Four_Old_Dudes.MovingSprites.Moveable;
-using static Four_Old_Dudes.MovingSprites.Animation;
-using System.Collections.Generic;
 using System.Xml.Linq;
-using System;
 using System.Linq;
 using SFML.Audio;
 using Four_Old_Dudes.Misc;
@@ -52,6 +48,7 @@ namespace Four_Old_Dudes.Utils
             while (_window.IsOpen)
             {
                 _window.DispatchEvents();
+                _window.SetMouseCursorVisible(!_window.HasFocus());
                 Delta = gameClock.Restart();
                 if (showSplash)
                 {

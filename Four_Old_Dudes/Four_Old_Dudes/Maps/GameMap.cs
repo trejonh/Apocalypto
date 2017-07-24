@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Four_Old_Dudes.MovingSprites;
 using Four_Old_Dudes.Utils;
 using SFML.Graphics;
 using SFML.System;
@@ -96,7 +97,7 @@ namespace Four_Old_Dudes.Maps
                 EnemySpawns = new List<EnemySpawn>();
                 foreach (var obj in eneObjs)
                 {
-                    EnemySpawns.Add(new EnemySpawn(obj.Properties["enemyName"], obj.Position));
+                    EnemySpawns.Add(new EnemySpawn(obj.Properties["enemyName"], obj.Position, obj.Properties["type"]));
                 }
                 if (EnemySpawns.Count == 0)
                     throw new Exception("No enemy spawns objects found.");
@@ -146,15 +147,36 @@ namespace Four_Old_Dudes.Maps
         {
             public string Name { get; }
             public Vector2f Position { get; }
+            public Enemy.EnemyType Type { get; }
+
             /// <summary>
             /// A structure holding the name and position of the enemy
             /// </summary>
             /// <param name="name">The name of the enemy to load</param>
             /// <param name="position">The spawn position of the enemy</param>
-            public EnemySpawn(string name, Vector2f position)
+            /// <param name="type">The enemy type</param>
+            public EnemySpawn(string name, Vector2f position, String type)
             {
                 Name = name;
                 Position = position;
+                switch (type)
+                {
+                    case "Nurse":
+                        Type = Enemy.EnemyType.Nurse;
+                        break;
+                    case "GrimReaper":
+                        Type = Enemy.EnemyType.GrimReeper;
+                        break;
+                    case "Teenager":
+                        Type = Enemy.EnemyType.Teenager;
+                        break;
+                    case "FuneralHomeDirector":
+                        Type = Enemy.EnemyType.FuneralHomeDirector;
+                        break;
+                    default:
+                        Type = Enemy.EnemyType.Nurse;
+                        break;
+                }
             }
         }
     }
