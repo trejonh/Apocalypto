@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using System.Linq;
 using SFML.Audio;
 using Four_Old_Dudes.Misc;
+using System;
 
 namespace Four_Old_Dudes.Utils
 {
@@ -20,7 +21,7 @@ namespace Four_Old_Dudes.Utils
         public static bool IsGamePaused { get; set; }
         private bool IsPauseMenuCreated { get; }
         private bool HasMainBeenDestroyed { get; }
-        private PauseMenu _pauseMenu;
+        private static PauseMenu _pauseMenu;
         public static Color ThemeColor { get; } = new Color(148,0,211);
         public Music ThemeMusic { get; }
         public static bool IsThemePlaying { get; private set; }
@@ -34,11 +35,13 @@ namespace Four_Old_Dudes.Utils
             AssetManager.LoadAssets();
             ThemeMusic = AssetManager.LoadMusic("ThemeMusic");
             IsMainMenuOpen = true;
-            _window = new RenderWindow(new VideoMode(Screenx, Screeny), AssetManager.GetMessage("GameTitle"));
+            _window = new RenderWindow(new VideoMode(Screenx, Screeny), AssetManager.GetMessage("GameTitle"),Styles.Close);
             _window.SetActive(true);
             _window.SetFramerateLimit(60);
             var mainMenu = new MainMenu(ref _window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
-            _window.Closed += Window_Closed;
+            _window.Closed += WindowClosed;
+            _window.LostFocus += WindowLostFocus;
+            _window.GainedFocus += WindowGainedFocus;
             IsGamePaused = false;
             HasMainBeenDestroyed = false;
             var gameClock = new Clock();
@@ -91,9 +94,6 @@ namespace Four_Old_Dudes.Utils
                     else if (IsGamePaused && IsPauseMenuCreated)
                     {
                         Pause();
-                        _pauseMenu.AddMenuSelectionAction();
-                        var gameWorld = GameWorld;
-                        _pauseMenu.SetWorld(ref gameWorld);
                         _pauseMenu.Draw();
                     }
                     else if (IsGamePaused && IsPauseMenuCreated == false)
@@ -111,12 +111,25 @@ namespace Four_Old_Dudes.Utils
             }
         }
 
+        private void WindowLostFocus(object sender, EventArgs e)
+        {
+            Pause();
+        }
+
+        private void WindowGainedFocus(object sender, EventArgs e)
+        {
+            Unpause();
+        }
+
         /// <summary>
         /// Create the pause menu
         /// </summary>
         private void CreatePauseMenu()
         {
             _pauseMenu = new PauseMenu(ref _window, AssetManager.LoadSound("ShiftThroughMenu"), AssetManager.LoadSound("ShiftThroughMenu"));
+            _pauseMenu.AddMenuSelectionAction();
+            var gameWorld = GameWorld;
+            _pauseMenu.SetWorld(ref gameWorld);
         }
 
         /// <summary>
@@ -135,7 +148,7 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Window_Closed(object sender, System.EventArgs e)
+        private static void WindowClosed(object sender, System.EventArgs e)
         {
             LogManager.CloseLog();
             _window.Close();
@@ -148,6 +161,8 @@ namespace Four_Old_Dudes.Utils
         {
             GameWorld.UnpauseWorld();
             IsGamePaused = false;
+            if (_pauseMenu != null)
+                _pauseMenu.DestroyMenu();
         }
 
         /// <summary>

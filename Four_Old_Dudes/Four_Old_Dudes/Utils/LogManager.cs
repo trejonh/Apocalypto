@@ -35,6 +35,7 @@ namespace Four_Old_Dudes.Utils
             if (File.Exists(LogFile))
                 File.Delete(LogFile);
             var logFs = new FileStream(LogFile,FileMode.OpenOrCreate,FileAccess.Write);
+            File.SetAttributes(LogFile, FileAttributes.Normal);
             _log = new StreamWriter(logFs);
             _log.WriteLine(_head);
         }

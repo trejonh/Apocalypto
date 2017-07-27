@@ -25,17 +25,9 @@ namespace Four_Old_Dudes.MovingSprites
         private readonly Sound _shotSound;
         public readonly Sound DeathSound;
         public bool ChangePlayer { get; set; }
-        /// <summary>
-        /// The position of the ground
-        /// </summary>
-        //public Vector2f Ground {get;set;}
-        /// <summary>
-        /// Is there a ground tile under me
-        /// </summary>
-       // public bool IsGroundUnderMe { get; set; }
         public bool IsControlsRemoved { get; set; }
-        private const float MaxShootIntervals = 1f;
-        private float _shootWaitTime = 1f;
+        private const float MaxShootIntervals = 0.75f;
+        private float _shootWaitTime = 0.75f;
         private bool _isFalling;
         /// <summary>
         /// Current health level

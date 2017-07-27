@@ -22,8 +22,8 @@ namespace Four_Old_Dudes.MovingSprites
         private float _playerIsCloseMultiplier;
         private const float AttackSpeed = 80.0f;
         private float _timeSinceLastAttack = 80.0f;
-        private const float ShotSpeed = 120.0f;
-        private float _timeSinceLastShot = 120.0f;
+        private const float ShotSpeed = 3f;
+        private float _timeSinceLastShot = 3f;
         public float AttackPower { get; set; } = 5.0f;
         public readonly int TakeDownScore;
         private bool _isFalling = true;
@@ -61,7 +61,7 @@ namespace Four_Old_Dudes.MovingSprites
             _isPlayerNear = false;
             IsNearEdge = false;
             _playerIsCloseMultiplier = 1.0f;
-            MaxWaitTime = 5.5f;
+            MaxWaitTime = 4.8f;
             TakeDownScore = tdscore;
             Ground = new Vector2f(0.0f,0.0f);
             ShotsFired = new List<Shot>();
@@ -133,10 +133,10 @@ namespace Four_Old_Dudes.MovingSprites
                 }
                 else if(_isPlayerNear && IsNearEdge == false)
                 {
-                    if (_playerOnMap.CurrentDirection == Direction.Right)
-                        SetDirection(Direction.Left);
-                    else
+                    if (Position.X < _playerOnMap.Position.X)
                         SetDirection(Direction.Right);
+                    else
+                        SetDirection(Direction.Left);
                 }else if (IsNearEdge)
                 {
                     if (TurnRight)
@@ -148,10 +148,10 @@ namespace Four_Old_Dudes.MovingSprites
             }
             if (_isPlayerNear)
             {
-                if (_playerOnMap.CurrentDirection == Direction.Right)
-                    SetDirection(Direction.Left);
-                else
+                if (Position.X < _playerOnMap.Position.X)
                     SetDirection(Direction.Right);
+                else
+                    SetDirection(Direction.Left);
             }
             if (CurrentDirection == Direction.Left)
                 dx = -1 * Friction * LinearVelocity * GameMaster.Delta.AsSeconds() *_playerIsCloseMultiplier;
@@ -177,6 +177,8 @@ namespace Four_Old_Dudes.MovingSprites
                     tmp.Y = Ground.Y - Height;
                     _isFalling = false;
                 }
+                else
+                    _isFalling = true;
             }
             Position = tmp;
         }
@@ -200,7 +202,7 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 var dx = _playerOnMap.Position.X - Position.X;
                 dx = Math.Abs(dx);
-                if (dx < 100.0f && dx > Height && Math.Abs(Position.Y - _playerOnMap.Position.Y) < 0.0001f)
+                if (dx < 100.0f && Math.Abs(Position.Y - _playerOnMap.Position.Y) < 0.0001f)
                     _isPlayerNear = true;
                 else
                     _isPlayerNear = false;

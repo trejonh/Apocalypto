@@ -176,6 +176,7 @@ namespace Four_Old_Dudes.Utils
                 var text = new Texture(pl.Location) { Smooth = true };
                 player = new Player(name,text, pl.Width, pl.Height, 60, window, RenderStates.Default, pl.FirstFrame, pl.LastFrame);
                 player.SetAnimationFrames(pl.Frames);
+                player.SetDirection(Moveable.Direction.Left);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {
@@ -207,7 +208,8 @@ namespace Four_Old_Dudes.Utils
                     text = EnemyTextures[name];
                 var rand = new Random(22);
                 enemy = new Enemy(name, text, ene.Width, ene.Height, 60, window, RenderStates.Default, player,rand.Next(0,101), ene.FirstFrame, ene.LastFrame);
-                enemy.SetAnimationFrames(ene.Frames); 
+                enemy.SetAnimationFrames(ene.Frames);
+                enemy.SetDirection(Moveable.Direction.Left);
             }
             catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
             {

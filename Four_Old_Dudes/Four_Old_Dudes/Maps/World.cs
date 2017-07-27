@@ -21,7 +21,7 @@ namespace Four_Old_Dudes.Maps
     {
         public Player WorldPlayer { get; private set; }
         public GameMap WorldMap { get; private set; }
-        private bool _isRunning = true;
+        private bool _isRunning;
         private Thread _collisionThread;
         private Thread _mapProgressionThread;
         private Thread _loadingThread;
@@ -87,6 +87,8 @@ namespace Four_Old_Dudes.Maps
                 var en = AssetManager.LoadEnemy(enemy.Name, WinInstance, WorldPlayer);
                 en.SetPosition(enemy.Position);
                 en.SetType(enemy.Type);
+                en.Ground = enemy.Position;
+                DictateSpriteFalling(en);
                 enemies.Add(en);
             }
             return enemies;
@@ -206,36 +208,38 @@ namespace Four_Old_Dudes.Maps
                          */
                         var center = _worldView.Center;
                         var viewSize = _worldView.Size;
-                        var enemiesWeCareAbout = EnemiesOnMap.Where(enemy => 
-                                                ((enemy.Position.X > center.X - viewSize.X/2) && enemy.Position.X < center.X+viewSize.X/2)
+                        var enemiesWeCareAbout = EnemiesOnMap.Where(enemy =>
+                                                ((enemy.Position.X > center.X - viewSize.X / 2) && enemy.Position.X < center.X + viewSize.X / 2)
                                                 &&
-                                                ((enemy.Position.Y > center.Y-viewSize.Y/2)&&(enemy.Position.Y < center.Y+viewSize.Y/2)));
+                                                ((enemy.Position.Y > center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y + viewSize.Y / 2)));
                         foreach (var enemy in enemiesWeCareAbout)
                         {
-                            var sortedTiles = SortByDistance(enemy.Position,
-                                WorldMap.FloorObjects.Select(tiles => tiles.Position).ToList());
-                            var closetTilePos = sortedTiles[0];
-                            var closestTile = WorldMap.FloorObjects.First(tile => tile.Position.Equals(closetTilePos));
+                            var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position).Where(tile => tile.Y >= (enemy.Position.Y + enemy.Height)).ToList();
+                            if (mapTiles != null && mapTiles.Count > 0)
+                            {
+                                var sortedTiles = SortByDistance(enemy.Position, mapTiles);
+                                var closetTilePos = sortedTiles[0];
+                                var closestTile = WorldMap.FloorObjects.First(tile => tile.Position.Equals(closetTilePos));
+                                if (bool.Parse(closestTile.Properties["leftNeighbor"]) == false)
+                                {
+                                    enemy.IsNearEdge = true;
+                                    enemy.TurnRight = true;
+                                    enemy.TurnLeft = false;
+                                }
+                                else if (bool.Parse(closestTile.Properties["rightNeighbor"]) == false)
+                                {
+                                    enemy.IsNearEdge = true;
+                                    enemy.TurnRight = false;
+                                    enemy.TurnLeft = true;
+                                }
+                                else
+                                {
+                                    enemy.IsNearEdge = false;
+                                    enemy.TurnRight = false;
+                                    enemy.TurnLeft = false;
+                                }
+                            }
                             DictateSpriteFalling(enemy);
-                            if (bool.Parse(closestTile.Properties["leftNeighbor"]) == false)
-                            {
-                                enemy.IsNearEdge = true;
-                                enemy.TurnRight = true;
-                                enemy.TurnLeft = false;
-
-                            }
-                            else if (bool.Parse(closestTile.Properties["rightNeighbor"]) == false)
-                            {
-                                enemy.IsNearEdge = true;
-                                enemy.TurnRight = false;
-                                enemy.TurnLeft = true;
-                            }
-                            else
-                            {
-                                enemy.IsNearEdge = false;
-                                enemy.TurnRight = false;
-                                enemy.TurnLeft = false;
-                            }
                             if (WorldPlayer.IsIntersecting(enemy.Position))
                             {
                                 enemy.Attack(WorldPlayer);
@@ -404,7 +408,7 @@ namespace Four_Old_Dudes.Maps
         {
             if (_isRunning)
             {
-                LogManager.LogWarning("Collision detection already started");
+                LogManager.LogWarning("All threads running.");
                 return;
             }
             _isRunning = true;
@@ -555,6 +559,9 @@ namespace Four_Old_Dudes.Maps
                 _scoreDisp.Draw();
                 foreach (var shot in WorldPlayer.ShotsFired)
                     shot.Draw();
+                foreach (var enemy in EnemiesOnMap)
+                    foreach (var shot in enemy.ShotsFired)
+                        shot.Draw();
             }
 
         }
@@ -636,7 +643,7 @@ namespace Four_Old_Dudes.Maps
 
             for (var i = 1; i < _players.Length; i++)
             {
-                if(_players[i] == null) continue;
+                if (_players[i] == null) continue;
                 _players[i].RemoveControls();
                 _players[i].ResetWaitTime();
             }
@@ -645,23 +652,7 @@ namespace Four_Old_Dudes.Maps
             EnemiesOnMap = SpawnEnemies();
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
-            var ts = new ThreadStart(CollisionDetection);
-            _collisionThread = new Thread(ts)
-            {
-                Priority = ThreadPriority.AboveNormal,
-                IsBackground = true
-            };
-            _collisionThread.Start();
-            var ts1 = new ThreadStart(DetectMapProgression);
-            _mapProgressionThread = new Thread(ts1)
-            {
-                Priority = ThreadPriority.Normal,
-                IsBackground = true
-            };
-            var ts2 = new ThreadStart(GeneralGameFlowThread);
-            _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
-            _gameFlowThread.Start();
-            _mapProgressionThread.Start();
+            StartWorld();
             var win = WinInstance;
             _healthBar = new HealthBar(ref win, WorldPlayer.Position);
             _scoreDisp = new ScoreDisplay(ref win, WorldPlayer.Position);
@@ -830,23 +821,7 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer.ResetWaitTime();
             foreach (var enemy in EnemiesOnMap)
                 enemy.ResetWaitTime();
-            var ts = new ThreadStart(CollisionDetection);
-            _collisionThread = new Thread(ts)
-            {
-                Priority = ThreadPriority.AboveNormal,
-                IsBackground = true
-            };
-            var ts1 = new ThreadStart(DetectMapProgression);
-            _mapProgressionThread = new Thread(ts1)
-            {
-                Priority = ThreadPriority.Normal,
-                IsBackground = true
-            };
-            var ts2 = new ThreadStart(GeneralGameFlowThread);
-            _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
-            _gameFlowThread.Start();
-            _mapProgressionThread.Start();
-            _collisionThread.Start();
+            StartWorld();
             GameMaster.IsMainMenuOpen = false;
             _displayLives = true;
             _dispControllerTime = true;
