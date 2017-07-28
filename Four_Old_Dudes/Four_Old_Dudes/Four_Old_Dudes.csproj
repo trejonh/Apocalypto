@@ -137,6 +137,7 @@
     <Compile Include="MovingSprites\Animation.cs" />
     <Compile Include="MovingSprites\Enemy.cs" />
     <Compile Include="MovingSprites\Moveable.cs" />
+    <Compile Include="MovingSprites\Npc.cs" />
     <Compile Include="MovingSprites\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Drawable.cs" />
