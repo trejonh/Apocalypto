@@ -183,7 +183,7 @@ namespace Four_Old_Dudes.MovingSprites
         {
             if (GameMaster.IsGamePaused)
                 return;
-            if (DoContinueToWait() == false)
+            if (CanIMove())
             {
                 var dx = 0f;
                 if (_isJumping)

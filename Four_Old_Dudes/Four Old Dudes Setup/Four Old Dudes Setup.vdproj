@@ -75,6 +75,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0B80F4ECE7FC44E29B8FB6C3359A46D1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0F54E1F149EB4B5F9A03F238A3161F10"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -154,6 +160,12 @@
         "Entry"
         {
         "MsmKey" = "8:_27A418B3779348879AC072214C2FAE0D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2A646F57057A45059C3B96D172C9DAAD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -525,6 +537,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B136EF624C32477FB3B35EACBB51A95C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B16379C8F8FC459D8EB0CB57DB1F182B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -790,13 +808,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7CDE843A857C4789C3BD73C0F31ED847"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_06772C3D0BD5449588BD2BCC43AF5326"
+        "OwnerKey" = "8:_054B31381226431BA311493701ED9381"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -808,7 +820,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_054B31381226431BA311493701ED9381"
+        "OwnerKey" = "8:_06772C3D0BD5449588BD2BCC43AF5326"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1177,6 +1189,12 @@
         "OwnerKey" = "8:_611EEE96674D548E669CA2469EC23F54"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7CDE843A857C4789C3BD73C0F31ED847"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -1195,6 +1213,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -1211,6 +1237,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -1497,6 +1531,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B80F4ECE7FC44E29B8FB6C3359A46D1"
+            {
+            "SourcePath" = "8:..\\Four_Old_Dudes\\Assets\\sprites\\skateboard.png"
+            "TargetName" = "8:skateboard.png"
+            "Tag" = "8:"
+            "Folder" = "8:_C20B5B0A5FA043ACAFE52B500D515039"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0F54E1F149EB4B5F9A03F238A3161F10"
             {
             "SourcePath" = "8:..\\Four_Old_Dudes\\bin\\x86\\Debug\\Logs\\log.js"
@@ -1780,6 +1834,26 @@
             "TargetName" = "8:mackShot.wav"
             "Tag" = "8:"
             "Folder" = "8:_6AE6DE37A49E44D092D98214DD10DE3C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A646F57057A45059C3B96D172C9DAAD"
+            {
+            "SourcePath" = "8:..\\Four_Old_Dudes\\Assets\\sprites\\skater.png"
+            "TargetName" = "8:skater.png"
+            "Tag" = "8:"
+            "Folder" = "8:_C20B5B0A5FA043ACAFE52B500D515039"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3212,6 +3286,26 @@
             {
             "SourcePath" = "8:..\\Four_Old_Dudes\\Assets\\sprites\\sergi.png"
             "TargetName" = "8:sergi.png"
+            "Tag" = "8:"
+            "Folder" = "8:_C20B5B0A5FA043ACAFE52B500D515039"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B136EF624C32477FB3B35EACBB51A95C"
+            {
+            "SourcePath" = "8:..\\Four_Old_Dudes\\Assets\\sprites\\treBiker.png"
+            "TargetName" = "8:treBiker.png"
             "Tag" = "8:"
             "Folder" = "8:_C20B5B0A5FA043ACAFE52B500D515039"
             "Condition" = "8:"

@@ -20,6 +20,7 @@ namespace Four_Old_Dudes.Maps
         public Vector2f PlayerInitialPosition { get; }
         public List<Object> FloorObjects { get; private set; }
         public List<EnemySpawn> EnemySpawns { get; private set; }
+        public List<NpcSpawn> NPCs { get; private set; }
         public Color BgColor { get; set; }
         public Music BgMusic { get; set; }
         public string Name { get; set; }
@@ -35,6 +36,7 @@ namespace Four_Old_Dudes.Maps
         {
             DevelopGround();
             FindEnemySpawns();
+            FindNpcSpawns();
             FindItems();
             try
             {
@@ -83,6 +85,26 @@ namespace Four_Old_Dudes.Maps
             {
                 LogManager.LogError("No initial player location was found for map: " + filename);
                 PlayerInitialPosition = new Vector2f(0f, 0f);
+            }
+        }
+
+        private void FindNpcSpawns()
+        {
+
+            try
+            {
+                var eneObjs = Objects.Where(obj => obj.Name.Equals("npcSpawn"));
+                NPCs = new List<NpcSpawn>();
+                foreach (var obj in eneObjs)
+                {
+                    NPCs.Add(new NpcSpawn(obj.Properties["npcName"], obj.Position));
+                }
+                if (NPCs.Count == 0)
+                    throw new Exception("No npc spawns objects found.");
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
 
@@ -177,6 +199,27 @@ namespace Four_Old_Dudes.Maps
                         Type = Enemy.EnemyType.Nurse;
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// A structure holding the name and position of the enemy
+        /// </summary>
+        public struct NpcSpawn
+        {
+            public string Name { get; }
+            public Vector2f Position { get; }
+
+            /// <summary>
+            /// A structure holding the name and position of the enemy
+            /// </summary>
+            /// <param name="name">The name of the enemy to load</param>
+            /// <param name="position">The spawn position of the enemy</param>
+            /// <param name="type">The enemy type</param>
+            public NpcSpawn(string name, Vector2f position)
+            {
+                Name = name;
+                Position = position;
             }
         }
     }

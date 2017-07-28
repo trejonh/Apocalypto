@@ -30,6 +30,7 @@ namespace Four_Old_Dudes.Maps
         private bool _dispControllerTime;
         public int NumberOfPlayerLives { get; set; } = 3;
         public List<Enemy> EnemiesOnMap { get; private set; }
+        public List<Npc> NPCsOnMap { get; private set; }
         private readonly View _worldView;
         private HealthBar _healthBar;
         private ScoreDisplay _scoreDisp;
@@ -51,6 +52,7 @@ namespace Four_Old_Dudes.Maps
         private const float MaxTimeForBulletDraw = 2.5f;
         private Player[] _players;
         private int _currentPlayerIndex;
+        private IEnumerable<Enemy> EnemiesRendered { get; set; }
 
         /// <summary>
         /// Create an empty world
@@ -91,6 +93,25 @@ namespace Four_Old_Dudes.Maps
                 enemies.Add(en);
             }
             return enemies;
+        } 
+        
+        /// <summary>
+          /// Spawn enemies based off their locations in the map
+          /// </summary>
+          /// <returns>List of enemies</returns>
+        private List<Npc> SpawnNpcs()
+        {
+            var npcsObj = WorldMap.NPCs;
+            var npcs = new List<Npc>();
+            if (npcsObj == null || npcsObj.Count == 0)
+                return npcs;
+            foreach (var npc in npcsObj)
+            {
+                var loadedNpc = AssetManager.LoadNpc(npc.Name, WinInstance);
+                loadedNpc.SetPosition(npc.Position);
+                npcs.Add(loadedNpc);
+            }
+            return npcs;
         }
 
         /// <summary>
@@ -150,13 +171,13 @@ namespace Four_Old_Dudes.Maps
                         }
                         var center = _worldView.Center;
                         var viewSize = _worldView.Size;
-                        var enemiesWeCareAbout = EnemiesOnMap.Where(enemy =>
+                        EnemiesRendered = EnemiesOnMap.Where(enemy =>
                             ((enemy.Position.X > center.X - viewSize.X / 2) && enemy.Position.X < center.X + viewSize.X / 2)
                             &&
                             ((enemy.Position.Y > center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y + viewSize.Y / 2)));
                         var eneTmp = new List<Enemy>(EnemiesOnMap);
                         //var eneTmpArr = eneTmp.ToArray();
-                        foreach (var enemy in enemiesWeCareAbout)
+                        foreach (var enemy in EnemiesRendered)
                         {
                             if (!shot.IsIntersecting(enemy.Position)) continue;
                             tmp.Remove(shot);
@@ -175,11 +196,11 @@ namespace Four_Old_Dudes.Maps
                          */
                         var center = _worldView.Center;
                         var viewSize = _worldView.Size;
-                        var enemiesWeCareAbout = EnemiesOnMap.Where(enemy =>
+                        EnemiesRendered = EnemiesOnMap.Where(enemy =>
                                                 ((enemy.Position.X >= center.X - viewSize.X / 2f) && enemy.Position.X <= center.X + viewSize.X / 2)
                                                 &&
                                                 ((enemy.Position.Y >= center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y - enemy.Height + viewSize.Y / 2)));
-                        foreach (var enemy in enemiesWeCareAbout)
+                        foreach (var enemy in EnemiesRendered)
                         {
                             var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position).Where(tile => tile.Y >= (enemy.Position.Y + enemy.Height)).ToList();
                             if (mapTiles != null && mapTiles.Count > 0)
@@ -439,29 +460,49 @@ namespace Four_Old_Dudes.Maps
                     foreach (var floor in WorldMap.FloorObjects)
                         WinInstance.Draw(floor);
                 }
-                if (EnemiesOnMap != null)
+                if (EnemiesRendered != null && EnemiesRendered.Count() > 0)
                 {
-                    var center = _worldView.Center;
-                    var size = new Vector2f(_worldView.Size.X / 2, _worldView.Size.Y / 2);
-                    var leftX = center.X - size.X;
-                    var rightX = center.X + size.X;
-                    var topY = center.Y - size.Y;
-                    var bottomY = center.Y + size.Y;
-                    foreach (var enemy in EnemiesOnMap)
+                    bool allEneMove = false;
+                    foreach (var enemy in EnemiesRendered)
                     {
-                        var enePos = enemy.Position;
-                        if ((enePos.Y < topY)
-                            || (enePos.Y > bottomY)
-                            || (enePos.X > rightX)
-                            || (enePos.X < leftX))
-                        {
-                            enemy.Stop();
-                        }
-                        else
-                        {
-                            enemy.Play();
-                        }
+                        enemy.Play();
                         enemy.Update();
+                        foreach (var shot in enemy.ShotsFired)
+                            shot.Draw();
+                        allEneMove = enemy.CanMove;
+                    }
+                    if (allEneMove)
+                    {
+                        foreach (var enemy in EnemiesOnMap)
+                            enemy.SetWaitToMax();
+                    }
+                }
+                else
+                {
+                    if (EnemiesOnMap != null)
+                    {
+                        var center = _worldView.Center;
+                        var size = new Vector2f(_worldView.Size.X / 2, _worldView.Size.Y / 2);
+                        var leftX = center.X - size.X;
+                        var rightX = center.X + size.X;
+                        var topY = center.Y - size.Y;
+                        var bottomY = center.Y + size.Y;
+                        foreach (var enemy in EnemiesOnMap)
+                        {
+                            var enePos = enemy.Position;
+                            if ((enePos.Y < topY)
+                                || (enePos.Y + enemy.Height > bottomY)
+                                || (enePos.X > rightX)
+                                || (enePos.X < leftX))
+                            {
+                                enemy.Stop();
+                                continue;
+                            }
+                            enemy.Play();
+                            foreach (var shot in enemy.ShotsFired)
+                                shot.Draw();
+                            enemy.Update();
+                        }
                     }
                 }
                 if (_displayLives && IsInitialMapLoad == false)
@@ -495,9 +536,8 @@ namespace Four_Old_Dudes.Maps
                 _scoreDisp.Draw();
                 foreach (var shot in WorldPlayer.ShotsFired)
                     shot.Draw();
-                foreach (var enemy in EnemiesOnMap)
-                    foreach (var shot in enemy.ShotsFired)
-                        shot.Draw();
+                foreach (var npc in NPCsOnMap)
+                    npc.Update();
             }
 
         }
@@ -601,6 +641,7 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer = _players[0];
             WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
             EnemiesOnMap = SpawnEnemies();
+            NPCsOnMap = SpawnNpcs();
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
             StartWorld();
@@ -778,6 +819,7 @@ namespace Four_Old_Dudes.Maps
             }
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
+            NPCsOnMap = SpawnNpcs();
             var win = WinInstance;
             _healthBar = new HealthBar(ref win, WorldPlayer.Position);
             _scoreDisp = new ScoreDisplay(ref win, WorldPlayer.Position);
@@ -822,6 +864,7 @@ namespace Four_Old_Dudes.Maps
                 WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
                 WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
                 EnemiesOnMap = SpawnEnemies();
+                NPCsOnMap = SpawnNpcs();
                 if (InitLoadText == null)
                 {
                     var font = AssetManager.LoadFont("OrangeJuice");

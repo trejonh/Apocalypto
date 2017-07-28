@@ -35,7 +35,7 @@ namespace Four_Old_Dudes.Misc
             }
             _shot.Position = initalPosition;
             if (Direction == Moveable.Direction.Right)
-                _shot.Origin = new Vector2f(_shot.Position.X + _shot.Texture.Size.X/2f,_shot.Position.Y + _shot.Texture.Size.Y/2f);
+                _shot.Scale = new Vector2f(-1.0f,1.0f);
         }
 
         /// <summary>

@@ -30,6 +30,7 @@ namespace Four_Old_Dudes.Utils
 
         private static readonly Dictionary<string, string> ImageAssets = new Dictionary<string, string>();
         private static readonly Dictionary<string, Texture> EnemyTextures = new Dictionary<string, Texture>();
+        private static readonly Dictionary<string, Texture> NpcTextures = new Dictionary<string, Texture>();
         private static readonly Dictionary<string, Texture> ShotTextures = new Dictionary<string, Texture>();
         private static readonly Dictionary<string, string> Shots = new Dictionary<string, string>();
 
@@ -116,6 +117,31 @@ namespace Four_Old_Dudes.Utils
             }
             fs.Close();
            MapAssets.OrderBy(map => map.Order);
+        }
+
+        public static Npc LoadNpc(string name, RenderWindow winInstance)
+        {
+            Npc npc = null;
+            try
+            {
+                var npcSpr = MovingSpriteAssests[name];
+                Texture text;
+                if (NpcTextures.ContainsKey(name) == false)
+                {
+                    text = new Texture(npcSpr.Location) { Smooth = true };
+                    NpcTextures.Add(name, text);
+                }
+                else
+                    text = NpcTextures[name];
+                npc = new Npc(name, text, npcSpr.Width, npcSpr.Height, 60, winInstance, RenderStates.Default, npcSpr.FirstFrame, npcSpr.LastFrame);
+                npc.SetAnimationFrames(npcSpr.Frames);
+                npc.SetDirection(Moveable.Direction.Left);
+            }
+            catch (Exception ex) when (ex is LoadingFailedException || ex is KeyNotFoundException)
+            {
+                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            return npc;
         }
 
         /// <summary>

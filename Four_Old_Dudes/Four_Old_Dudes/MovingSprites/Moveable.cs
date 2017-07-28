@@ -37,6 +37,7 @@ namespace Four_Old_Dudes.MovingSprites
         public bool IsGroundUnderMe { get; set; }
         public Vector2f Ground { get; set; }
         public List<Shot> ShotsFired { get; set; }
+        public bool CanMove { get; private set; }
 
         /// <summary>
         /// Create a new moveable instance
@@ -127,11 +128,11 @@ namespace Four_Old_Dudes.MovingSprites
         /// Determine if the moveable should keep waiting
         /// </summary>
         /// <returns></returns>
-        protected bool DoContinueToWait()
+        protected bool CanIMove()
         {
-            if (!(_currentWaitTime < MaxWaitTime)) return false;
             _currentWaitTime += GameMaster.Delta.AsSeconds();
-            return true;
+            CanMove = !(_currentWaitTime < MaxWaitTime);
+            return CanMove;
         }
 
         /// <summary>

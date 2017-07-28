@@ -191,7 +191,7 @@ namespace Four_Old_Dudes.MovingSprites
         {
             if (IsAnimated == false || GameMaster.IsGamePaused)
                 return;
-            if (DoContinueToWait() == false)
+            if (CanIMove())
             {
                 var dx = _playerOnMap.Position.X - Position.X;
                 dx = Math.Abs(dx);

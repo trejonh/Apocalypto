@@ -86,14 +86,14 @@
     <property name="type" value="Nurse"/>
    </properties>
   </object>
-  <object id="256" name="enemySpawn" gid="52" x="1376" y="638.5" width="32" height="32">
+  <object id="256" name="enemySpawn" gid="52" x="1376" y="640" width="32" height="32">
    <properties>
     <property name="enemyName" value="Skater"/>
     <property name="enemySpawn" type="bool" value="true"/>
     <property name="type" value="Teenager"/>
    </properties>
   </object>
-  <object id="257" name="enemySpawn" gid="52" x="864" y="639.5" width="32" height="32">
+  <object id="257" name="enemySpawn" gid="52" x="864" y="640" width="32" height="32">
    <properties>
     <property name="enemyName" value="Nurse"/>
     <property name="enemySpawn" type="bool" value="true"/>
@@ -105,13 +105,6 @@
     <property name="enemyName" value="Skater"/>
     <property name="enemySpawn" type="bool" value="true"/>
     <property name="type" value="Teenager"/>
-   </properties>
-  </object>
-  <object id="259" name="enemySpawn" gid="52" x="-76" y="511.5" width="32" height="32">
-   <properties>
-    <property name="enemyName" value="Nurse"/>
-    <property name="enemySpawn" type="bool" value="true"/>
-    <property name="type" value="Name"/>
    </properties>
   </object>
   <object id="260" name="enemySpawn" gid="52" x="1632" y="512" width="32" height="32">
