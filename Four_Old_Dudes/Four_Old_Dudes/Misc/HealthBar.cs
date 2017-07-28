@@ -75,7 +75,6 @@ namespace Four_Old_Dudes.Misc
             for (var i = 0; i < _numToDraw; i++)
             {
                 WinInstance.Draw(_innerRects[i]);
-                Console.WriteLine("Rect position X: {0}, Y: {1}",_innerRects[i].Position.X,_innerRects[i].Position.Y);
             }
             WinInstance.Draw(_healthText);
         }

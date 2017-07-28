@@ -65,6 +65,8 @@ namespace Four_Old_Dudes.MovingSprites
             TakeDownScore = tdscore;
             Ground = new Vector2f(0.0f,0.0f);
             ShotsFired = new List<Shot>();
+            IsGroundUnderMe = true;
+            _isFalling = false;
         }
 
         /// <summary>
@@ -103,7 +105,7 @@ namespace Four_Old_Dudes.MovingSprites
         public override float Jump()
         {
             var velocity = 0.0f;
-            if (IsGroundUnderMe == false || _isFalling)
+            if (IsGroundUnderMe == false && _isFalling)
             { 
                 velocity = Gravity * GameMaster.Delta.AsSeconds() * 10;
             }
@@ -126,17 +128,11 @@ namespace Four_Old_Dudes.MovingSprites
             {
                 if (_isPlayerNear == false && IsNearEdge == false)
                 {
-                    if (CurrentDirection == Direction.Right)
-                        SetDirection(Direction.Left);
-                    else
-                        SetDirection(Direction.Right);
+                    SetDirection(CurrentDirection == Direction.Right ? Direction.Left : Direction.Right);
                 }
                 else if(_isPlayerNear && IsNearEdge == false)
                 {
-                    if (Position.X < _playerOnMap.Position.X)
-                        SetDirection(Direction.Right);
-                    else
-                        SetDirection(Direction.Left);
+                    SetDirection(Position.X < _playerOnMap.Position.X ? Direction.Right : Direction.Left);
                 }else if (IsNearEdge)
                 {
                     if (TurnRight)
@@ -148,10 +144,7 @@ namespace Four_Old_Dudes.MovingSprites
             }
             if (_isPlayerNear)
             {
-                if (Position.X < _playerOnMap.Position.X)
-                    SetDirection(Direction.Right);
-                else
-                    SetDirection(Direction.Left);
+                SetDirection(Position.X < _playerOnMap.Position.X ? Direction.Right : Direction.Left);
             }
             if (CurrentDirection == Direction.Left)
                 dx = -1 * Friction * LinearVelocity * GameMaster.Delta.AsSeconds() *_playerIsCloseMultiplier;

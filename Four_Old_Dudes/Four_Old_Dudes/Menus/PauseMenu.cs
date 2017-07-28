@@ -230,7 +230,6 @@ namespace Four_Old_Dudes.Menus
             }
             for (var i = 0; i < MenuItems.Count; i++)
             {
-                Console.WriteLine("Pointer Y {0}, Item Y {1}", pointerPosition.Value.Y ,MenuItems[i].Position.Y);
                 if ((Math.Abs(pointerPosition.Value.Y - MenuItems[i].Position.Y) <= 0.1))
                     _itemIndex = i;
             }

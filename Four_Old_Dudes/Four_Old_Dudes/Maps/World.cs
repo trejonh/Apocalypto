@@ -23,7 +23,6 @@ namespace Four_Old_Dudes.Maps
         public GameMap WorldMap { get; private set; }
         private bool _isRunning;
         private Thread _collisionThread;
-        private Thread _mapProgressionThread;
         private Thread _loadingThread;
         private Thread _gameFlowThread;
         private bool _madeItToEnd;
@@ -110,41 +109,14 @@ namespace Four_Old_Dudes.Maps
                 while (_isRunning)
                 {
                     if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
-                    var currPosition = WorldPlayer.Position;
                     /*
                      * Find the ground tiles closest to the player
                      * Calculate the distance between the player and said tile
                      * if that distance is greater than the size of tile  then 
                      * the player needs to fall
                      */
-                    if (WorldMap.FloorObjects != null || WorldMap.FloorObjects.Count != 0)
+                    if (WorldMap.FloorObjects != null && WorldMap.FloorObjects.Count != 0)
                     {
-                        /*var closeTiles =
-                            WorldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
-                        var floor = closeTiles.Select(tile => tile.Position).ToList();
-                        if (floor.Count > 0)
-                        {
-                            var list = SortByDistance(currPosition, floor);
-                            var closestTile = closeTiles.First(tile => tile.Position.Equals(list[0]));
-                            var bottomPosition = currPosition.Y + WorldPlayer.Height;
-                            if (closestTile != null)
-                            {
-                                WorldPlayer.Ground = closestTile.Position;
-                                var dx = Math.Abs(WorldPlayer.Ground.X - currPosition.X);
-                                if (dx < (closestTile.Size.X * 0.73f) && bottomPosition <= WorldPlayer.Ground.Y)
-                                    WorldPlayer.IsGroundUnderMe = true;
-                                else if (dx >= (closestTile.Size.X * 0.73f))
-                                    WorldPlayer.IsGroundUnderMe = false;
-                            }
-                            else
-                            {
-                                WorldPlayer.IsGroundUnderMe = false;
-                            }
-                        }
-                        else
-                        {
-                            WorldPlayer.IsGroundUnderMe = false;
-                        }*/
                         DictateSpriteFalling(WorldPlayer);
                     }
                     else
@@ -159,12 +131,13 @@ namespace Four_Old_Dudes.Maps
                         NumberOfPlayerLives--;
                         Reset(NumberOfPlayerLives, false);
                         UnpauseWorld();
+                        continue;
                     }
                     var tmp = new List<Shot>(WorldPlayer.ShotsFired);
                     var tmpArry = tmp.ToArray();
                     foreach (var shot in tmpArry)
                     {
-                        var endOfScreen = _worldView.Center.X + _worldView.Size.X / 2.0f;
+                        var endOfScreen = _worldView.Center.X - shot.Width + _worldView.Size.X / 2.0f ;
                         if (shot.Position.X >= endOfScreen)
                         {
                             tmp.Remove(shot);
@@ -183,18 +156,12 @@ namespace Four_Old_Dudes.Maps
                             ((enemy.Position.Y > center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y + viewSize.Y / 2)));
                         var eneTmp = new List<Enemy>(EnemiesOnMap);
                         //var eneTmpArr = eneTmp.ToArray();
-                        var pName = WorldPlayer.Name;
                         foreach (var enemy in enemiesWeCareAbout)
                         {
                             if (!shot.IsIntersecting(enemy.Position)) continue;
                             tmp.Remove(shot);
                             var enType = enemy.Type;
-                            if (pName.Equals("Mack") && enType != Enemy.EnemyType.Nurse) continue;
-                            if (pName.Equals("Trent") && enType != Enemy.EnemyType.GrimReeper) continue;
-                            if (pName.Equals("Jaun") && enType != Enemy.EnemyType.FuneralHomeDirector) continue;
-                            if (pName.Equals("Sergei") && enType != Enemy.EnemyType.Teenager) continue;
-                            if (!shot.IsIntersecting(enemy.Position)) continue;
-                            tmp.Remove(shot);
+                            if (WorldPlayer.EnemyICanAttack.Equals(enType) == false) continue;
                             eneTmp.Remove(enemy);
                             Score += enemy.TakeDownScore;
                         }
@@ -209,9 +176,9 @@ namespace Four_Old_Dudes.Maps
                         var center = _worldView.Center;
                         var viewSize = _worldView.Size;
                         var enemiesWeCareAbout = EnemiesOnMap.Where(enemy =>
-                                                ((enemy.Position.X > center.X - viewSize.X / 2) && enemy.Position.X < center.X + viewSize.X / 2)
+                                                ((enemy.Position.X >= center.X - viewSize.X / 2f) && enemy.Position.X <= center.X + viewSize.X / 2)
                                                 &&
-                                                ((enemy.Position.Y > center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y + viewSize.Y / 2)));
+                                                ((enemy.Position.Y >= center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y - enemy.Height + viewSize.Y / 2)));
                         foreach (var enemy in enemiesWeCareAbout)
                         {
                             var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position).Where(tile => tile.Y >= (enemy.Position.Y + enemy.Height)).ToList();
@@ -239,7 +206,7 @@ namespace Four_Old_Dudes.Maps
                                     enemy.TurnLeft = false;
                                 }
                             }
-                            DictateSpriteFalling(enemy);
+                           // DictateSpriteFalling(enemy);
                             if (WorldPlayer.IsIntersecting(enemy.Position))
                             {
                                 enemy.Attack(WorldPlayer);
@@ -248,7 +215,7 @@ namespace Four_Old_Dudes.Maps
                             var eneTmpShotArray = eneTmpShot.ToArray();
                             foreach (var shot in eneTmpShotArray)
                             {
-                                var endOfScreen = _worldView.Center.X + _worldView.Size.X / 2.0f;
+                                var endOfScreen = _worldView.Center.X - shot.Width + _worldView.Size.X / 2.0f;
                                 if (shot.Position.X >= endOfScreen)
                                 {
                                     eneTmpShot.Remove(shot);
@@ -259,10 +226,9 @@ namespace Four_Old_Dudes.Maps
                                     eneTmpShot.Remove(shot);
                                     continue;
                                 }
-                                if (shot.IsIntersecting(WorldPlayer.Position))
-                                {
-                                    eneTmpShot.Remove(shot);
-                                }
+                                if (!shot.IsIntersecting(WorldPlayer.Position)) continue;
+                                WorldPlayer.Health -= enemy.AttackPower;
+                                eneTmpShot.Remove(shot);
                             }
                             enemy.ShotsFired = eneTmpShot;
                         }
@@ -328,28 +294,6 @@ namespace Four_Old_Dudes.Maps
                         ChangePlayer();
                         _localPause = false;
                     }
-                }
-            }
-            catch (ThreadAbortException)
-            {
-
-            }
-            finally
-            {
-                LogManager.LogWarning("Aborting general game flow thread.");
-            }
-        }
-
-        /// <summary>
-        /// Detect if the player has reached the end of the map
-        /// </summary>
-        private void DetectMapProgression()
-        {
-            try
-            {
-                while (_isRunning)
-                {
-                    if (_localPause || _madeItToEnd) continue;
                     if (WorldPlayer.IsIntersecting(WorldMap.EndOfMap) == false)
                     {
                         _madeItToEnd = false;
@@ -361,11 +305,11 @@ namespace Four_Old_Dudes.Maps
             }
             catch (ThreadAbortException)
             {
-                // no action required ...
+
             }
             finally
             {
-                LogManager.LogWarning("Stopping map progression thread.");
+                LogManager.LogWarning("Aborting general game flow thread.");
             }
         }
 
@@ -398,7 +342,6 @@ namespace Four_Old_Dudes.Maps
             _isRunning = false;
             _collisionThread.Abort();
             _gameFlowThread.Abort();
-            _mapProgressionThread.Abort();
         }
 
         /// <summary>
@@ -419,16 +362,9 @@ namespace Four_Old_Dudes.Maps
                 Priority = ThreadPriority.AboveNormal,
                 IsBackground = true
             };
-            var ts1 = new ThreadStart(DetectMapProgression);
-            _mapProgressionThread = new Thread(ts1)
-            {
-                Priority = ThreadPriority.Normal,
-                IsBackground = true
-            };
             var ts2 = new ThreadStart(GeneralGameFlowThread);
             _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
             _gameFlowThread.Start();
-            _mapProgressionThread.Start();
             _collisionThread.Start();
         }
 
@@ -646,6 +582,21 @@ namespace Four_Old_Dudes.Maps
                 if (_players[i] == null) continue;
                 _players[i].RemoveControls();
                 _players[i].ResetWaitTime();
+                switch (_players[i].Name)
+                {
+                    case "Mack":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.Nurse;
+                        break;
+                    case "Sergi":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.FuneralHomeDirector;
+                        break;
+                    case "Trent":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.GrimReeper;
+                        break;
+                    case "Jaun":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.Teenager;
+                        break;
+                }
             }
             WorldPlayer = _players[0];
             WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
@@ -769,6 +720,21 @@ namespace Four_Old_Dudes.Maps
             {
                 _players[i].RemoveControls();
                 _players[i].ResetWaitTime();
+                switch (_players[i].Name)
+                {
+                    case "Mack":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.Nurse;
+                        break;
+                    case "Sergi":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.FuneralHomeDirector;
+                        break;
+                    case "Trent":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.GrimReeper;
+                        break;
+                    case "Jaun":
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.Teenager;
+                        break;
+                }
             }
             WorldPlayer = _players[0];
             WorldPlayer.Health = float.Parse(playerAttr["health"]);
@@ -838,7 +804,7 @@ namespace Four_Old_Dudes.Maps
             if (LoadingText == null)
             {
                 var font = AssetManager.LoadFont("OrangeJuice");
-                LoadingText = new Text() { Position = new Vector2f(WinInstance.Size.X / 2f, WinInstance.Size.Y / 2f), DisplayedString = AssetManager.GetMessage("Loading"), CharacterSize = 60, Color = Color.Black, Font = font };
+                LoadingText = new Text() { Position = WinInstance.DefaultView.Center, DisplayedString = AssetManager.GetMessage("Loading"), CharacterSize = 60, Color = Color.Black, Font = font };
             }
             WinInstance.SetView(WinInstance.DefaultView);
             var ts = new ThreadStart(LoadNewMap);

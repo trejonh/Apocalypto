@@ -26,6 +26,8 @@ namespace Four_Old_Dudes.Utils
         public Music ThemeMusic { get; }
         public static bool IsThemePlaying { get; private set; }
 
+        private static bool _isAlreadyPaused;
+
         /// <summary>
         /// Initialize the game
         /// </summary>
@@ -161,8 +163,8 @@ namespace Four_Old_Dudes.Utils
         {
             GameWorld.UnpauseWorld();
             IsGamePaused = false;
-            if (_pauseMenu != null)
-                _pauseMenu.DestroyMenu();
+            _pauseMenu?.DestroyMenu();
+            _isAlreadyPaused = false;
         }
 
         /// <summary>
@@ -171,6 +173,11 @@ namespace Four_Old_Dudes.Utils
         public static void Pause()
         {
             GameWorld.Pause();
+            if (_isAlreadyPaused == false)
+            {
+                _pauseMenu?.AddMenuSelectionAction();
+                _isAlreadyPaused = true;
+            }
             IsGamePaused = true;
         }
 
