@@ -346,7 +346,7 @@ namespace Four_Old_Dudes.MovingSprites
             var x = CurrentDirection == Direction.Right ? 30f : -30f;
             var pos = new Vector2f(Position.X + x, Position.Y);
             ShotsFired.Add(new Shot(ref playerWindow, Name + "Shot", pos){Direction = CurrentDirection});
-            _shotSound.Play();
+            _shotSound?.Play();
             _shootWaitTime = 0;
         }
     }

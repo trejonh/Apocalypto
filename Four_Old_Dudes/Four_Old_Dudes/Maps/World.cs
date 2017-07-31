@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Xml.Linq;
+using SFML.Audio;
 using static Four_Old_Dudes.MovingSprites.Moveable;
 
 namespace Four_Old_Dudes.Maps
@@ -30,7 +31,7 @@ namespace Four_Old_Dudes.Maps
         private bool _dispControllerTime;
         public int NumberOfPlayerLives { get; set; } = 3;
         public List<Enemy> EnemiesOnMap { get; private set; }
-        public List<Npc> NPCsOnMap { get; private set; }
+        public List<Npc> NpCsOnMap { get; private set; }
         private readonly View _worldView;
         private HealthBar _healthBar;
         private ScoreDisplay _scoreDisp;
@@ -53,6 +54,7 @@ namespace Four_Old_Dudes.Maps
         private Player[] _players;
         private int _currentPlayerIndex;
         private IEnumerable<Enemy> EnemiesRendered { get; set; }
+        private Sound _finishMapSound;
 
         /// <summary>
         /// Create an empty world
@@ -71,6 +73,7 @@ namespace Four_Old_Dudes.Maps
         {
             WinInstance = window;
             _worldView = new View(new FloatRect(new Vector2f(0.0f, 0.0f), new Vector2f(window.Size.X, window.Size.Y)));
+            _finishMapSound = AssetManager.LoadSound("Tada");
         }
 
         /// <summary>
@@ -202,6 +205,8 @@ namespace Four_Old_Dudes.Maps
                                                 ((enemy.Position.Y >= center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y - enemy.Height + viewSize.Y / 2)));
                         foreach (var enemy in EnemiesRendered)
                         {
+                            if(WorldPlayer.CanMove && !enemy.CanMove)
+                                enemy.SetWaitToMax();
                             var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position).Where(tile => tile.Y >= (enemy.Position.Y + enemy.Height)).ToList();
                             if (mapTiles != null && mapTiles.Count > 0)
                             {
@@ -275,6 +280,37 @@ namespace Four_Old_Dudes.Maps
             {
                 while (_isRunning)
                 {
+                    if (GameMaster.IsGamePaused == false && _localPause == false)
+                    {
+                        foreach (var npc in NpCsOnMap)
+                        {
+                            var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position)
+                                .Where(tile => tile.Y >= (npc.Position.Y + npc.Height)).ToList();
+                            if (mapTiles.Count <= 0) continue;
+                                var sortedTiles = SortByDistance(npc.Position, mapTiles);
+                                var closetTilePos = sortedTiles[0];
+                                var closestTile =
+                                    WorldMap.FloorObjects.First(tile => tile.Position.Equals(closetTilePos));
+                                if (bool.Parse(closestTile.Properties["leftNeighbor"]) == false)
+                                {
+                                    npc.IsNearEdge = true;
+                                    npc.TurnRight = true;
+                                    npc.TurnLeft = false;
+                                }
+                                else if (bool.Parse(closestTile.Properties["rightNeighbor"]) == false)
+                                {
+                                    npc.IsNearEdge = true;
+                                    npc.TurnRight = false;
+                                    npc.TurnLeft = true;
+                                }
+                                else
+                                {
+                                    npc.IsNearEdge = false;
+                                    npc.TurnRight = false;
+                                    npc.TurnLeft = false;
+                                }
+                        }
+                    }
                     if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
                     if (WorldPlayer == null)
                     {
@@ -320,6 +356,7 @@ namespace Four_Old_Dudes.Maps
                         _madeItToEnd = false;
                         continue;
                     }
+                    _finishMapSound.Play();
                     _madeItToEnd = true;
                     _localPause = true;
                 }
@@ -460,9 +497,9 @@ namespace Four_Old_Dudes.Maps
                     foreach (var floor in WorldMap.FloorObjects)
                         WinInstance.Draw(floor);
                 }
-                if (EnemiesRendered != null && EnemiesRendered.Count() > 0)
+                if (EnemiesRendered != null && EnemiesRendered.Any())
                 {
-                    bool allEneMove = false;
+                    var allEneMove = false;
                     foreach (var enemy in EnemiesRendered)
                     {
                         enemy.Play();
@@ -536,9 +573,9 @@ namespace Four_Old_Dudes.Maps
                 _scoreDisp.Draw();
                 foreach (var shot in WorldPlayer.ShotsFired)
                     shot.Draw();
-                foreach (var npc in NPCsOnMap)
-                    npc.Update();
             }
+            foreach (var npc in NpCsOnMap)
+                npc.Update();
 
         }
 
@@ -641,7 +678,7 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer = _players[0];
             WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
             EnemiesOnMap = SpawnEnemies();
-            NPCsOnMap = SpawnNpcs();
+            NpCsOnMap = SpawnNpcs();
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
             StartWorld();
@@ -819,7 +856,7 @@ namespace Four_Old_Dudes.Maps
             }
             _worldView.Center = WorldPlayer.Position;
             BgColor = WorldMap.BgColor;
-            NPCsOnMap = SpawnNpcs();
+            NpCsOnMap = SpawnNpcs();
             var win = WinInstance;
             _healthBar = new HealthBar(ref win, WorldPlayer.Position);
             _scoreDisp = new ScoreDisplay(ref win, WorldPlayer.Position);
@@ -864,7 +901,7 @@ namespace Four_Old_Dudes.Maps
                 WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
                 WorldPlayer.SetPosition(WorldMap.PlayerInitialPosition);
                 EnemiesOnMap = SpawnEnemies();
-                NPCsOnMap = SpawnNpcs();
+                NpCsOnMap = SpawnNpcs();
                 if (InitLoadText == null)
                 {
                     var font = AssetManager.LoadFont("OrangeJuice");

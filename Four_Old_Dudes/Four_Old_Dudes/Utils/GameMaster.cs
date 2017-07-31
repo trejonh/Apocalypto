@@ -161,7 +161,7 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         public static void Unpause()
         {
-            GameWorld.UnpauseWorld();
+            GameWorld?.UnpauseWorld();
             IsGamePaused = false;
             _pauseMenu?.DestroyMenu();
             _isAlreadyPaused = false;
@@ -172,7 +172,7 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         public static void Pause()
         {
-            GameWorld.Pause();
+            GameWorld?.Pause();
             if (_isAlreadyPaused == false)
             {
                 _pauseMenu?.AddMenuSelectionAction();

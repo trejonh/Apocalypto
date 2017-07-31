@@ -133,26 +133,26 @@
     <type>movingSprite</type>
     <name>Skater</name>
     <location>\sprites\skater.png</location>
-    <firstFrame>0</firstFrame>
-    <lastFrame>5</lastFrame>
     <width>32</width>
     <height>32</height>
+    <firstFrame>0</firstFrame>
+    <lastFrame>11</lastFrame>
     <frames>
-      <left>3,5</left>
-      <right>0,2</right>
+      <left>6,11</left>
+      <right>0,5</right>
     </frames>
   </asset>
   <asset>
     <type>movingSprite</type>
     <name>Sergi</name>
     <location>\sprites\sergi.png</location>
-    <firstFrame>0</firstFrame>
-    <lastFrame>5</lastFrame>
     <width>32</width>
     <height>32</height>
+    <firstFrame>0</firstFrame>
+    <lastFrame>11</lastFrame>
     <frames>
-      <left>3,5</left>
-      <right>0,2</right>
+      <left>6,11</left>
+      <right>0,5</right>
     </frames>
   </asset>
   <asset>
@@ -160,12 +160,12 @@
     <name>Mack</name>
     <location>\sprites\mack.png</location>
     <firstFrame>0</firstFrame>
-    <lastFrame>5</lastFrame>
+    <lastFrame>11</lastFrame>
     <width>32</width>
     <height>32</height>
     <frames>
-      <left>3,5</left>
-      <right>0,2</right>
+      <left>6,11</left>
+      <right>0,5</right>
     </frames>
   </asset>
   <asset>
@@ -175,10 +175,10 @@
     <width>32</width>
     <height>32</height>
     <firstFrame>0</firstFrame>
-    <lastFrame>5</lastFrame>
+    <lastFrame>11</lastFrame>
     <frames>
-      <left>3,5</left>
-      <right>0,2</right>
+      <left>6,11</left>
+      <right>0,5</right>
     </frames>
   </asset>
   <asset>
@@ -188,10 +188,10 @@
     <width>32</width>
     <height>32</height>
     <firstFrame>0</firstFrame>
-    <lastFrame>5</lastFrame>
+    <lastFrame>11</lastFrame>
     <frames>
-      <left>3,5</left>
-      <right>0,2</right>
+      <left>6,11</left>
+      <right>0,5</right>
     </frames>
   </asset>
   <asset>
@@ -201,10 +201,23 @@
     <width>32</width>
     <height>32</height>
     <firstFrame>0</firstFrame>
-    <lastFrame>5</lastFrame>
+    <lastFrame>11</lastFrame>
     <frames>
-      <left>3,5</left>
-      <right>0,2</right>
+      <left>6,11</left>
+      <right>0,5</right>
+    </frames>
+  </asset>
+  <asset>
+    <type>movingSprite</type>
+    <name>Matthew</name>
+    <location>\sprites\matthew.png</location>
+    <width>64</width>
+    <height>64</height>
+    <firstFrame>0</firstFrame>
+    <lastFrame>11</lastFrame>
+    <frames>
+      <left>6,11</left>
+      <right>0,5</right>
     </frames>
   </asset>
   <asset>
@@ -310,6 +323,11 @@
   </asset>
   <asset>
     <type>shot</type>
+    <name>JaunShot</name>
+    <location>\sprites\juanShot.png</location>
+  </asset>
+  <asset>
+    <type>shot</type>
     <name>Needle</name>
     <location>\sprites\needle.png</location>
   </asset>
@@ -325,13 +343,23 @@
   </asset>
   <asset>
     <type>audio</type>
+    <name>JaunShot</name>
+    <location>\audio\pills.wav</location>
+  </asset>
+  <asset>
+    <type>audio</type>
     <name>TrentShot</name>
-    <location>\audio\trentShot.flac</location>
+    <location>\audio\whack.ogg</location>
   </asset>
   <asset>
     <type>audio</type>
     <name>MackShot</name>
     <location>\audio\mackShot.wav</location>
+  </asset>
+  <asset>
+    <type>audio</type>
+    <name>Tada</name>
+    <location>\audio\tada.flac</location>
   </asset>
   <asset>
     <type>audio</type>

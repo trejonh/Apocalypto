@@ -133,7 +133,7 @@ namespace Four_Old_Dudes.Utils
                 }
                 else
                     text = NpcTextures[name];
-                npc = new Npc(name, text, npcSpr.Width, npcSpr.Height, 60, winInstance, RenderStates.Default, npcSpr.FirstFrame, npcSpr.LastFrame);
+                npc = new Npc(name, text, npcSpr.Width, npcSpr.Height, 60, winInstance, RenderStates.Default, npcSpr.FirstFrame, npcSpr.LastFrame,true);
                 npc.SetAnimationFrames(npcSpr.Frames);
                 npc.SetDirection(Moveable.Direction.Left);
             }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" backgroundcolor="#87cefa" nextobjectid="298">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" backgroundcolor="#87cefa" nextobjectid="299">
  <properties>
   <property name="BGC" type="color" value="#ff87cefa"/>
   <property name="BGMusic" value="Funkadelic"/>
@@ -55,7 +55,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Spawns">
+ <objectgroup name="Spawns" visible="0">
   <object id="1" name="playerStartLocation" gid="51" x="98" y="640" width="32" height="32" visible="0"/>
   <object id="19" name="enemySpawn" gid="52" x="1151" y="640" width="32" height="32">
    <properties>
@@ -856,6 +856,13 @@
     <property name="leftNeighbor" type="bool" value="true"/>
     <property name="rightNeighbor" type="bool" value="true"/>
     <property name="type" value="floor"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="NPCSpawns">
+  <object id="298" name="npcSpawn" gid="52" x="973" y="640" width="32" height="32">
+   <properties>
+    <property name="Name" value="Matthew"/>
    </properties>
   </object>
  </objectgroup>

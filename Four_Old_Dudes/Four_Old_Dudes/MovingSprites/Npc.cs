@@ -8,7 +8,7 @@ namespace Four_Old_Dudes.MovingSprites
     public class Npc : Moveable
     {
 
-        private const float MaxTimeBetweenTurns = 5.0f;
+        private const float MaxTimeBetweenTurns = 15.0f;
         private float _timeBetweenTurns;
         public bool IsNearEdge { get; set; }
         public bool TurnRight { get; set; } = false;
@@ -22,7 +22,7 @@ namespace Four_Old_Dudes.MovingSprites
 
         public new void Update()
         {
-            if (IsAnimated == false || GameMaster.IsGamePaused)
+            if (GameMaster.IsGamePaused)
                 return;
             if (CanIMove())
             {
@@ -42,7 +42,7 @@ namespace Four_Old_Dudes.MovingSprites
 
         public override void Move()
         {
-            float dx = 0.0f;
+            float dx;
             if (_timeBetweenTurns >= MaxTimeBetweenTurns || IsNearEdge)
             {
                 if (IsNearEdge == false)

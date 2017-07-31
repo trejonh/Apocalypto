@@ -97,14 +97,14 @@ namespace Four_Old_Dudes.Maps
                 NPCs = new List<NpcSpawn>();
                 foreach (var obj in eneObjs)
                 {
-                    NPCs.Add(new NpcSpawn(obj.Properties["npcName"], obj.Position));
+                    NPCs.Add(new NpcSpawn(obj.Properties["Name"], obj.Position));
                 }
                 if (NPCs.Count == 0)
                     throw new Exception("No npc spawns objects found.");
             }
             catch (Exception ex)
             {
-                LogManager.LogError(ex.Message + "\r\n" + ex.StackTrace);
+                LogManager.LogWarning(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
 
