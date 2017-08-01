@@ -99,7 +99,7 @@ namespace Four_Old_Dudes.Maps
         } 
         
         /// <summary>
-          /// Spawn enemies based off their locations in the map
+          /// Spawn npc's based off their locations in the map
           /// </summary>
           /// <returns>List of enemies</returns>
         private List<Npc> SpawnNpcs()
@@ -991,6 +991,9 @@ namespace Four_Old_Dudes.Maps
             _countDown--;
         }
 
+        /// <summary>
+        /// Changed the current player on screen to the next one in the list
+        /// </summary>
         private void ChangePlayer()
         {
             if (_currentPlayerIndex >= 3)
@@ -1013,6 +1016,10 @@ namespace Four_Old_Dudes.Maps
             WorldPlayer.SetWaitToMax();
         }
 
+        /// <summary>
+        /// Determine if the given sprite is falling
+        /// </summary>
+        /// <param name="sprite">Sprite to determine is is falling</param>
         private void DictateSpriteFalling(Moveable sprite)
         {
             var currPosition = sprite.Position;

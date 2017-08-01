@@ -102,6 +102,10 @@ namespace Four_Old_Dudes.MovingSprites
             }
         }
 
+        /// <summary>
+        /// Set the animation framtes of the moving sprite
+        /// </summary>
+        /// <param name="frames">The animation frames</param>
         public void SetAnimationFrames(Dictionary<Direction, AnimationFrames> frames) => AnimationsDirections = frames;
 
         /// <summary>
@@ -143,6 +147,9 @@ namespace Four_Old_Dudes.MovingSprites
             _currentWaitTime = 0.0f;
         }
 
+        /// <summary>
+        /// Sets the wait time to the max
+        /// </summary>
         public void SetWaitToMax() => _currentWaitTime = MaxWaitTime;
     }
 }

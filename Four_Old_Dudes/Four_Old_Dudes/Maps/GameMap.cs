@@ -88,6 +88,9 @@ namespace Four_Old_Dudes.Maps
             }
         }
 
+        /// <summary>
+        /// Find the npc's on the map
+        /// </summary>
         private void FindNpcSpawns()
         {
 
@@ -203,7 +206,7 @@ namespace Four_Old_Dudes.Maps
         }
 
         /// <summary>
-        /// A structure holding the name and position of the enemy
+        /// A structure holding the name and position of the npc
         /// </summary>
         public struct NpcSpawn
         {
@@ -211,7 +214,7 @@ namespace Four_Old_Dudes.Maps
             public Vector2f Position { get; }
 
             /// <summary>
-            /// A structure holding the name and position of the enemy
+            /// A structure holding the name and position of the npc
             /// </summary>
             /// <param name="name">The name of the npc to load</param>
             /// <param name="position">The spawn position of the npc</param>

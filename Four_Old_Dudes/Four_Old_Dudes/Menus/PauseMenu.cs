@@ -243,6 +243,7 @@ namespace Four_Old_Dudes.Menus
         /// <returns></returns>
         private bool ExitGameFunc()
         {
+            _worldInstance.StopWorld();
             LogManager.CloseLog();
             WinInstance.Close();
             return true;

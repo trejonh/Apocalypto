@@ -29,7 +29,9 @@ namespace Four_Old_Dudes.MovingSprites
         private bool _isFalling;
         public EnemyType Type { get; private set; }
 
-
+        /// <summary>
+        /// Type of enemy 
+        /// </summary>
         public enum EnemyType
         {
             Nurse,
@@ -78,6 +80,10 @@ namespace Four_Old_Dudes.MovingSprites
             Position = position;
         }
 
+        /// <summary>
+        /// Set the type of enemy
+        /// </summary>
+        /// <param name="type">The enemy type</param>
         public void SetType(EnemyType type)
         {
             Type = type;

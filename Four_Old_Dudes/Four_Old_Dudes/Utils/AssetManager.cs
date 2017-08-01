@@ -119,6 +119,12 @@ namespace Four_Old_Dudes.Utils
            MapAssets.OrderBy(map => map.Order);
         }
 
+        /// <summary>
+        /// Load a non-playable character
+        /// </summary>
+        /// <param name="name">Name of the character</param>
+        /// <param name="winInstance">The window to draw to</param>
+        /// <returns></returns>
         public static Npc LoadNpc(string name, RenderWindow winInstance)
         {
             Npc npc = null;

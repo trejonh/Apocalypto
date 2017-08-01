@@ -114,7 +114,7 @@ namespace Four_Old_Dudes.Menus
         }
 
         /// <summary>
-        /// 
+        /// Handler for joystick axis moving
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -166,7 +166,7 @@ namespace Four_Old_Dudes.Menus
         }
 
         /// <summary>
-        /// 
+        /// Handler for joystick button pressed
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -176,7 +176,7 @@ namespace Four_Old_Dudes.Menus
         }
 
         /// <summary>
-        /// 
+        /// Handler for keyboard key presses
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -2,7 +2,6 @@
 using Four_Old_Dudes.Utils;
 using SFML.Graphics;
 using SFML.System;
-using System;
 using System.Collections.Generic;
 
 namespace Four_Old_Dudes.Misc
