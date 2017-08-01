@@ -485,7 +485,7 @@ namespace Four_Old_Dudes.Maps
             {
                 if (GameMaster.IsThemePlaying)
                     GameMaster.StopTheme();
-                if (WorldMap.BgMusic != null && WorldMap.BgMusic.Status != SFML.Audio.SoundStatus.Playing)
+                if (WorldMap.BgMusic != null && WorldMap.BgMusic.Status != SoundStatus.Playing)
                     WorldMap.BgMusic.Play();
                 _worldView.Center = WorldPlayer.Position;
                 WinInstance.SetView(_worldView);

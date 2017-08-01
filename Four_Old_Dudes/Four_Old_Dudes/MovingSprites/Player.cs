@@ -29,7 +29,10 @@ namespace Four_Old_Dudes.MovingSprites
         private const float MaxShootIntervals = 0.75f;
         private float _shootWaitTime = 0.75f;
         private bool _isFalling;
-        public bool IsFalling { get => _isFalling; set => _isFalling = value; }
+        public bool IsFalling {
+            get { return _isFalling; }
+            set { _isFalling = value; }
+        }
         public  Enemy.EnemyType EnemyICanAttack { get; set; }
         /// <summary>
         /// Current health level
