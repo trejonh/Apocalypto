@@ -11,8 +11,10 @@ C/C++ and scriptint.
 
 ## Running
 
-If you want to run the current build of the "game", everything you need to run the game should be included.
-Clone the latest version of master, run it in VS with a x86 CPU type.
+If you want to debug/run the current build of the "game", everything (assets) you need to run the game should be included.
+Clone the latest version of master, run it in VS with a x86 CPU type. Or open the Four Old Dudes Setup project, under the Debug
+folder, run the exe and Four Old Dudes will install, then run the game as admin so the log manager can log in order to launch the 
+game.
 
 ## Feedback
 
