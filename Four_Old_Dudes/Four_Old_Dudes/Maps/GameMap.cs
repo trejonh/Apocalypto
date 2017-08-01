@@ -93,9 +93,9 @@ namespace Four_Old_Dudes.Maps
 
             try
             {
-                var eneObjs = Objects.Where(obj => obj.Name.Equals("npcSpawn"));
+                var npcObjs = Objects.Where(obj => obj.Name.Equals("npcSpawn"));
                 NPCs = new List<NpcSpawn>();
-                foreach (var obj in eneObjs)
+                foreach (var obj in npcObjs)
                 {
                     NPCs.Add(new NpcSpawn(obj.Properties["Name"], obj.Position));
                 }
@@ -213,9 +213,8 @@ namespace Four_Old_Dudes.Maps
             /// <summary>
             /// A structure holding the name and position of the enemy
             /// </summary>
-            /// <param name="name">The name of the enemy to load</param>
-            /// <param name="position">The spawn position of the enemy</param>
-            /// <param name="type">The enemy type</param>
+            /// <param name="name">The name of the npc to load</param>
+            /// <param name="position">The spawn position of the npc</param>
             public NpcSpawn(string name, Vector2f position)
             {
                 Name = name;

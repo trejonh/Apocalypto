@@ -29,6 +29,7 @@ namespace Four_Old_Dudes.MovingSprites
         private const float MaxShootIntervals = 0.75f;
         private float _shootWaitTime = 0.75f;
         private bool _isFalling;
+        public bool IsFalling { get => _isFalling; set => _isFalling = value; }
         public  Enemy.EnemyType EnemyICanAttack { get; set; }
         /// <summary>
         /// Current health level
@@ -257,15 +258,17 @@ namespace Four_Old_Dudes.MovingSprites
         public void OnKeyPressed(object sender, KeyEventArgs key)
         {
             //if (key.Code != Keyboard.Key.Escape) return;
-            if (GameMaster.IsGamePaused != false) return;
-            if (key.Code == Keyboard.Key.Escape)
+            if (GameMaster.IsGamePaused) return;
+            switch (key.Code)
             {
-                Stop();
-                RemoveControls();
-                GameMaster.IsGamePaused = true;
-            }else if(key.Code == Keyboard.Key.RShift)
-            {
-                ChangePlayer = true;
+                case Keyboard.Key.Escape:
+                    GameMaster.IsGamePaused = true;
+                    Stop();
+                    RemoveControls();
+                    break;
+                case Keyboard.Key.RShift:
+                    ChangePlayer = true;
+                    break;
             }
         }
 

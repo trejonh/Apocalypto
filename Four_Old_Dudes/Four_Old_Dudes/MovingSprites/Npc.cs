@@ -1,5 +1,4 @@
-﻿using System;
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using Four_Old_Dudes.Utils;
 using SFML.System;
 
@@ -70,6 +69,8 @@ namespace Four_Old_Dudes.MovingSprites
             var tmp = Position;
             tmp.X += x;
             tmp.Y += y;
+            if (tmp.Y + Height > Ground.Y)
+                tmp.Y = Ground.Y;
             Position = tmp;
         }
 

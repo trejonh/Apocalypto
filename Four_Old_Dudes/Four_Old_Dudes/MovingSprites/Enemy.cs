@@ -26,7 +26,7 @@ namespace Four_Old_Dudes.MovingSprites
         private float _timeSinceLastShot = 3f;
         public float AttackPower { get; set; } = 5.0f;
         public readonly int TakeDownScore;
-        private bool _isFalling = true;
+        private bool _isFalling;
         public EnemyType Type { get; private set; }
 
 

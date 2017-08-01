@@ -54,7 +54,7 @@ namespace Four_Old_Dudes.Maps
         private Player[] _players;
         private int _currentPlayerIndex;
         private IEnumerable<Enemy> EnemiesRendered { get; set; }
-        private Sound _finishMapSound;
+        private readonly Sound _finishMapSound;
 
         /// <summary>
         /// Create an empty world
@@ -91,7 +91,7 @@ namespace Four_Old_Dudes.Maps
                 var en = AssetManager.LoadEnemy(enemy.Name, WinInstance, WorldPlayer);
                 en.SetPosition(enemy.Position);
                 en.SetType(enemy.Type);
-                en.Ground = enemy.Position;
+                en.Ground = new Vector2f(enemy.Position.X, enemy.Position.Y + en.Height);
                 DictateSpriteFalling(en);
                 enemies.Add(en);
             }
@@ -112,6 +112,7 @@ namespace Four_Old_Dudes.Maps
             {
                 var loadedNpc = AssetManager.LoadNpc(npc.Name, WinInstance);
                 loadedNpc.SetPosition(npc.Position);
+                loadedNpc.Ground = new Vector2f(npc.Position.X, npc.Position.Y + loadedNpc.Height);
                 npcs.Add(loadedNpc);
             }
             return npcs;
@@ -737,11 +738,15 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         public void Pause()
         {
+            _localPause = true;
+            foreach (var enemy in EnemiesOnMap)
+            {
+                enemy.Stop();
+                enemy.ResetWaitTime();
+                enemy.ShotsFired=new List<Shot>();
+            }
             WorldPlayer.RemoveControls();
             WorldPlayer.ResetWaitTime();
-            foreach (var enemy in EnemiesOnMap)
-                enemy.ResetWaitTime();
-            _localPause = true;
         }
 
         /// <summary>
@@ -804,13 +809,13 @@ namespace Four_Old_Dudes.Maps
                         _players[i].EnemyICanAttack = Enemy.EnemyType.Nurse;
                         break;
                     case "Sergi":
-                        _players[i].EnemyICanAttack = Enemy.EnemyType.FuneralHomeDirector;
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.Teenager;
                         break;
                     case "Trent":
-                        _players[i].EnemyICanAttack = Enemy.EnemyType.GrimReeper;
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.FuneralHomeDirector;
                         break;
                     case "Jaun":
-                        _players[i].EnemyICanAttack = Enemy.EnemyType.Teenager;
+                        _players[i].EnemyICanAttack = Enemy.EnemyType.GrimReeper;
                         break;
                 }
             }
@@ -995,10 +1000,12 @@ namespace Four_Old_Dudes.Maps
             var currentPos = WorldPlayer.Position;
             var health = WorldPlayer.Health;
             var currDir = WorldPlayer.CurrentDirection;
+            var isFalling = WorldPlayer.IsFalling;
             WorldPlayer.RemoveControls();
             WorldPlayer.ChangePlayer = false;
             WorldPlayer.ShotsFired = new List<Shot>();
             WorldPlayer = _players[_currentPlayerIndex];
+            WorldPlayer.IsFalling = isFalling;
             WorldPlayer.Health = health;
             WorldPlayer.SetPosition(currentPos);
             WorldPlayer.SetDirection(currDir);

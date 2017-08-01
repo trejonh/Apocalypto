@@ -161,6 +161,8 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         public static void Unpause()
         {
+            if (IsMainMenuOpen)
+                return;
             GameWorld?.UnpauseWorld();
             IsGamePaused = false;
             _pauseMenu?.DestroyMenu();
@@ -172,6 +174,8 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         public static void Pause()
         {
+            if(IsMainMenuOpen)
+                return;
             GameWorld?.Pause();
             if (_isAlreadyPaused == false)
             {
