@@ -16,7 +16,8 @@ namespace Four_Old_Dudes.MovingSprites
     {
         private readonly RenderWindow _playerWindow;
         private bool _isJumping;
-        private float _timeInAir;
+        public float TimeInAir { get; set; }
+        public bool IsHittingCeiling { get; set; }
         public float TimeFalling { get; set; }
         private const float InitialJumpSpeed = -1050.0f;
         private float _jumpAccel = -600.2f;
@@ -156,11 +157,11 @@ namespace Four_Old_Dudes.MovingSprites
                 _isFalling = true;
             }
             if (!_isJumping && !_isFalling) return velocity;
-            if(Math.Abs(_timeInAir) < 0.0001f && _isJumping)
+            if(Math.Abs(TimeInAir) < 0.0001f && _isJumping)
             {
                 velocity = InitialJumpSpeed;
             }
-            else if(_timeInAir < MaxAirTime && _isJumping)
+            else if(TimeInAir < MaxAirTime && _isJumping)
             {
                 velocity = _jumpAccel * GameMaster.Delta.AsSeconds()*10;
             }
@@ -185,13 +186,13 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public new void Update()
         {
-            if (GameMaster.IsGamePaused)
+            if (GameMaster.IsGamePaused || LocalizedPause)
                 return;
             if (CanIMove())
             {
                 var dx = 0f;
                 if (_isJumping)
-                    _timeInAir += GameMaster.Delta.AsSeconds();
+                    TimeInAir += GameMaster.Delta.AsSeconds();
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
                 {
                     SetDirection(Direction.Right);
@@ -211,14 +212,14 @@ namespace Four_Old_Dudes.MovingSprites
                 var dy = Jump() * GameMaster.Delta.AsSeconds();
                 Move(dx, dy);
                 var dyGround = (Position.Y + Height) - Ground.Y;
-                if (dyGround > 0f && IsGroundUnderMe)
+                if (dyGround > 0f && IsGroundUnderMe && IsHittingCeiling == false)
                 {
                     var tmp = Position;
-                    tmp.Y = Ground.Y - Height - 0.01f;
+                    tmp.Y = Ground.Y - Height - 0.001f;
                     Position = tmp;
                     _isJumping = false;
                     _isFalling = false;
-                    _timeInAir = 0.0f;
+                    TimeInAir = 0.0f;
                 }
                 else if (Position.Y > Ground.Y && IsGroundUnderMe == false)
                 {

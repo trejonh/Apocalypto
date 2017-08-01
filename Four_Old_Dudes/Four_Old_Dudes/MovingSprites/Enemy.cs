@@ -195,7 +195,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public new void Update()
         {
-            if (IsAnimated == false || GameMaster.IsGamePaused)
+            if (IsAnimated == false || GameMaster.IsGamePaused || LocalizedPause)
                 return;
             if (CanIMove())
             {

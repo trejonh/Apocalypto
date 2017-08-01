@@ -45,8 +45,8 @@ namespace Four_Old_Dudes.Misc
         /// <returns></returns>
         public bool IsIntersecting(Vector2f position)
         {
-            var dx = Math.Abs(Position.X - position.X);
-            var dy = Math.Abs(Position.Y - position.Y);
+            var dx = Math.Abs((Position.X + (Width / 2f)) - position.X);
+            var dy = Math.Abs((Position.Y + (Height / 2f)) - position.Y);
             return dx < Width && dy < Height;
         }
 

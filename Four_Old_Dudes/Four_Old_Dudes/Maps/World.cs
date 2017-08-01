@@ -12,6 +12,7 @@ using System.Timers;
 using System.Xml.Linq;
 using SFML.Audio;
 using static Four_Old_Dudes.MovingSprites.Moveable;
+using Tiled.SFML;
 
 namespace Four_Old_Dudes.Maps
 {
@@ -730,7 +731,13 @@ namespace Four_Old_Dudes.Maps
         public void UnpauseWorld()
         {
             WorldPlayer.AddControls();
+            WorldPlayer.LocalizedPause = false;
             _localPause = false;
+            foreach (var enemy in EnemiesOnMap)
+            {
+                enemy.Play();
+                enemy.LocalizedPause = false;
+            }
         }
 
         /// <summary>
@@ -744,9 +751,11 @@ namespace Four_Old_Dudes.Maps
                 enemy.Stop();
                 enemy.ResetWaitTime();
                 enemy.ShotsFired=new List<Shot>();
+                enemy.LocalizedPause = true;
             }
             WorldPlayer.RemoveControls();
             WorldPlayer.ResetWaitTime();
+            WorldPlayer.LocalizedPause = true;
         }
 
         /// <summary>
@@ -888,7 +897,7 @@ namespace Four_Old_Dudes.Maps
             if (LoadingText == null)
             {
                 var font = AssetManager.LoadFont("OrangeJuice");
-                LoadingText = new Text() { Position = WinInstance.DefaultView.Center, DisplayedString = AssetManager.GetMessage("Loading"), CharacterSize = 60, Color = Color.Black, Font = font };
+                LoadingText = new Text() { Position = new Vector2f(WinInstance.Size.X / 2f, WinInstance.Size.Y / 2f), DisplayedString = AssetManager.GetMessage("Loading"), CharacterSize = 60, Color = Color.Black, Font = font };
             }
             WinInstance.SetView(WinInstance.DefaultView);
             var ts = new ThreadStart(LoadNewMap);
@@ -1039,6 +1048,14 @@ namespace Four_Old_Dudes.Maps
                         sprite.IsGroundUnderMe = true;
                     else if (dx >= (closestTile.Size.X * 0.73f))
                         sprite.IsGroundUnderMe = false;
+                    var isHitCeil = IsHittingCeiling(closestTile);
+                    WorldPlayer.IsHittingCeiling = isHitCeil;
+                    if (isHitCeil)
+                    {
+                        
+                        Console.WriteLine("Hit ceiling");
+                        WorldPlayer.TimeInAir = WorldPlayer.MoveableMaxAirTime;
+                    }
                 }
                 else
                 {
@@ -1049,6 +1066,19 @@ namespace Four_Old_Dudes.Maps
             {
                 sprite.IsGroundUnderMe = false;
             }
+        }
+
+        private bool IsHittingCeiling(Tiled.SFML.Object closestTile)
+        {
+            if (closestTile == null || WorldPlayer == null)
+                return false;
+            var tilePos = closestTile.Position;
+            var tileSize = closestTile.Size;
+            var playPos = WorldPlayer.Position;
+            Console.WriteLine("ClosetTile: {0},{1}; player: {2},{3}",tilePos.X,tilePos.Y,playPos.X,playPos.Y);
+            if (playPos.Y + WorldPlayer.Height <= tilePos.Y)
+                return false;
+            return playPos.Y > (tilePos.Y + tileSize.Y);
         }
     }
 }

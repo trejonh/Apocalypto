@@ -42,7 +42,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public new void Update()
         {
-            if (GameMaster.IsGamePaused)
+            if (GameMaster.IsGamePaused || LocalizedPause)
                 return;
             if (CanIMove())
             {

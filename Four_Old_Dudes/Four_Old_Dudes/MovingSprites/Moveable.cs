@@ -38,6 +38,8 @@ namespace Four_Old_Dudes.MovingSprites
         public Vector2f Ground { get; set; }
         public List<Shot> ShotsFired { get; set; }
         public bool CanMove { get; private set; }
+        public float MoveableMaxAirTime { get { return MaxAirTime; } private set { } }
+        public bool LocalizedPause;
 
         /// <summary>
         /// Create a new moveable instance
@@ -123,8 +125,8 @@ namespace Four_Old_Dudes.MovingSprites
         /// <returns>True if the sprite is intersecting with the object</returns>
         public bool IsIntersecting(Vector2f objPosition)
         {
-            var dx = Math.Abs(Position.X - objPosition.X);
-            var dy = Math.Abs(Position.Y - objPosition.Y);
+            var dx = Math.Abs((Position.X  + ( Width / 2f)) - objPosition.X);
+            var dy = Math.Abs((Position.Y + (Height / 2f)) - objPosition.Y);
             return dx < Width && dy < Height;
         }
 
