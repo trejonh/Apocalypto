@@ -26,7 +26,6 @@ namespace Four_Old_Dudes.Maps
         private bool _isRunning;
         private Thread _collisionThread;
         private Thread _loadingThread;
-        private Thread _gameFlowThread;
         private bool _madeItToEnd;
         private bool _loading;
         private bool _dispControllerTime;
@@ -134,6 +133,37 @@ namespace Four_Old_Dudes.Maps
             {
                 while (_isRunning)
                 {
+                    if (GameMaster.IsGamePaused == false && _localPause == false)
+                    {
+                        foreach (var npc in NpCsOnMap)
+                        {
+                            var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position)
+                                .Where(tile => tile.Y >= (npc.Position.Y + npc.Height)).ToList();
+                            if (mapTiles.Count <= 0) continue;
+                            var sortedTiles = SortByDistance(npc.Position, mapTiles);
+                            var closetTilePos = sortedTiles[0];
+                            var closestTile =
+                                WorldMap.FloorObjects.First(tile => tile.Position.Equals(closetTilePos));
+                            if (bool.Parse(closestTile.Properties["leftNeighbor"]) == false)
+                            {
+                                npc.IsNearEdge = true;
+                                npc.TurnRight = true;
+                                npc.TurnLeft = false;
+                            }
+                            else if (bool.Parse(closestTile.Properties["rightNeighbor"]) == false)
+                            {
+                                npc.IsNearEdge = true;
+                                npc.TurnRight = false;
+                                npc.TurnLeft = true;
+                            }
+                            else
+                            {
+                                npc.IsNearEdge = false;
+                                npc.TurnRight = false;
+                                npc.TurnLeft = false;
+                            }
+                        }
+                    }
                     if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
                     /*
                      * Find the ground tiles closest to the player
@@ -181,7 +211,6 @@ namespace Four_Old_Dudes.Maps
                             &&
                             ((enemy.Position.Y > center.Y - viewSize.Y / 2) && (enemy.Position.Y < center.Y + viewSize.Y / 2)));
                         var eneTmp = new List<Enemy>(EnemiesOnMap);
-                        //var eneTmpArr = eneTmp.ToArray();
                         foreach (var enemy in EnemiesRendered)
                         {
                             if (!shot.IsIntersecting(enemy.Position)) continue;
@@ -194,7 +223,7 @@ namespace Four_Old_Dudes.Maps
                         EnemiesOnMap = eneTmp;
                     }
                     WorldPlayer.ShotsFired = tmp;
-                    if (EnemiesOnMap.Count == 0) continue;
+                    if (EnemiesOnMap.Count > 0)
                     {
                         /*
                          * Detect if the enemy is near an edge, if so then change its direction
@@ -261,6 +290,7 @@ namespace Four_Old_Dudes.Maps
                             enemy.ShotsFired = eneTmpShot;
                         }
                     }
+                    GeneralGameFlowThread();
                 }
             }
             catch (ThreadAbortException)
@@ -278,48 +308,7 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         private void GeneralGameFlowThread()
         {
-            try
-            {
-                while (_isRunning)
-                {
-                    if (GameMaster.IsGamePaused == false && _localPause == false)
-                    {
-                        foreach (var npc in NpCsOnMap)
-                        {
-                            var mapTiles = WorldMap.FloorObjects.Select(tiles => tiles.Position)
-                                .Where(tile => tile.Y >= (npc.Position.Y + npc.Height)).ToList();
-                            if (mapTiles.Count <= 0) continue;
-                                var sortedTiles = SortByDistance(npc.Position, mapTiles);
-                                var closetTilePos = sortedTiles[0];
-                                var closestTile =
-                                    WorldMap.FloorObjects.First(tile => tile.Position.Equals(closetTilePos));
-                                if (bool.Parse(closestTile.Properties["leftNeighbor"]) == false)
-                                {
-                                    npc.IsNearEdge = true;
-                                    npc.TurnRight = true;
-                                    npc.TurnLeft = false;
-                                }
-                                else if (bool.Parse(closestTile.Properties["rightNeighbor"]) == false)
-                                {
-                                    npc.IsNearEdge = true;
-                                    npc.TurnRight = false;
-                                    npc.TurnLeft = true;
-                                }
-                                else
-                                {
-                                    npc.IsNearEdge = false;
-                                    npc.TurnRight = false;
-                                    npc.TurnLeft = false;
-                                }
-                        }
-                    }
-                    if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) continue;
-                    if (WorldPlayer == null)
-                    {
-                        LogManager.LogError("The world player is null, aborting gen game flow");
-                        _isRunning = false;
-                        break;
-                    }
+                    if (GameMaster.IsGamePaused || IsInitialMapLoad || _localPause) return;
                     if (WorldPlayer.Health <= 0)
                     {
                         WorldPlayer.DeathSound.Play();
@@ -356,21 +345,11 @@ namespace Four_Old_Dudes.Maps
                     if (WorldPlayer.IsIntersecting(WorldMap.EndOfMap) == false)
                     {
                         _madeItToEnd = false;
-                        continue;
+                        return;
                     }
                     _finishMapSound.Play();
                     _madeItToEnd = true;
                     _localPause = true;
-                }
-            }
-            catch (ThreadAbortException)
-            {
-
-            }
-            finally
-            {
-                LogManager.LogWarning("Aborting general game flow thread.");
-            }
         }
 
         /// <summary>
@@ -401,7 +380,6 @@ namespace Four_Old_Dudes.Maps
             }
             _isRunning = false;
             _collisionThread.Abort();
-            _gameFlowThread.Abort();
         }
 
         /// <summary>
@@ -422,9 +400,6 @@ namespace Four_Old_Dudes.Maps
                 Priority = ThreadPriority.AboveNormal,
                 IsBackground = true
             };
-            var ts2 = new ThreadStart(GeneralGameFlowThread);
-            _gameFlowThread = new Thread(ts2) { Priority = ThreadPriority.AboveNormal, IsBackground = true };
-            _gameFlowThread.Start();
             _collisionThread.Start();
         }
 
@@ -576,8 +551,9 @@ namespace Four_Old_Dudes.Maps
                 foreach (var shot in WorldPlayer.ShotsFired)
                     shot.Draw();
             }
-            foreach (var npc in NpCsOnMap)
-                npc.Update();
+            if(_loading == false)
+                foreach (var npc in NpCsOnMap)
+                    npc.Update();
 
         }
 
@@ -891,6 +867,7 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         private void PrepareNextMap()
         {
+            StopWorld();
             CurrentMap++;
             WorldPlayer.RemoveControls();
             _loading = true;
@@ -910,6 +887,7 @@ namespace Four_Old_Dudes.Maps
         /// </summary>
         private void LoadNewMap()
         {
+            bool loaded = false;
             try
             {
                 WorldMap = AssetManager.LoadGameMap(CurrentMap, _worldView);
@@ -929,6 +907,7 @@ namespace Four_Old_Dudes.Maps
                 _madeItToEnd = false;
                 _displayLives = true;
                 WorldPlayer.AddControls();
+                loaded = true;
             }
             catch (Exception ex)
             {
@@ -936,6 +915,8 @@ namespace Four_Old_Dudes.Maps
             }
             finally
             {
+                if (loaded)
+                    StartWorld();
                 LogManager.Log("New Map Loaded!");
             }
         }

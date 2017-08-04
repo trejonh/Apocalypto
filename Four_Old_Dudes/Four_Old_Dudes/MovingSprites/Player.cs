@@ -221,7 +221,7 @@ namespace Four_Old_Dudes.MovingSprites
                     _isFalling = false;
                     TimeInAir = 0.0f;
                 }
-                else if (Position.Y > Ground.Y && IsGroundUnderMe == false)
+                else if (Position.Y > Ground.Y && IsGroundUnderMe == false || IsHittingCeiling)
                 {
                     _isFalling = true;
                 }

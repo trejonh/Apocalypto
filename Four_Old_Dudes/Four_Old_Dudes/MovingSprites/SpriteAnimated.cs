@@ -67,7 +67,7 @@ namespace Four_Old_Dudes.MovingSprites
         /// </summary>
         public void Update()
         {
-            _clock += GameMaster.Delta.AsMilliseconds();
+            _clock += GameMaster.Delta.AsMilliseconds() / 5;
             if (IsAnimated & _clock >= _interval)
             {
                 TextureRect = GetFramePosition(_currentFrame);
