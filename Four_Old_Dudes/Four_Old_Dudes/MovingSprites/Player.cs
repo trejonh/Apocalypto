@@ -60,8 +60,8 @@ namespace Four_Old_Dudes.MovingSprites
             Ground = Position;
             IsGroundUnderMe = true;
             _isFalling = false;
-            var window = rTarget as RenderWindow;
-            if (window != null) { 
+            if (rTarget is RenderWindow window)
+            {
                 _playerWindow = window;
                 _playerWindow.KeyPressed += OnKeyPressed;
                 _playerWindow.KeyReleased += OnKeyReleased;

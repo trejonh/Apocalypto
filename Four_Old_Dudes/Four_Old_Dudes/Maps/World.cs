@@ -12,6 +12,7 @@ using System.Timers;
 using System.Xml.Linq;
 using SFML.Audio;
 using static Four_Old_Dudes.MovingSprites.Moveable;
+using Object = Tiled.SFML.Object;
 
 namespace Four_Old_Dudes.Maps
 {
@@ -599,11 +600,13 @@ namespace Four_Old_Dudes.Maps
         /// <returns>List of position with closet position being first</returns>
         private List<Vector2f> SortByDistance(Vector2f target, List<Vector2f> listOfPositions)
         {
-            var output = new List<Vector2f>();
-            output.Add(listOfPositions[NearestPoint(target, listOfPositions)]);
+            var output = new List<Vector2f>
+            {
+                listOfPositions[NearestPoint(target, listOfPositions)]
+            };
             listOfPositions.Remove(output[0]);
-            int x = 0;
-            for (int i = 0; i < listOfPositions.Count + x; i++)
+            var x = 0;
+            for (var i = 0; i < listOfPositions.Count + x; i++)
             {
                 output.Add(listOfPositions[NearestPoint(output[output.Count - 1], listOfPositions)]);
                 listOfPositions.Remove(output[output.Count - 1]);
@@ -621,9 +624,9 @@ namespace Four_Old_Dudes.Maps
         private int NearestPoint(Vector2f srcPt, List<Vector2f> lookIn)
         {
             var smallestDistance = new KeyValuePair<double, int>();
-            for (int i = 0; i < lookIn.Count; i++)
+            for (var i = 0; i < lookIn.Count; i++)
             {
-                double distance = Math.Sqrt(Math.Pow(srcPt.X - lookIn[i].X, 2) + Math.Pow(srcPt.Y - lookIn[i].Y, 2));
+                var distance = Math.Sqrt(Math.Pow(srcPt.X - lookIn[i].X, 2) + Math.Pow(srcPt.Y - lookIn[i].Y, 2));
                 if (i == 0)
                 {
                     smallestDistance = new KeyValuePair<double, int>(distance, i);
@@ -1025,11 +1028,12 @@ namespace Four_Old_Dudes.Maps
             var currPosition = sprite.Position;
             var closeTiles =
                 WorldMap.FloorObjects.Where(tiles => Math.Abs(tiles.Position.X - currPosition.X) <= 100);
-            var floor = closeTiles.Select(tile => tile.Position).ToList();
+            var enumerable = closeTiles as Object[] ?? closeTiles.ToArray();
+            var floor = enumerable.Select(tile => tile.Position).ToList();
             if (floor.Count > 0)
             {
                 var list = SortByDistance(currPosition, floor);
-                var closestTile = closeTiles.First(tile => tile.Position.Equals(list[0]));
+                var closestTile = enumerable.First(tile => tile.Position.Equals(list[0]));
                 var bottomPosition = currPosition.Y + sprite.Height;
                 if (closestTile != null)
                 {

@@ -150,7 +150,7 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void WindowClosed(object sender, System.EventArgs e)
+        private static void WindowClosed(object sender, EventArgs e)
         {
             LogManager.CloseLog();
             _window.Close();
@@ -219,7 +219,7 @@ namespace Four_Old_Dudes.Utils
         /// </summary>
         public static void StopTheme()
         {
-            if (IsThemePlaying == true)
+            if (IsThemePlaying)
                 IsThemePlaying = false;
         }
     }
